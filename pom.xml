@@ -47,6 +47,7 @@
     <module>integration</module>
     <module>slf4j-site</module>
     <module>slf4j-migrator</module>
+    <module>sysout-over-slf4j</module>
   </modules>
 
 	<dependencies>

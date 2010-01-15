@@ -1,6 +1,5 @@
 package org.slf4j.sysoutslf4j.system;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;

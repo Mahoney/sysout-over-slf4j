@@ -4,4 +4,4 @@ target
 .project
 *~
 integration/bundle/
-integration/felix-cache/
+integration/felix-cache//.settings
