@@ -2,7 +2,7 @@ package org.slf4j.sysoutslf4j.system;
 
 import static java.lang.Thread.currentThread;
 import static org.easymock.classextension.EasyMock.createMock;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
@@ -30,15 +30,28 @@ public class TestLoggerAppenderStore extends SysOutOverSLF4JTestCase {
 	private void assertCorrectAppenderReturnedForEachClassLoader() {
 		for (int i = 0; i < classLoaders.length; i++) {
 			currentThread().setContextClassLoader(classLoaders[i]);
-			assertEquals(loggerAppenders[i], storeUnderTest.get());
+			assertSame(loggerAppenders[i], storeUnderTest.get());
 		}
 	}
 	
 	@Test
-	public void loggerAppenderWorksIfContextClassLoaderIsNull() {
+	public void loggerAppenderStoreWorksIfContextClassLoaderIsNull() {
 		currentThread().setContextClassLoader(null);
 		LoggerAppender loggerAppender = createMock(LoggerAppender.class);
 		storeUnderTest.set(loggerAppender);
-		assertEquals(loggerAppender, storeUnderTest.get());
+		assertSame(loggerAppender, storeUnderTest.get());
+	}
+	
+	@Test
+	public void loggerAppenderStoreReturnsLoggerAppenderStoredAgainstParentOfContextClassLoader() {
+		ClassLoader parent = new ClassLoader() { };
+		LoggerAppender loggerAppender = createMock(LoggerAppender.class);
+		currentThread().setContextClassLoader(parent);
+		storeUnderTest.set(loggerAppender);
+		
+		ClassLoader child = new ClassLoader(parent) { };
+		currentThread().setContextClassLoader(child);
+		
+		assertSame(loggerAppender, storeUnderTest.get());
 	}
 }

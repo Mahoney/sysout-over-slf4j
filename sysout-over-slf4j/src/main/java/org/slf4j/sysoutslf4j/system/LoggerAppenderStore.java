@@ -25,14 +25,22 @@ class LoggerAppenderStore {
 		LoggerAppender loggerAppender = null;
 		readLock.lock();
 		try {
-			WeakReference<LoggerAppender> loggerAppenderReference = loggerAppenderMap.get(contextClassLoader());
-			if (loggerAppenderReference != null) {
-				loggerAppender = loggerAppenderReference.get();
-			}
+			loggerAppender = get(contextClassLoader());
 		} finally {
 			readLock.unlock();
 		}
 		return loggerAppender;
+	}
+
+	private LoggerAppender get(ClassLoader classLoader) {
+		WeakReference<LoggerAppender> loggerAppenderReference = loggerAppenderMap.get(classLoader);
+		if (loggerAppenderReference != null) {
+			return loggerAppenderReference.get();
+		} else if (classLoader == null) {
+			return null;
+		} else {
+			return get(classLoader.getParent());
+		}
 	}
 
 	void set(Object loggerAppenderObject) {
