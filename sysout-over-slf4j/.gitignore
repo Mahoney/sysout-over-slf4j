@@ -4,4 +4,6 @@
 /.fbprefs
 /.project
 /.checkstyle
-/target
+/.pmd
+/.ruleset
+/reports
