@@ -6,8 +6,8 @@ import java.util.Iterator;
 
 public class GenericCrossClassLoaderCollection<E> implements Collection<E> {
 
-	private final Class<E> genericType;
-	private final Collection<?> wrappedCollection;
+	final Class<E> genericType;
+	final Collection<?> wrappedCollection;
 	
 	public GenericCrossClassLoaderCollection(Class<E> genericType, Collection<?> wrappedCollection) {
 		this.genericType = genericType;

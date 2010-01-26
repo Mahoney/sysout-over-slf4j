@@ -4,15 +4,15 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-public class ReferenceHolder {
+public final class ReferenceHolder {
 	
 	private static final Map<Object, Object> REFERENCES = Collections.synchronizedMap(new IdentityHashMap<Object, Object>()); 
 
-	public static void preventGarbageCollectionForLifeOfClassLoader(Object objectToBeMaintained) {
+	public static void preventGarbageCollectionForLifeOfClassLoader(final Object objectToBeMaintained) {
 		REFERENCES.put(objectToBeMaintained, objectToBeMaintained);
 	}
 	
 	private ReferenceHolder() {
-		throw new IllegalArgumentException();
+		throw new UnsupportedOperationException("Not instantiable");
 	}
 }

@@ -68,12 +68,12 @@ import java.util.Locale;
  *         SLF4J, though a performance hit will occur.
  *         </p>
  */
-public final class SLF4JPrintStream extends PrintStream {
+public final class SLF4JPrintStream extends PrintStream { // NOPMD - too many methods but can't be helped
 
 	private final PrintStream originalPrintStream;
 	private final SLF4JPrintStreamDelegater delegater;
 
-	SLF4JPrintStream(PrintStream originalPrintStream, SLF4JPrintStreamDelegater delegater) {
+	SLF4JPrintStream(final PrintStream originalPrintStream, final SLF4JPrintStreamDelegater delegater) {
 		// This ByteArrayOutputStream will be unused - we aren't going to touch
 		// the super class.
 		super(new ByteArrayOutputStream());
@@ -82,69 +82,69 @@ public final class SLF4JPrintStream extends PrintStream {
 	}
 
 	@Override
-	public void println(String s) {
-		delegater.delegatePrintln(s);
+	public void println(final String string) {
+		delegater.delegatePrintln(string);
 	}
 
 	@Override
-	public void println(Object x) {
-		delegater.delegatePrintln(String.valueOf(x));
+	public void println(final Object object) {
+		delegater.delegatePrintln(String.valueOf(object));
 	}
 
 	@Override
 	public void println() {
-		delegater.delegatePrintln(String.valueOf(""));
+		delegater.delegatePrintln("");
 	}
 
 	@Override
-	public void println(boolean x) {
-		delegater.delegatePrintln(String.valueOf(x));
+	public void println(final boolean bool) {
+		delegater.delegatePrintln(String.valueOf(bool));
 	}
 
 	@Override
-	public void println(char x) {
-		delegater.delegatePrintln(String.valueOf(x));
+	public void println(final char character) {
+		delegater.delegatePrintln(String.valueOf(character));
 	}
 
 	@Override
-	public void println(char[] x) {
-		delegater.delegatePrintln(String.valueOf(x));
+	public void println(final char[] charArray) {
+		delegater.delegatePrintln(String.valueOf(charArray));
 	}
 
 	@Override
-	public void println(double x) {
-		delegater.delegatePrintln(String.valueOf(x));
+	public void println(final double doub) {
+		delegater.delegatePrintln(String.valueOf(doub));
 	}
 
 	@Override
-	public void println(float x) {
-		delegater.delegatePrintln(String.valueOf(x));
+	public void println(final float floa) {
+		delegater.delegatePrintln(String.valueOf(floa));
 	}
 
 	@Override
-	public void println(int x) {
-		delegater.delegatePrintln(String.valueOf(x));
+	public void println(final int integer) {
+		delegater.delegatePrintln(String.valueOf(integer));
 	}
 
 	@Override
-	public void println(long x) {
-		delegater.delegatePrintln(String.valueOf(x));
+	public void println(final long lon) {
+		delegater.delegatePrintln(String.valueOf(lon));
 	}
 
 	@Override
-	public PrintStream append(char c) {
-		delegater.delegatePrint(String.valueOf(c));
+	public PrintStream append(final char character) {
+		delegater.delegatePrint(String.valueOf(character));
 		return this;
 	}
 
 	@Override
-	public PrintStream append(CharSequence csq, int start, int end) {
+	public PrintStream append(final CharSequence csq, final int start, final int end) {
 		delegater.delegatePrint(csq.subSequence(start, end).toString());
 		return this;
 	}
 
 	@Override
-	public PrintStream append(CharSequence csq) {
+	public PrintStream append(final CharSequence csq) {
 		delegater.delegatePrint(csq.toString());
 		return this;
 	}
@@ -170,94 +170,94 @@ public final class SLF4JPrintStream extends PrintStream {
 	}
 
 	@Override
-	public PrintStream format(Locale l, String format, Object... args) {
-		String s = String.format(l, format, args);
-		delegater.delegatePrint(s);
+	public PrintStream format(final Locale locale, final String format, final Object... args) {
+		final String string = String.format(locale, format, args);
+		delegater.delegatePrint(string);
 		return this;
 	}
 
 	@Override
-	public PrintStream format(String format, Object... args) {
-		String s = String.format(format, args);
-		delegater.delegatePrint(s);
+	public PrintStream format(final String format, final Object... args) {
+		final String string = String.format(format, args);
+		delegater.delegatePrint(string);
 		return this;
 	}
 
 	@Override
-	public void print(boolean b) {
-		delegater.delegatePrint(String.valueOf(b));
+	public void print(final boolean bool) {
+		delegater.delegatePrint(String.valueOf(bool));
 	}
 
 	@Override
-	public void print(char c) {
-		delegater.delegatePrint(String.valueOf(c));
+	public void print(final char character) {
+		delegater.delegatePrint(String.valueOf(character));
 	}
 
 	@Override
-	public void print(char[] s) {
-		delegater.delegatePrint(String.valueOf(s));
+	public void print(final char[] charArray) {
+		delegater.delegatePrint(String.valueOf(charArray));
 	}
 
 	@Override
-	public void print(double d) {
-		delegater.delegatePrint(String.valueOf(d));
+	public void print(final double doubl) {
+		delegater.delegatePrint(String.valueOf(doubl));
 	}
 
 	@Override
-	public void print(float f) {
-		delegater.delegatePrint(String.valueOf(f));
+	public void print(final float floa) {
+		delegater.delegatePrint(String.valueOf(floa));
 	}
 
 	@Override
-	public void print(int i) {
-		delegater.delegatePrint(String.valueOf(i));
+	public void print(final int integer) {
+		delegater.delegatePrint(String.valueOf(integer));
 	}
 
 	@Override
-	public void print(long l) {
-		delegater.delegatePrint(String.valueOf(l));
+	public void print(final long lon) {
+		delegater.delegatePrint(String.valueOf(lon));
 	}
 
 	@Override
-	public void print(Object obj) {
-		delegater.delegatePrint(String.valueOf(obj));
+	public void print(final Object object) {
+		delegater.delegatePrint(String.valueOf(object));
 	}
 
 	@Override
-	public void print(String s) {
-		delegater.delegatePrint(String.valueOf(s));
+	public void print(final String string) {
+		delegater.delegatePrint(String.valueOf(string));
 	}
 
 	@Override
-	public PrintStream printf(Locale l, String format, Object... args) {
-		String s = String.format(l, format, args);
-		delegater.delegatePrint(s);
+	public PrintStream printf(final Locale locale, final String format, final Object... args) {
+		final String string = String.format(locale, format, args);
+		delegater.delegatePrint(string);
 		return this;
 	}
 
 	@Override
-	public PrintStream printf(String format, Object... args) {
-		String s = String.format(format, args);
-		delegater.delegatePrint(s);
+	public PrintStream printf(final String format, final Object... args) {
+		final String string = String.format(format, args);
+		delegater.delegatePrint(string);
 		return this;
 	}
 	
 	@Override
-	public synchronized void write(byte[] buf, int off, int len) {
+	public void write(final byte[] buf, final int off, final int len) {
 		originalPrintStream.write(buf, off, len);
 	}
 
 	@Override
-	public synchronized void write(int b) {
-		originalPrintStream.write(b);
+	public void write(final int integer) {
+		originalPrintStream.write(integer);
 	}
 
 	@Override
-	public synchronized void write(byte[] b) throws IOException {
-		originalPrintStream.write(b);
+	public void write(final byte[] bytes) throws IOException {
+		originalPrintStream.write(bytes);
 	}
 
-	public void registerLoggerAppender(Object loggerAppender) {
+	public void registerLoggerAppender(final Object loggerAppender) {
 		delegater.registerLoggerAppender(loggerAppender);
 	}
 

@@ -1,5 +1,7 @@
 package org.slf4j.sysoutslf4j.context;
 
+import static java.lang.ClassLoader.getSystemClassLoader;
+
 import java.io.PrintStream;
 
 import org.slf4j.Logger;
@@ -16,7 +18,7 @@ class SLF4JPrintStreamManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SysOutOverSLF4J.class);
 
-	void sendSystemOutAndErrToSLF4J(ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
+	void sendSystemOutAndErrToSLF4J(final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
 		synchronized (System.class) {
 			makeSystemOutputsSLF4JPrintStreamsIfNecessary();
 			sendSystemOutAndErrToSLF4JForThisContext(exceptionHandlingStrategyFactory);
@@ -40,39 +42,39 @@ class SLF4JPrintStreamManager {
 	}
 
 	private void makeSystemOutputsSLF4JPrintStreams() {
-		ClassLoader classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(Wirer.class);
-		Class<?> wirerClass = ClassLoaderUtils.loadClass(classLoader, Wirer.class);
+		final ClassLoader classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(Wirer.class);
+		final Class<?> wirerClass = ClassLoaderUtils.loadClass(classLoader, Wirer.class);
 		ReflectionUtils.invokeStaticMethod("replaceSystemOutputsWithSLF4JPrintStreamsIfNecessary", wirerClass);
 	}
 
 	private void sendSystemOutAndErrToSLF4JForThisContext(
-			ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
+			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
 		for (SystemOutput systemOutput : SystemOutput.values()) {
 			registerNewLoggerAppender(exceptionHandlingStrategyFactory, systemOutput);
 		}
 	}
 
 	private void registerNewLoggerAppender(
-			ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory, SystemOutput systemOutput) {
-		PrintStream originalPrintStream = getOriginalPrintStream(systemOutput.get());
-		ExceptionHandlingStrategy exceptionHandlingStrategy = 
+			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory, final SystemOutput systemOutput) {
+		final PrintStream originalPrintStream = getOriginalPrintStream(systemOutput.get());
+		final ExceptionHandlingStrategy exceptionHandlingStrategy = 
 			exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(systemOutput.getLogLevel(), originalPrintStream);
-		LoggerAppenderImpl loggerAppender = 
+		final LoggerAppenderImpl loggerAppender = 
 			new LoggerAppenderImpl(systemOutput.getLogLevel(), exceptionHandlingStrategy, originalPrintStream);
 		registerLoggerAppender(systemOutput, loggerAppender);
 	}
 
-	private PrintStream getOriginalPrintStream(PrintStream slf4jPrintStream) {
+	private PrintStream getOriginalPrintStream(final PrintStream slf4jPrintStream) {
 		return (PrintStream) ReflectionUtils.invokeMethod("getOriginalPrintStream", slf4jPrintStream);
 	}
 
-	private void registerLoggerAppender(SystemOutput systemOutput, LoggerAppenderImpl loggerAppender) {
+	private void registerLoggerAppender(final SystemOutput systemOutput, final LoggerAppenderImpl loggerAppender) {
 		ReflectionUtils.invokeMethod("registerLoggerAppender", systemOutput.get(), Object.class, loggerAppender);
 	}
 
 	void sendSystemOutAndErrToOriginals() {
-		ClassLoader classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(Wirer.class, System.out.getClass().getClassLoader());
-		Class<?> wirerClass = ClassLoaderUtils.loadClass(classLoader, Wirer.class);
+		final ClassLoader classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(Wirer.class, getSystemClassLoader());
+		final Class<?> wirerClass = ClassLoaderUtils.loadClass(classLoader, Wirer.class);
 		ReflectionUtils.invokeStaticMethod("restoreOriginalSystemOutputsIfNecessary", wirerClass);
 		LOG.info("Restored original System.out and System.err");
 	}

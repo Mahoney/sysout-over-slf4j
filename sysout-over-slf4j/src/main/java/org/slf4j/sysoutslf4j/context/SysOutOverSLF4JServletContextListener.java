@@ -6,11 +6,11 @@ import javax.servlet.ServletContextListener;
 
 public class SysOutOverSLF4JServletContextListener implements ServletContextListener {
 
-	public final void contextInitialized(ServletContextEvent servletContextEvent) {
+	public final void contextInitialized(final ServletContextEvent servletContextEvent) {
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 	}
 
-	public void contextDestroyed(ServletContextEvent servletContextEvent) {
+	public void contextDestroyed(final ServletContextEvent servletContextEvent) {
 		// Not interested...
 	}
 }

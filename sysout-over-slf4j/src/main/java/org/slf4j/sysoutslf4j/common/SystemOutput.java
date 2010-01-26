@@ -11,7 +11,7 @@ public enum SystemOutput {
 			return System.out;
 		}
 
-		public void set(PrintStream newPrintStream) {
+		public void set(final PrintStream newPrintStream) {
 			System.setOut(newPrintStream);
 		}
 	}, SYSERR("System.err", LogLevel.ERROR) {
@@ -19,7 +19,7 @@ public enum SystemOutput {
 			return System.err;
 		}
 
-		public void set(PrintStream newPrintStream) {
+		public void set(final PrintStream newPrintStream) {
 			System.setErr(newPrintStream);
 		}
 	};
@@ -30,7 +30,7 @@ public enum SystemOutput {
 	private final String friendlyName;
 	private final LogLevel logLevel;
 
-	private SystemOutput(String name, LogLevel logLevel) {
+	private SystemOutput(final String name, final LogLevel logLevel) {
 		this.friendlyName = name;
 		this.logLevel = logLevel;
 	}

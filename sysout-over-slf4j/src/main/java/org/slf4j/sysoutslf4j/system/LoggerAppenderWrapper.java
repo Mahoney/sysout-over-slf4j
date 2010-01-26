@@ -2,18 +2,20 @@ package org.slf4j.sysoutslf4j.system;
 
 import org.slf4j.sysoutslf4j.common.LoggerAppender;
 
-class LoggerAppenderWrapper {
+final class LoggerAppenderWrapper {
 
-	static LoggerAppender wrap(Object targetLoggerAppender) {
+	static LoggerAppender wrap(final Object targetLoggerAppender) {
+		LoggerAppender result;
 		if (targetLoggerAppender instanceof LoggerAppender) {
-			return (LoggerAppender) targetLoggerAppender;
+			result = (LoggerAppender) targetLoggerAppender;
 		} else {
-			return new LoggerAppenderProxy(targetLoggerAppender);
+			result = new LoggerAppenderProxy(targetLoggerAppender);
 		}
+		return result;
 	}
 	
 	private LoggerAppenderWrapper() {
-		throw new IllegalArgumentException("Not instantiable");
+		throw new UnsupportedOperationException("Not instantiable");
 	}
 
 }

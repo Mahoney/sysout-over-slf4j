@@ -18,17 +18,18 @@ public final class LogPerLineExceptionHandlingStrategyFactory implements Excepti
 		super();
 	}
 	
-	public ExceptionHandlingStrategy makeExceptionHandlingStrategy(LogLevel logLevel, PrintStream originalPrintStream) {
-		return new LogPerLineExceptionHandlingStrategy(logLevel, originalPrintStream);
+	public ExceptionHandlingStrategy makeExceptionHandlingStrategy(
+			final LogLevel logLevel, final PrintStream originalPrintStream) {
+		return new LogPerLineExceptionHandlingStrategy(logLevel);
 	}
-	
+
 	private static final class LogPerLineExceptionHandlingStrategy implements ExceptionHandlingStrategy {
 
 		private static final Marker MARKER = MarkerFactory.getMarker("stacktrace");
 		
 		private final LogLevel logLevel;
 
-		private LogPerLineExceptionHandlingStrategy(LogLevel logLevel, PrintStream originalPrintStream) {
+		LogPerLineExceptionHandlingStrategy(final LogLevel logLevel) {
 			super();
 			this.logLevel = logLevel;
 		}
@@ -37,7 +38,7 @@ public final class LogPerLineExceptionHandlingStrategyFactory implements Excepti
 			// Do nothing
 		}
 
-		public void handleExceptionLine(String line, Logger log) {
+		public void handleExceptionLine(final String line, final Logger log) {
 			logLevel.log(log, MARKER, line);
 		}
 

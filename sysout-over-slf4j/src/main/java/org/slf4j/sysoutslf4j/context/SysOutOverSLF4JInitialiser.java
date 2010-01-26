@@ -21,11 +21,11 @@ class SysOutOverSLF4JInitialiser {
 	
 	private final LoggingSystemRegister loggingSystemRegister;
 	
-	SysOutOverSLF4JInitialiser(LoggingSystemRegister loggingSystemRegister) {
+	SysOutOverSLF4JInitialiser(final LoggingSystemRegister loggingSystemRegister) {
 		this.loggingSystemRegister = loggingSystemRegister;
 	}
 
-	void initialise(Logger currentLoggerImplementation) {
+	void initialise(final Logger currentLoggerImplementation) {
 		if (loggingSystemKnownAndMightAccessConsoleViaPrintln(currentLoggerImplementation)) {
 			registerCurrentLoggingSystemPackage(currentLoggerImplementation);
 		} else if (loggingSystemDoesNotAccessConsoleViaPrintln(currentLoggerImplementation)) {
@@ -35,25 +35,29 @@ class SysOutOverSLF4JInitialiser {
 		}
 	}
 
-	private boolean loggingSystemDoesNotAccessConsoleViaPrintln(Logger currentLoggerImplementation) {
+	private boolean loggingSystemDoesNotAccessConsoleViaPrintln(final Logger currentLoggerImplementation) {
+		boolean loggingSystemDoesNotAccessConsoleViaPrintln = false;
 		for (String loggingPackage : LOGGING_SYSTEMS_THAT_DO_NOT_ACCESS_CONSOLE) {
 			if (usingLogFramework(currentLoggerImplementation, loggingPackage)) {
-				return true;
+				loggingSystemDoesNotAccessConsoleViaPrintln = true;
+				break;
 			}
 		}
-		return false;
+		return loggingSystemDoesNotAccessConsoleViaPrintln;
 	}
 
-	private boolean loggingSystemKnownAndMightAccessConsoleViaPrintln(Logger currentLoggerImplementation) {
+	private boolean loggingSystemKnownAndMightAccessConsoleViaPrintln(final Logger currentLoggerImplementation) {
+		boolean loggingSystemKnownAndMightAccessConsoleViaPrintln = false;
 		for (String loggingPackage : LOGGING_SYSTEMS_THAT_MIGHT_ACCESS_CONSOLE) {
 			if (usingLogFramework(currentLoggerImplementation, loggingPackage)) {
-				return true;
+				loggingSystemKnownAndMightAccessConsoleViaPrintln = true;
+				break;
 			}
 		}
-		return false;
+		return loggingSystemKnownAndMightAccessConsoleViaPrintln;
 	}
 
-	private void registerCurrentLoggingSystemPackage(Logger currentLoggerImplementation) {
+	private void registerCurrentLoggingSystemPackage(final Logger currentLoggerImplementation) {
 		for (String loggingPackage : LOGGING_SYSTEMS_THAT_MIGHT_ACCESS_CONSOLE) {
 			if (usingLogFramework(currentLoggerImplementation, loggingPackage)) {
 				loggingSystemRegister.registerLoggingSystem(loggingPackage);
@@ -61,7 +65,7 @@ class SysOutOverSLF4JInitialiser {
 		}
 	}
 
-	private boolean usingLogFramework(Logger currentLoggerImplementation, String packageName) {
+	private boolean usingLogFramework(final Logger currentLoggerImplementation, final String packageName) {
 		return currentLoggerImplementation.getClass().getName().startsWith(packageName);
 	}
 

@@ -1,5 +1,8 @@
 package org.slf4j.integration.sysoutslf4j;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -9,7 +12,6 @@ import java.util.logging.ConsoleHandler;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.SimpleLayout;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Marker;

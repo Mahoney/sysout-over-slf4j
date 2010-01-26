@@ -24,7 +24,13 @@
   	  <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>pertest</forkMode> 
+          <forkMode>pertest</forkMode>
+          <systemProperties>
+            <property>
+              <name>cobertura.use.java.nio</name>
+              <value>false</value>
+            </property>
+          </systemProperties>
         </configuration>
       </plugin>
     </plugins>
@@ -44,28 +50,30 @@
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
-          <configLocation>http://www.lidalia.org.uk/checkstyle.xml</configLocation>
+          <configLocation>checkstyle.xml</configLocation>
         </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <links>
-            <link>http://java.sun.com/javase/6/docs/api/</link>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
           </links>
-          <aggregate>true</aggregate>
         </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-pmd-plugin</artifactId>
         <configuration>
           <targetJdk>1.5</targetJdk>
+          <rulesets>
+            <ruleset>pmd-rules.xml</ruleset>
+          </rulesets>
         </configuration>
       </plugin>
-      <!--<plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
-      </plugin>-->
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>taglist-maven-plugin</artifactId>
@@ -86,9 +94,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
         <configuration>
-          <findbugsXmlOutput>true</findbugsXmlOutput>
-          <!-- Optional directory to put findbugs xml report -->
-          <findbugsXmlOutputDirectory>target/site</findbugsXmlOutputDirectory>
+          <threshold>Low</threshold>
           <effort>Max</effort>
         </configuration>
       </plugin>

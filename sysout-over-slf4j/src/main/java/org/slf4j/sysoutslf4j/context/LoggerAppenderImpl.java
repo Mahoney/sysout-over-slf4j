@@ -14,32 +14,32 @@ public class LoggerAppenderImpl implements LoggerAppender {
 	private final PrintStream originalPrintStream;
 	private StringBuilder buffer = new StringBuilder();
 
-	LoggerAppenderImpl(LogLevel level, ExceptionHandlingStrategy exceptionHandlingStrategy,
-			PrintStream originalPrintStream) {
+	LoggerAppenderImpl(final LogLevel level, final ExceptionHandlingStrategy exceptionHandlingStrategy,
+			final PrintStream originalPrintStream) {
 		super();
 		this.level = level;
 		this.exceptionHandlingStrategy = exceptionHandlingStrategy;
 		this.originalPrintStream = originalPrintStream;
 	}
 
-	public void append(String message) {
+	public void append(final String message) {
 		exceptionHandlingStrategy.notifyNotStackTrace();
 		buffer.append(message);
 	}
 
-	public void appendAndLog(String message, String className, boolean isStackTrace) {
+	public void appendAndLog(final String message, final String className, final boolean isStackTrace) {
 		buffer.append(message);
-		String logStatement = flushBuffer();
+		final String logStatement = flushBuffer();
 		logOrPrint(logStatement, className, isStackTrace);
 	}
 
 	private String flushBuffer() {
-		String logStatement = buffer.toString();
+		final String logStatement = buffer.toString();
 		buffer = new StringBuilder();
 		return logStatement;
 	}
 
-	private void logOrPrint(String logStatement, String className, boolean isStackTrace) {
+	private void logOrPrint(final String logStatement, final String className, final boolean isStackTrace) {
 		if (SysOutOverSLF4J.isInLoggingSystem(className)) {
 			originalPrintStream.println(logStatement);
 		} else {
@@ -47,8 +47,8 @@ public class LoggerAppenderImpl implements LoggerAppender {
 		}
 	}
 
-	private void log(String logStatement, String className, boolean isStackTrace) {
-		Logger log = LoggerFactory.getLogger(className);
+	private void log(final String logStatement, final String className, final boolean isStackTrace) {
+		final Logger log = LoggerFactory.getLogger(className);
 		if (isStackTrace) {
 			exceptionHandlingStrategy.handleExceptionLine(logStatement, log);
 		} else {

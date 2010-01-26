@@ -10,44 +10,43 @@ import java.security.PrivilegedAction;
 
 public final class ClassLoaderUtils {
 	
-	public static ClassLoader makeNewClassLoaderForJar(Class<?> classInJar) {
+	public static ClassLoader makeNewClassLoaderForJar(final Class<?> classInJar) {
 		return makeNewClassLoaderForJar(classInJar, ClassLoader.getSystemClassLoader());
 	}
 	
-	public static ClassLoader makeNewClassLoaderForJar(Class<?> classInJar, final ClassLoader parent) {
-		final URL jarURL = getJarURL(classInJar);
-		URLClassLoader result = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
+	public static ClassLoader makeNewClassLoaderForJar(final Class<?> classInJar, final ClassLoader parent) {
+		final URL jarURL = getJarURL(classInJar); // NOPMD
+		return AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
 			public URLClassLoader run() {
 				return new URLClassLoader(new URL[]{jarURL}, parent);
 			}
 		});
-		return result;
 	}
 
-	private static URL getJarURL(Class<?> classInJar) {
+	private static URL getJarURL(final Class<?> classInJar) {
 		try {
-			String relativeClassFilePath = getRelativeFilePathOfClass(classInJar);
-			URL classURL = getResource(relativeClassFilePath);
-			String jarURLString = substringBefore(classURL.toString(), relativeClassFilePath);
+			final String relativeClassFilePath = getRelativeFilePathOfClass(classInJar); // NOPMD
+			final URL classURL = getResource(relativeClassFilePath);
+			final String jarURLString = substringBefore(classURL.toString(), relativeClassFilePath);
 			return new URL(jarURLString);
 		} catch (MalformedURLException e) {
 			throw new IllegalStateException("Should not be possible", e);
 		}
 	}
 	
-	private static URL getResource(String relativeFilePath) {
-		return ClassLoaderUtils.class.getClassLoader().getResource(relativeFilePath);
+	private static URL getResource(final String relativeFilePath) {
+		return Thread.currentThread().getContextClassLoader().getResource(relativeFilePath);
 	}
 
-	private static String getRelativeFilePathOfClass(Class<?> clazz) {
+	private static String getRelativeFilePathOfClass(final Class<?> clazz) {
 		return clazz.getName().replace('.', '/') + ".class";
 	}
 
-	public static Class<?> loadClass(ClassLoader classLoader, Class<?> classToLoad) {
+	public static Class<?> loadClass(final ClassLoader classLoader, final Class<?> classToLoad) {
 		try {
 			return classLoader.loadClass(classToLoad.getName());
 		} catch (ClassNotFoundException cne) {
-			throw new RuntimeException(cne);
+			throw new RuntimeException(cne); // NOPMD
 		}
 	}
 

@@ -24,8 +24,8 @@ public final class SysOutOverSLF4J {
 	private static final SLF4JPrintStreamManager SLF4J_PRINT_STREAM_MANAGER = new SLF4JPrintStreamManager();
 	
 	static {
-		SysOutOverSLF4JInitialiser sysOutOverSLF4JInitialiser = new SysOutOverSLF4JInitialiser(LOGGING_SYSTEM_REGISTER);
-		Logger loggerImplementation = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+		final SysOutOverSLF4JInitialiser sysOutOverSLF4JInitialiser = new SysOutOverSLF4JInitialiser(LOGGING_SYSTEM_REGISTER);
+		final Logger loggerImplementation = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 		sysOutOverSLF4JInitialiser.initialise(loggerImplementation);
 	}
 
@@ -37,7 +37,7 @@ public final class SysOutOverSLF4J {
 	 * Throwable.printStackTrace()
 	 */
 	public static void sendSystemOutAndErrToSLF4J() {
-		ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory =
+		final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory =
 			LogPerLineExceptionHandlingStrategyFactory.getInstance();
 		sendSystemOutAndErrToSLF4J(exceptionHandlingStrategyFactory);
 	}
@@ -50,7 +50,7 @@ public final class SysOutOverSLF4J {
 	 * @param exceptionHandlingStrategyFactory A factory for creating strategues for handling printlns coming from
 	 *			Throwable.printStackTrace()
 	 */
-	public static void sendSystemOutAndErrToSLF4J(ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
+	public static void sendSystemOutAndErrToSLF4J(final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
 		SLF4J_PRINT_STREAM_MANAGER.sendSystemOutAndErrToSLF4J(exceptionHandlingStrategyFactory);
 	}
 
@@ -71,7 +71,7 @@ public final class SysOutOverSLF4J {
 	 *
 	 * @param packageName A package name e.g. org.apache.log4j
 	 */
-	public static void registerLoggingSystem(String packageName) {
+	public static void registerLoggingSystem(final String packageName) {
 		LOGGING_SYSTEM_REGISTER.registerLoggingSystem(packageName);
 	}
 
@@ -81,7 +81,7 @@ public final class SysOutOverSLF4J {
 	 *
 	 * @param packageName A package name e.g. org.apache.log4j
 	 */
-	public static void unregisterLoggingSystem(String packageName) {
+	public static void unregisterLoggingSystem(final String packageName) {
 		LOGGING_SYSTEM_REGISTER.unregisterLoggingSystem(packageName);
 	}
 
@@ -93,7 +93,7 @@ public final class SysOutOverSLF4J {
 	 * @return true if the class is in one of the registered logging system
 	 *         packages, false otherwise
 	 */
-	public static boolean isInLoggingSystem(String className) {
+	public static boolean isInLoggingSystem(final String className) {
 		return LOGGING_SYSTEM_REGISTER.isInLoggingSystem(className);
 	}
 

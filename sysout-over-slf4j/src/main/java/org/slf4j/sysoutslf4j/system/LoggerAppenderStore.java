@@ -32,20 +32,22 @@ class LoggerAppenderStore {
 		return loggerAppender;
 	}
 
-	private LoggerAppender get(ClassLoader classLoader) {
-		WeakReference<LoggerAppender> loggerAppenderReference = loggerAppenderMap.get(classLoader);
-		if (loggerAppenderReference != null) {
-			return loggerAppenderReference.get();
+	private LoggerAppender get(final ClassLoader classLoader) {
+		final WeakReference<LoggerAppender> loggerAppenderReference = loggerAppenderMap.get(classLoader);
+		final LoggerAppender result;
+		if (loggerAppenderReference != null) { //NOPMD
+			result = loggerAppenderReference.get();
 		} else if (classLoader == null) {
-			return null;
+			result = null;
 		} else {
-			return get(classLoader.getParent());
+			result = get(classLoader.getParent());
 		}
+		return result;
 	}
 
-	void set(Object loggerAppenderObject) {
-		LoggerAppender loggerAppender = LoggerAppenderWrapper.wrap(loggerAppenderObject);
-		preventLoggerAppenderFromBeingGarbageCollected(loggerAppenderObject.getClass().getClassLoader(), loggerAppender);
+	void set(final Object loggerAppenderObject) {
+		final LoggerAppender loggerAppender = LoggerAppenderWrapper.wrap(loggerAppenderObject);
+		preventLoggerAppenderFromBeingGarbageCollected(loggerAppenderObject.getClass().getClassLoader(), loggerAppender); //NOPMD
 
 		writeLock.lock();
 		try {
@@ -56,8 +58,8 @@ class LoggerAppenderStore {
 	}
 
 	private void preventLoggerAppenderFromBeingGarbageCollected(
-			ClassLoader originatingClassLoader, LoggerAppender loggerAppender) {
-		Class<?> referenceHolderClass = ClassLoaderUtils.loadClass(originatingClassLoader, ReferenceHolder.class);
+			final ClassLoader originatingClassLoader, final LoggerAppender loggerAppender) {
+		final Class<?> referenceHolderClass = ClassLoaderUtils.loadClass(originatingClassLoader, ReferenceHolder.class);
 		ReflectionUtils.invokeStaticMethod(
 				"preventGarbageCollectionForLifeOfClassLoader", referenceHolderClass, Object.class, loggerAppender);
 	}

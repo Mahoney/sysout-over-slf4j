@@ -3,8 +3,6 @@ package org.slf4j.sysoutslf4j.common;
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
@@ -13,44 +11,41 @@ import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 import static org.slf4j.testutils.ThrowableEquals.eqExceptionCause;
+import static org.slf4j.testutils.Assert.shouldThrow;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Callable;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ExceptionUtils.class)
 public class TestReflectionUtils {
 	
 	@Test
-	public void invokeMethodByNameNoArgCallsMethod() {
-		
-		CharSequence target = createMock(CharSequence.class);
-		Integer expectedReturnVal = 1;
-		expect(target.length()).andReturn(expectedReturnVal);
-		replay(target);
-		
-		assertEquals(expectedReturnVal, ReflectionUtils.invokeMethod("length", target));
-		
-		verify(target);
+	public void invokeMethodCallsMethod() {
+		assertEquals(2, ReflectionUtils.invokeMethod("length", "aa"));
 	}
 
 	@Test
-	public void invokeMethodByNameNoArgThrowsNoSuchMethodExceptionNestedInIllegalStateExceptionWhenNoSuchMethod() {
-		assertNoSuchMethodExceptionNestedInIllegalStateException(new Runnable() {
-			public void run() {
+	public void invokeMethodThrowsNoSuchMethodExceptionNestedInIllegalStateExceptionWhenNoSuchMethod() throws Throwable {
+		IllegalStateException ise = shouldThrow(IllegalStateException.class, new Callable<Void>() {
+			public Void call() throws Exception {
 				ReflectionUtils.invokeMethod("methodThatDoesntExist", new Object());
+				return null;
 			}
 		});
+		assertSame(NoSuchMethodException.class, ise.getCause().getClass());
 	}
 	
 	@Test
-	public void invokeMethodByNameNoArgCoercesExceptionToRuntimeException() {
+	public void invokeMethodCoercesExceptionToRuntimeException() throws Throwable {
 		
-		CharSequence target = createMock(CharSequence.class);
+		final CharSequence target = createMock(CharSequence.class);
 		RuntimeException expectedException = new RuntimeException();
 		expect(target.length()).andThrow(expectedException);
 		
@@ -59,23 +54,38 @@ public class TestReflectionUtils {
 				and(isA(InvocationTargetException.class), eqExceptionCause(expectedException)))).andReturn(expectedException);
 		replayAll();
 		
-		try {
-			ReflectionUtils.invokeMethod("length", target);
-			fail();
-		} catch (RuntimeException actualException) {
-			assertSame(expectedException, actualException);
-		}
+		shouldThrow(expectedException, new Callable<Void>() {
+			public Void call() throws Exception {
+				ReflectionUtils.invokeMethod("length", target);
+				return null;
+			}
+		});
 		
 		verifyAll();
 	}
 	
-	private void assertNoSuchMethodExceptionNestedInIllegalStateException(Runnable runnable) {
+	@Test
+	public void invokeMethodWithArgCallsMethod() {
+		assertEquals("world", ReflectionUtils.invokeMethod("substring", "helloworld", int.class, 5));
+	}
+	
+	@Test
+	public void invokeStaticMethodCallsMethod() {
+		assertEquals(System.getenv(), ReflectionUtils.invokeStaticMethod("getenv", System.class));
+	}
+	
+	@Test
+	public void invokeStaticMethodWithArgCallsMethod() {
+		assertEquals("5", ReflectionUtils.invokeStaticMethod("valueOf", String.class, int.class, 5));
+	}
+	
+	@Test
+	public void reflectionUtilsNotInstantiable() throws Exception {
 		try {
-			runnable.run();
+			Whitebox.invokeConstructor(ReflectionUtils.class);
 			fail();
-		} catch (IllegalStateException ise) {
-			assertSame(NoSuchMethodException.class, ise.getCause().getClass());
+		} catch (UnsupportedOperationException oue) {
+			assertEquals("Not instantiable", oue.getMessage());
 		}
 	}
-
 }

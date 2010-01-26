@@ -1,6 +1,8 @@
 package org.slf4j.testutils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 import java.util.concurrent.Callable;
 
@@ -8,8 +10,6 @@ import org.slf4j.Marker;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-
-import junit.framework.AssertionFailedError;
 
 public class Assert {
 
@@ -23,7 +23,21 @@ public class Assert {
 			}
 			throw t;
 		}
-		throw new AssertionFailedError("No exception thrown");
+		fail("No exception thrown");
+		return null;
+	}
+	
+	public static void shouldThrow(Throwable expected, Callable<?> callable) throws Throwable {
+		try {
+			callable.call();
+		} catch (Throwable actual) {
+			if (instanceOf(actual, expected.getClass())) {
+				assertSame(expected, actual);
+				return;
+			}
+			throw actual;
+		}
+		fail("No exception thrown");
 	}
 	
 	public static boolean instanceOf(Object o, Class<?> c) {

@@ -2,20 +2,22 @@ package org.slf4j.sysoutslf4j.common;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class ExceptionUtils {
+public final class ExceptionUtils {
 
-	public static RuntimeException asRuntimeException(Throwable t) {
-		if (t == null) {
+	public static RuntimeException asRuntimeException(final Throwable throwable) {
+		final RuntimeException result; // NOPMD
+		if (throwable == null) {
 			throw new IllegalArgumentException("Throwable argument cannot be null");
-		} else if (t instanceof Error) {
-			throw (Error) t;
-		} else if (t instanceof RuntimeException) {
-			return (RuntimeException) t;
-		} else if (t instanceof InvocationTargetException) {
-			return asRuntimeException(t.getCause());
+		} else if (throwable instanceof Error) {
+			throw (Error) throwable;
+		} else if (throwable instanceof RuntimeException) {
+			result = (RuntimeException) throwable;
+		} else if (throwable instanceof InvocationTargetException) {
+			result = asRuntimeException(throwable.getCause());
 		} else {
-			return new RuntimeException("Wrapping checked exception " + t.toString(), t);
+			result = new RuntimeException("Wrapping checked exception " + throwable.toString(), throwable); // NOPMD
 		}
+		return result;
 	}
 	
 	private ExceptionUtils() {

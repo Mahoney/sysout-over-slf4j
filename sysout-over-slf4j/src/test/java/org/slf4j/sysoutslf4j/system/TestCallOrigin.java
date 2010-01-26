@@ -69,7 +69,7 @@ public class TestCallOrigin {
 	public void testGetCallOriginIsNotStackTraceIfThrowableNotFirstElement() {
 		StackTraceElement[] stackTraceElements = { buildStackTraceElement("org.a.ClassName") };
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
-		assertFalse(callOrigin.isStackTrace());
+		assertFalse(callOrigin.isPrintingStackTrace());
 	}
 	
 	@Test
@@ -79,7 +79,7 @@ public class TestCallOrigin {
 				buildStackTraceElement("org.a.ClassName")
 		};
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
-		assertTrue(callOrigin.isStackTrace());
+		assertTrue(callOrigin.isPrintingStackTrace());
 	}
 	
 	@Test
@@ -122,7 +122,7 @@ public class TestCallOrigin {
 				buildStackTraceElement("org.a.ClassName")
 		};
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
-		assertTrue(callOrigin.isStackTrace());
+		assertTrue(callOrigin.isPrintingStackTrace());
 	}
 	
 	@Test
