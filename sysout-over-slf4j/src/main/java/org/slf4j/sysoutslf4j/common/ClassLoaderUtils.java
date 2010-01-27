@@ -1,7 +1,5 @@
 package org.slf4j.sysoutslf4j.common;
 
-import static org.apache.commons.lang.StringUtils.substringBefore;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -23,11 +21,12 @@ public final class ClassLoaderUtils {
 		});
 	}
 
+	// TODO give a bit more context in the thrown exception...
 	private static URL getJarURL(final Class<?> classInJar) {
 		try {
 			final String relativeClassFilePath = getRelativeFilePathOfClass(classInJar); // NOPMD
 			final URL classURL = getResource(relativeClassFilePath);
-			final String jarURLString = substringBefore(classURL.toString(), relativeClassFilePath);
+			final String jarURLString = StringUtils.substringBefore(classURL.toString(), relativeClassFilePath);
 			return new URL(jarURLString);
 		} catch (MalformedURLException e) {
 			throw new IllegalStateException("Should not be possible", e);

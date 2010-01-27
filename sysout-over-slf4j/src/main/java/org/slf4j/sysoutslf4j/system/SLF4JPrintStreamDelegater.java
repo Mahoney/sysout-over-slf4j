@@ -3,6 +3,7 @@ package org.slf4j.sysoutslf4j.system;
 import java.io.PrintStream;
 
 import org.slf4j.sysoutslf4j.common.LoggerAppender;
+import org.slf4j.sysoutslf4j.common.StringUtils;
 
 class SLF4JPrintStreamDelegater {
 	
