@@ -3,10 +3,10 @@ package org.slf4j.sysoutslf4j.context;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
+import static org.slf4j.testutils.Assert.assertNotInstantiable;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -165,12 +165,7 @@ public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
 //	}
 	
 	@Test
-	public void testConstructorThrowsUnsupportedOperationException() throws Exception {
-		try {
-			Whitebox.invokeConstructor(SysOutOverSLF4J.class);
-			fail();
-		} catch (UnsupportedOperationException uoe) {
-			assertEquals("Not instantiable", uoe.getMessage());
-		}
+	public void notInstantiable() throws Exception {
+		assertNotInstantiable(SysOutOverSLF4J.class);
 	}
 }

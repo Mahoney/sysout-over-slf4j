@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 public final class ExceptionUtils {
 
 	public static RuntimeException asRuntimeException(final Throwable throwable) {
-		final RuntimeException result; // NOPMD
+		final RuntimeException result;
 		if (throwable == null) {
 			throw new IllegalArgumentException("Throwable argument cannot be null");
 		} else if (throwable instanceof Error) {
@@ -15,7 +15,7 @@ public final class ExceptionUtils {
 		} else if (throwable instanceof InvocationTargetException) {
 			result = asRuntimeException(throwable.getCause());
 		} else {
-			result = new RuntimeException("Wrapping checked exception " + throwable.toString(), throwable); // NOPMD
+			result = new WrappedCheckedException(throwable);
 		}
 		return result;
 	}

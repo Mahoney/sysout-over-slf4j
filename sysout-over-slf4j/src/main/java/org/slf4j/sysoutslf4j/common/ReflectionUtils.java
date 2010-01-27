@@ -28,16 +28,16 @@ public final class ReflectionUtils {
 	private static Method getMethod(final String methodName, final Class<?> classWithMethod, final Class<?>... argTypes) {
 		try {
 			return classWithMethod.getDeclaredMethod(methodName, argTypes);
-		} catch (NoSuchMethodException e) {
-			throw new IllegalStateException(e);
+		} catch (NoSuchMethodException noSuchMethodException) {
+			throw new WrappedCheckedException(noSuchMethodException);
 		}
 	}
 
 	public static Object invokeMethod(final Method method, final Object target, final Object... args) {
 		try {
 			return method.invoke(target, args);
-		} catch (Exception e) {
-			throw ExceptionUtils.asRuntimeException(e);
+		} catch (Exception exception) {
+			throw ExceptionUtils.asRuntimeException(exception);
 		}
 	}
 	

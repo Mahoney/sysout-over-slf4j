@@ -4,10 +4,10 @@ import static org.slf4j.testutils.Assert.assertNotInstantiable;
 
 import org.junit.Test;
 
-public class TestLoggerAppenderWrapper {
-	
+public class TestWirer {
+
 	@Test
 	public void notInstantiable() throws Exception {
-		assertNotInstantiable(LoggerAppenderWrapper.class);
+		assertNotInstantiable(Wirer.class);
 	}
 }

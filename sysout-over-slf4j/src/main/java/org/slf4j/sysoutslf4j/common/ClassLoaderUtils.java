@@ -13,7 +13,7 @@ public final class ClassLoaderUtils {
 	}
 	
 	public static ClassLoader makeNewClassLoaderForJar(final Class<?> classInJar, final ClassLoader parent) {
-		final URL jarURL = getJarURL(classInJar); // NOPMD
+		final URL jarURL = getJarURL(classInJar);
 		return AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
 			public URLClassLoader run() {
 				return new URLClassLoader(new URL[]{jarURL}, parent);
@@ -23,29 +23,30 @@ public final class ClassLoaderUtils {
 
 	// TODO give a bit more context in the thrown exception...
 	private static URL getJarURL(final Class<?> classInJar) {
+		final String relativeClassFilePath = getRelativeFilePathOfClass(classInJar); // NOPMD
+		final URL classURL = getResource(relativeClassFilePath);
+		final String classUrlString = classURL == null ? "" : classURL.toString();
+		final String jarURLString = StringUtils.substringBefore(classUrlString, relativeClassFilePath);
 		try {
-			final String relativeClassFilePath = getRelativeFilePathOfClass(classInJar); // NOPMD
-			final URL classURL = getResource(relativeClassFilePath);
-			final String jarURLString = StringUtils.substringBefore(classURL.toString(), relativeClassFilePath);
 			return new URL(jarURLString);
-		} catch (MalformedURLException e) {
-			throw new IllegalStateException("Should not be possible", e);
+		} catch (MalformedURLException malformedURLException) {
+			throw new WrappedCheckedException(malformedURLException);
 		}
-	}
-	
-	private static URL getResource(final String relativeFilePath) {
-		return Thread.currentThread().getContextClassLoader().getResource(relativeFilePath);
 	}
 
 	private static String getRelativeFilePathOfClass(final Class<?> clazz) {
 		return clazz.getName().replace('.', '/') + ".class";
 	}
 
+	private static URL getResource(final String relativeFilePath) {
+		return Thread.currentThread().getContextClassLoader().getResource(relativeFilePath);
+	}
+
 	public static Class<?> loadClass(final ClassLoader classLoader, final Class<?> classToLoad) {
 		try {
 			return classLoader.loadClass(classToLoad.getName());
 		} catch (ClassNotFoundException cne) {
-			throw new RuntimeException(cne); // NOPMD
+			throw new WrappedCheckedException(cne);
 		}
 	}
 

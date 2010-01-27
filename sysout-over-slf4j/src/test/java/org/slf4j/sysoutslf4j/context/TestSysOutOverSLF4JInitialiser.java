@@ -6,9 +6,6 @@ import static org.powermock.api.easymock.PowerMock.createStrictMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
-import javassist.ClassPool;
-import javassist.CtClass;
-
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +13,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.testutils.ClassCreationUtils;
 import org.slf4j.testutils.LoggingUtils;
 
 import ch.qos.logback.classic.Level;
@@ -98,16 +96,7 @@ public class TestSysOutOverSLF4JInitialiser {
 
 	@SuppressWarnings("unchecked")
 	private Class<Logger> makeMockLoggerClass(String loggerClassName) throws Exception {
-		ClassPool pool = ClassPool.getDefault();
-		CtClass cc;
-		try {
-			cc = pool.getCtClass(loggerClassName);
-		} catch (Exception e) {
-			cc = pool.makeClass(loggerClassName);
-			cc.setInterfaces(new CtClass[] {pool.getCtClass(Logger.class.getName())});
-		}
-		Class<Logger> mockLoggerClass = (Class<Logger>) cc.toClass(getClass().getClassLoader(), null);
-		return mockLoggerClass;
+		return (Class<Logger>) ClassCreationUtils.makeClass(loggerClassName, Logger.class);
 	}
 	
 	private void givenLoggerIsA(Logger logger) throws Exception {

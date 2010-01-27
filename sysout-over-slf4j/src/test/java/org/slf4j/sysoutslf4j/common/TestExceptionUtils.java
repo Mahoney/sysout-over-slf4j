@@ -2,36 +2,40 @@ package org.slf4j.sysoutslf4j.common;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
+import static org.slf4j.testutils.Assert.assertNotInstantiable;
+import static org.slf4j.testutils.Assert.shouldThrow;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Callable;
 
 import org.junit.Test;
-import org.powermock.reflect.Whitebox;
 
 public class TestExceptionUtils {
-	
+
 	@Test
-	public void asRuntimeExceptionThrowsIllegalArgumentExceptionWhenNullPassedIn() {
-		try {
-			ExceptionUtils.asRuntimeException(null);
-			fail();
-		} catch (IllegalArgumentException iae) {
-			assertEquals("Throwable argument cannot be null", iae.getMessage());
-		}
+	public void asRuntimeExceptionThrowsIllegalArgumentExceptionWhenNullPassedIn() throws Throwable {
+		IllegalArgumentException iae = shouldThrow(IllegalArgumentException.class, new Callable<Void>() {
+			public Void call() throws Exception {
+				ExceptionUtils.asRuntimeException(null);
+				return null;
+			}
+		});
+		assertEquals("Throwable argument cannot be null", iae.getMessage());
 	}
-	
+
 	@Test
-	public void asRuntimeExceptionThrowsPassedInError() {
-		Error expectedError = new Error();
-		try {
-			ExceptionUtils.asRuntimeException(expectedError);
-			fail();
-		} catch (Error actualError) {
-			assertSame(expectedError, actualError);
-		}
+	public void asRuntimeExceptionThrowsPassedInError() throws Throwable {
+		final Error expectedError = new Error();
+		Error actualError = shouldThrow(Error.class, new Callable<Void>() {
+			public Void call() throws Exception {
+				ExceptionUtils.asRuntimeException(expectedError);
+				return null;
+			}
+		});
+		assertSame(expectedError, actualError);
 	}
-	
+
 	@Test
 	public void asRuntimeExceptionReturnsPassedInRuntimeException() {
 		RuntimeException expectedException = new RuntimeException();
@@ -40,23 +44,25 @@ public class TestExceptionUtils {
 	}
 	
 	@Test
-	public void asRuntimeExceptionReturnsPassedInCheckedExceptionAsCauseOfRuntimeException() {
+	public void asRuntimeExceptionReturnsPassedInCheckedExceptionAsCauseOfWrappedCheckedException() {
 		Exception expectedException = new Exception();
-		Throwable actualException = ExceptionUtils.asRuntimeException(expectedException);
-		assertSame(RuntimeException.class, actualException.getClass());
+		RuntimeException actualException = ExceptionUtils.asRuntimeException(expectedException);
+		assertTrue(actualException instanceof WrappedCheckedException);
 		assertSame(expectedException, actualException.getCause());
 	}
 	
 	@Test
-	public void asRuntimeExceptionThrowsPassedInInvocationTargetExceptionsCauseIfError() {
-		Error expectedError = new Error();
-		InvocationTargetException invocationTargetException = new InvocationTargetException(expectedError);
-		try {
-			ExceptionUtils.asRuntimeException(invocationTargetException);
-			fail();
-		} catch (Error actualError) {
-			assertSame(expectedError, actualError);
-		}
+	public void asRuntimeExceptionThrowsPassedInInvocationTargetExceptionsCauseIfError() throws Throwable {
+		final Error expectedError = new Error();
+		final InvocationTargetException invocationTargetException = new InvocationTargetException(expectedError);
+
+		Error actualError = shouldThrow(Error.class, new Callable<Void>() {
+			public Void call() throws Exception {
+				ExceptionUtils.asRuntimeException(invocationTargetException);
+				return null;
+			}
+		});
+		assertSame(expectedError, actualError);
 	}
 	
 	@Test
@@ -68,21 +74,16 @@ public class TestExceptionUtils {
 	}
 	
 	@Test
-	public void asRuntimeExceptionReturnsPassedInInvocationTargetExceptionsCauseAsCauseOfRuntimeExceptionIfCheckedException() {
+	public void asRuntimeExceptionReturnsPassedInInvocationTargetExceptionsCauseAsCauseOfWrappedCheckedExceptionIfCheckedException() {
 		Exception expectedException = new Exception();
 		InvocationTargetException invocationTargetException = new InvocationTargetException(expectedException);
 		RuntimeException actualException = ExceptionUtils.asRuntimeException(invocationTargetException);
-		assertSame(RuntimeException.class, actualException.getClass());
+		assertTrue(actualException instanceof WrappedCheckedException);
 		assertSame(expectedException, actualException.getCause());
 	}
 	
 	@Test
-	public void exceptionUtilsNotInstantiable() throws Exception {
-		try {
-			Whitebox.invokeConstructor(ExceptionUtils.class);
-			fail();
-		} catch (UnsupportedOperationException uoe) {
-			assertEquals("Not instantiable", uoe.getMessage());
-		}
+	public void notInstantiable() throws Exception {
+		assertNotInstantiable(ExceptionUtils.class);
 	}
 }

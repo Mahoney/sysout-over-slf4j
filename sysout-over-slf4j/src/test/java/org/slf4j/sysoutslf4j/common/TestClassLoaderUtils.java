@@ -2,28 +2,24 @@ package org.slf4j.sysoutslf4j.common;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.powermock.api.easymock.PowerMock.expectNew;
-import static org.powermock.api.easymock.PowerMock.replay;
+import static org.slf4j.testutils.Assert.assertNotInstantiable;
+import static org.slf4j.testutils.Assert.shouldThrow;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.concurrent.Callable;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
+import org.slf4j.testutils.ClassCreationUtils;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ ClassLoaderUtils.class })
 public class TestClassLoaderUtils extends SysOutOverSLF4JTestCase {
 	
 	@Test
@@ -89,20 +85,15 @@ public class TestClassLoaderUtils extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
-	public void makeNewClassLoaderForJarThrowsIllegalStateExceptionIfMalformedUrlOccurs() throws Exception {
-		URLClassLoader classLoader = (URLClassLoader) ClassLoaderUtils.makeNewClassLoaderForJar(Test.class, null);
-		
-		MalformedURLException expected = new MalformedURLException();
-		expectNew(URL.class, classLoader.getURLs()[0].toString()).andThrow(expected);
-		replay(URL.class);
-		
-		try {
-			ClassLoaderUtils.makeNewClassLoaderForJar(Test.class, null);
-			fail();
-		} catch (IllegalStateException ise) {
-			assertSame(expected, ise.getCause());
-			assertEquals("Should not be possible", ise.getMessage());
-		}
+	public void makeNewClassLoaderForJarThrowsIllegalStateExceptionIfMalformedUrlOccurs() throws Throwable {
+		final Class<?> randomClass = ClassCreationUtils.makeClass("org.Something");
+		final WrappedCheckedException expectedException = shouldThrow(WrappedCheckedException.class, new Callable<Void>() {
+			public Void call() throws Exception {
+				ClassLoaderUtils.makeNewClassLoaderForJar(randomClass, null);
+				return null;
+			}
+		});
+		assertEquals(MalformedURLException.class, expectedException.getCause().getClass());
 	}
 	
 	@Test
@@ -117,27 +108,23 @@ public class TestClassLoaderUtils extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
-	public void loadClassMakesClassNotFoundExceptionUnchecked() throws Exception {
-		ClassLoader mockClassLoader = createMock(ClassLoader.class);
-		ClassNotFoundException expected = new ClassNotFoundException();
+	public void loadClassMakesClassNotFoundExceptionUnchecked() throws Throwable {
+		final ClassLoader mockClassLoader = createMock(ClassLoader.class);
+		final ClassNotFoundException expected = new ClassNotFoundException();
 		expect(mockClassLoader.loadClass("java.lang.Object")).andThrow(expected);
 		replay(mockClassLoader);
-		
-		try {
-			ClassLoaderUtils.loadClass(mockClassLoader, Object.class);
-			fail();
-		} catch (RuntimeException e) {
-			assertSame(expected, e.getCause());
-		}
+
+		WrappedCheckedException exception = shouldThrow(WrappedCheckedException.class, new Callable<Void>() {
+			public Void call() throws Exception {
+				ClassLoaderUtils.loadClass(mockClassLoader, Object.class);
+				return null;
+			}
+		});
+		assertSame(expected, exception.getCause());
 	}
 	
 	@Test
-	public void classLoaderUtilsNotInstantiable() throws Exception {
-		try {
-			Whitebox.invokeConstructor(ClassLoaderUtils.class);
-			fail();
-		} catch (UnsupportedOperationException oue) {
-			assertEquals("Not instantiable", oue.getMessage());
-		}
+	public void notInstantiable() throws Exception {
+		assertNotInstantiable(ClassLoaderUtils.class);
 	}
 }
