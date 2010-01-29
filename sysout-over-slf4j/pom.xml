@@ -53,9 +53,6 @@
 	<reporting>
 		<plugins>
 			<plugin>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-			</plugin>
-			<plugin>
 				<artifactId>maven-jxr-plugin</artifactId>
 				<configuration>
 					<linkJavadoc>true</linkJavadoc>
@@ -112,6 +109,9 @@
 					<threshold>Low</threshold>
 					<effort>Max</effort>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-report-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</reporting>

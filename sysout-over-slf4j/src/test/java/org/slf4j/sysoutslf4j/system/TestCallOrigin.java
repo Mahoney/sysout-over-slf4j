@@ -3,58 +3,60 @@ package org.slf4j.sysoutslf4j.system;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.slf4j.testutils.Assert.shouldThrow;
 
 import org.junit.Test;
+
+import java.util.concurrent.Callable;
 
 public class TestCallOrigin {
 
 	@Test
-	public void testGetCallOriginThrowsNullPointerIfCalledWithNoStackTrace() {
-		try {
-			CallOrigin.getCallOrigin(null, "com");
-			fail();
-		} catch (NullPointerException npe) {
-			// expected
-		}
+	public void testGetCallOriginThrowsNullPointerIfCalledWithNoStackTrace() throws Throwable {
+		shouldThrow(NullPointerException.class, new Callable() {
+			public Object call() throws Exception {
+				CallOrigin.getCallOrigin(null, "com");
+				return null;
+			}
+		});
 	}
-	
+
 	@Test
-	public void testGetCallOriginThrowsNullPointerIfCalledWithNoLibraryPackageName() {
-		try {
-			StackTraceElement[] stackTraceElements = { buildStackTraceElement("org.a.ClassName") };
-			CallOrigin.getCallOrigin(stackTraceElements, null);
-			fail();
-		} catch (NullPointerException npe) {
-			// expected
-		}
+	public void testGetCallOriginThrowsNullPointerIfCalledWithNoLibraryPackageName() throws Throwable {
+		shouldThrow(NullPointerException.class, new Callable() {
+			public Object call() throws Exception {
+				StackTraceElement[] stackTraceElements = { buildStackTraceElement("org.a.ClassName") };
+				CallOrigin.getCallOrigin(stackTraceElements, null);
+				return null;
+			}
+		});
 	}
-	
+
 	@Test
-	public void testGetCallOriginThrowsIllegalStateExceptionIfCalledWithEmptyStackTrace() {
-		try {
-			StackTraceElement[] stackTraceElements = { };
-			CallOrigin.getCallOrigin(stackTraceElements, "");
-			fail();
-		} catch (IllegalStateException ise) {
-			// expected
-		}
+	public void testGetCallOriginThrowsIllegalStateExceptionIfCalledWithEmptyStackTrace() throws Throwable {
+		shouldThrow(IllegalStateException.class, new Callable() {
+			public Object call() throws Exception {
+				StackTraceElement[] stackTraceElements = { };
+				CallOrigin.getCallOrigin(stackTraceElements, "");
+				return null;
+			}
+		});
 	}
-	
+
 	@Test
-	public void testGetCallOriginThrowsIllegalStateExceptionIfAllStackTraceElementsAreInTheLibrary() {
-		try {
-			StackTraceElement[] stackTraceElements = {
-					buildStackTraceElement("org.a.1"),
-					buildStackTraceElement("org.a.2")
-			};
-			CallOrigin.getCallOrigin(stackTraceElements, "org.a");
-			fail();
-		} catch (IllegalStateException ise) {
-			// expected
-		}
+	public void testGetCallOriginThrowsIllegalStateExceptionIfAllStackTraceElementsAreInTheLibrary() throws Throwable {
+		shouldThrow(IllegalStateException.class, new Callable() {
+			public Object call() throws Exception {
+				StackTraceElement[] stackTraceElements = {
+						buildStackTraceElement("org.a.1"),
+						buildStackTraceElement("org.a.2")
+				};
+				CallOrigin.getCallOrigin(stackTraceElements, "org.a");
+				return null;
+			}
+		});
 	}
-	
+
 	@Test
 	public void testGetCallOriginReturnsFirstClassName() {
 		StackTraceElement[] stackTraceElements = {
@@ -64,14 +66,14 @@ public class TestCallOrigin {
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
 	}
-	
+
 	@Test
 	public void testGetCallOriginIsNotStackTraceIfThrowableNotFirstElement() {
 		StackTraceElement[] stackTraceElements = { buildStackTraceElement("org.a.ClassName") };
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
 		assertFalse(callOrigin.isPrintingStackTrace());
 	}
-	
+
 	@Test
 	public void testGetCallOriginIsStackTraceIfThrowableIsFirstElement() {
 		StackTraceElement[] stackTraceElements = {
@@ -81,7 +83,7 @@ public class TestCallOrigin {
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
 		assertTrue(callOrigin.isPrintingStackTrace());
 	}
-	
+
 	@Test
 	public void testGetCallOriginReturnsFirstClassNameOtherThanThrowable() {
 		StackTraceElement[] stackTraceElements = {
@@ -91,7 +93,7 @@ public class TestCallOrigin {
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
 	}
-	
+
 	@Test
 	public void testGetCallOriginReturnsFirstClassNameOtherThanThread() {
 		StackTraceElement[] stackTraceElements = {
@@ -101,7 +103,7 @@ public class TestCallOrigin {
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
 	}
-	
+
 	@Test
 	public void testGetCallOriginReturnsFirstClassNameOutsideTheLibrary() {
 		StackTraceElement[] stackTraceElements = {
@@ -112,7 +114,7 @@ public class TestCallOrigin {
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
 	}
-	
+
 	@Test
 	public void testGetCallOriginIsStackTraceIfThrowableIsFirstElementOutsideTheLibrary() {
 		StackTraceElement[] stackTraceElements = {
@@ -124,7 +126,7 @@ public class TestCallOrigin {
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
 		assertTrue(callOrigin.isPrintingStackTrace());
 	}
-	
+
 	@Test
 	public void testGetCallOriginReturnsFirstClassNameOutsideTheLibraryOtherThanThreadOrThrowable() {
 		StackTraceElement[] stackTraceElements = {
@@ -138,7 +140,7 @@ public class TestCallOrigin {
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
 	}
-	
+
 	@Test
 	public void testGetCallOriginReturnsInnerClassesAsTheOuterClass() {
 		StackTraceElement[] stackTraceElements = { buildStackTraceElement("org.a.ClassName$InnerClass") };

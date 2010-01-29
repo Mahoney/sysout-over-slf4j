@@ -60,17 +60,19 @@ public class Assert {
 		assertEquals(marker, loggingEvent.getMarker());
 	}
 	
-	public static void assertNotInstantiable(Class<?> classThatShouldNotBeInstantiable) throws Exception {
+	public static void assertNotInstantiable(final Class<?> classThatShouldNotBeInstantiable) throws Throwable {
 		assertEquals(Object.class, classThatShouldNotBeInstantiable.getSuperclass());
 		assertEquals(1, classThatShouldNotBeInstantiable.getDeclaredConstructors().length);
 		final Constructor<?> constructor = classThatShouldNotBeInstantiable.getDeclaredConstructors()[0];
 		assertTrue(Modifier.isPrivate(constructor.getModifiers()));
 		assertEquals(0, classThatShouldNotBeInstantiable.getDeclaredConstructors()[0].getParameterTypes().length);
-		try {
-			Whitebox.invokeConstructor(classThatShouldNotBeInstantiable);
-			fail();
-		} catch (UnsupportedOperationException oue) {
-			assertEquals("Not instantiable", oue.getMessage());
-		}
+		
+		UnsupportedOperationException oue = shouldThrow(UnsupportedOperationException.class, new Callable() {
+			public Object call() throws Exception {
+				Whitebox.invokeConstructor(classThatShouldNotBeInstantiable);
+				return null;
+			}
+		});
+		assertEquals("Not instantiable", oue.getMessage());
 	}
 }

@@ -3,13 +3,14 @@ package org.slf4j.sysoutslf4j.system;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
 import static org.powermock.api.easymock.PowerMock.createNiceMock;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
+import static org.slf4j.testutils.Assert.shouldThrow;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.Callable;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,15 +24,15 @@ import org.slf4j.sysoutslf4j.common.ReflectionUtils;
 public class TestLoggerAppenderProxy {
 	
 	@Test
-	public void loggerAppenderProxyThrowsNestedNoSuchMethodExceptionIfInstantiatedWithWrongType() {
-		try {
-			new LoggerAppenderProxy(new Object());
-			fail();
-		} catch (IllegalArgumentException iae) {
-			assertSame(NoSuchMethodException.class, iae.getCause().getClass());
-			assertEquals("Must only be instantiated with a LoggerAppenderImpl instance, got a class java.lang.Object",
-					iae.getMessage());
-		}
+	public void loggerAppenderProxyThrowsNestedNoSuchMethodExceptionIfInstantiatedWithWrongType() throws Throwable {
+		IllegalArgumentException iae = shouldThrow(IllegalArgumentException.class, new Callable() {
+			public Object call() throws Exception {
+				new LoggerAppenderProxy(new Object());
+				return null;
+			}
+		});
+		assertSame(NoSuchMethodException.class, iae.getCause().getClass());
+		assertEquals("Must only be instantiated with a LoggerAppenderImpl instance, got a class java.lang.Object", iae.getMessage());
 	}
 
 	private final  LoggerAppender targetLoggerAppender = createNiceMock(LoggerAppender.class);
