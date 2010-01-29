@@ -124,7 +124,7 @@ public class TestClassLoaderUtils extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
-	public void notInstantiable() throws Exception {
+	public void notInstantiable() throws Throwable {
 		assertNotInstantiable(ClassLoaderUtils.class);
 	}
 }

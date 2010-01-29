@@ -83,7 +83,7 @@ public class TestExceptionUtils {
 	}
 	
 	@Test
-	public void notInstantiable() throws Exception {
+	public void notInstantiable() throws Throwable {
 		assertNotInstantiable(ExceptionUtils.class);
 	}
 }

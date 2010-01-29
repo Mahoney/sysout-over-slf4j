@@ -13,8 +13,8 @@ public class TestCallOrigin {
 
 	@Test
 	public void testGetCallOriginThrowsNullPointerIfCalledWithNoStackTrace() throws Throwable {
-		shouldThrow(NullPointerException.class, new Callable() {
-			public Object call() throws Exception {
+		shouldThrow(NullPointerException.class, new Callable<Void>() {
+			public Void call() throws Exception {
 				CallOrigin.getCallOrigin(null, "com");
 				return null;
 			}
@@ -23,8 +23,8 @@ public class TestCallOrigin {
 
 	@Test
 	public void testGetCallOriginThrowsNullPointerIfCalledWithNoLibraryPackageName() throws Throwable {
-		shouldThrow(NullPointerException.class, new Callable() {
-			public Object call() throws Exception {
+		shouldThrow(NullPointerException.class, new Callable<Void>() {
+			public Void call() throws Exception {
 				StackTraceElement[] stackTraceElements = { buildStackTraceElement("org.a.ClassName") };
 				CallOrigin.getCallOrigin(stackTraceElements, null);
 				return null;
@@ -34,8 +34,8 @@ public class TestCallOrigin {
 
 	@Test
 	public void testGetCallOriginThrowsIllegalStateExceptionIfCalledWithEmptyStackTrace() throws Throwable {
-		shouldThrow(IllegalStateException.class, new Callable() {
-			public Object call() throws Exception {
+		shouldThrow(IllegalStateException.class, new Callable<Void>() {
+			public Void call() throws Exception {
 				StackTraceElement[] stackTraceElements = { };
 				CallOrigin.getCallOrigin(stackTraceElements, "");
 				return null;
@@ -45,8 +45,8 @@ public class TestCallOrigin {
 
 	@Test
 	public void testGetCallOriginThrowsIllegalStateExceptionIfAllStackTraceElementsAreInTheLibrary() throws Throwable {
-		shouldThrow(IllegalStateException.class, new Callable() {
-			public Object call() throws Exception {
+		shouldThrow(IllegalStateException.class, new Callable<Void>() {
+			public Void call() throws Exception {
 				StackTraceElement[] stackTraceElements = {
 						buildStackTraceElement("org.a.1"),
 						buildStackTraceElement("org.a.2")

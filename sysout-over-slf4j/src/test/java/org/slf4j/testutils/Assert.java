@@ -2,11 +2,9 @@ package org.slf4j.testutils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
 import java.util.concurrent.Callable;
 
 import org.powermock.reflect.Whitebox;
@@ -18,7 +16,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 public class Assert {
 
 	@SuppressWarnings("unchecked")
-	public static <E extends Throwable> E shouldThrow(Class<E> throwableType, Callable<?> callable) throws Throwable {
+	public static <E extends Throwable> E shouldThrow(Class<E> throwableType, Callable<Void> callable) throws Throwable {
 		try {
 			callable.call();
 			fail("No exception thrown");
@@ -61,18 +59,21 @@ public class Assert {
 	}
 	
 	public static void assertNotInstantiable(final Class<?> classThatShouldNotBeInstantiable) throws Throwable {
-		assertEquals(Object.class, classThatShouldNotBeInstantiable.getSuperclass());
-		assertEquals(1, classThatShouldNotBeInstantiable.getDeclaredConstructors().length);
-		final Constructor<?> constructor = classThatShouldNotBeInstantiable.getDeclaredConstructors()[0];
-		assertTrue(Modifier.isPrivate(constructor.getModifiers()));
-		assertEquals(0, classThatShouldNotBeInstantiable.getDeclaredConstructors()[0].getParameterTypes().length);
+		assertOnlyHasNoArgsConstructor(classThatShouldNotBeInstantiable);
 		
-		UnsupportedOperationException oue = shouldThrow(UnsupportedOperationException.class, new Callable() {
-			public Object call() throws Exception {
+		UnsupportedOperationException oue = shouldThrow(UnsupportedOperationException.class, new Callable<Void>() {
+			public Void call() throws Exception {
 				Whitebox.invokeConstructor(classThatShouldNotBeInstantiable);
 				return null;
 			}
 		});
 		assertEquals("Not instantiable", oue.getMessage());
+	}
+
+	private static void assertOnlyHasNoArgsConstructor(final Class<?> classThatShouldNotBeInstantiable) {
+		assertEquals(Object.class, classThatShouldNotBeInstantiable.getSuperclass());
+		assertEquals(1, classThatShouldNotBeInstantiable.getDeclaredConstructors().length);
+		final Constructor<?> constructor = classThatShouldNotBeInstantiable.getDeclaredConstructors()[0];
+		assertEquals(0, constructor.getParameterTypes().length);
 	}
 }

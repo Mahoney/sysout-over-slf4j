@@ -79,7 +79,7 @@ public class TestReflectionUtils {
 	}
 	
 	@Test
-	public void notInstantiable() throws Exception {
+	public void notInstantiable() throws Throwable {
 		assertNotInstantiable(ReflectionUtils.class);
 	}
 }

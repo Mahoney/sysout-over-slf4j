@@ -25,8 +25,8 @@ public class TestLoggerAppenderProxy {
 	
 	@Test
 	public void loggerAppenderProxyThrowsNestedNoSuchMethodExceptionIfInstantiatedWithWrongType() throws Throwable {
-		IllegalArgumentException iae = shouldThrow(IllegalArgumentException.class, new Callable() {
-			public Object call() throws Exception {
+		IllegalArgumentException iae = shouldThrow(IllegalArgumentException.class, new Callable<Void>() {
+			public Void call() throws Exception {
 				new LoggerAppenderProxy(new Object());
 				return null;
 			}

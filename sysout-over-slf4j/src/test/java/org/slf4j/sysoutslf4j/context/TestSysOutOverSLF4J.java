@@ -1,7 +1,6 @@
 package org.slf4j.sysoutslf4j.context;
 
 import static org.easymock.EasyMock.expect;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
@@ -165,7 +164,7 @@ public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
 //	}
 	
 	@Test
-	public void notInstantiable() throws Exception {
+	public void notInstantiable() throws Throwable {
 		assertNotInstantiable(SysOutOverSLF4J.class);
 	}
 }

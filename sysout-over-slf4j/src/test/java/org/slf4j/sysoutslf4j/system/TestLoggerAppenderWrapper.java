@@ -7,7 +7,7 @@ import org.junit.Test;
 public class TestLoggerAppenderWrapper {
 	
 	@Test
-	public void notInstantiable() throws Exception {
+	public void notInstantiable() throws Throwable {
 		assertNotInstantiable(LoggerAppenderWrapper.class);
 	}
 }
