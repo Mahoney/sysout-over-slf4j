@@ -24,17 +24,11 @@ public final class StringUtils {
 	
 	public static String substringBefore(final String toBeSubstringed, final String separator) {
 		final String substring;
-        if (toBeSubstringed == null || toBeSubstringed.length() == 0 || separator == null) {
+        final int indexOfSeparator = toBeSubstringed.indexOf(separator);
+        if (indexOfSeparator == -1) {
         	substring = toBeSubstringed;
-        } else if (separator.length() == 0) {
-        	substring = "";
         } else {
-	        final int pos = toBeSubstringed.indexOf(separator);
-	        if (pos == -1) {
-	        	substring = toBeSubstringed;
-	        } else {
-	        	substring = toBeSubstringed.substring(0, pos);
-	        }
+        	substring = toBeSubstringed.substring(0, indexOfSeparator);
         }
         return substring;
     }
