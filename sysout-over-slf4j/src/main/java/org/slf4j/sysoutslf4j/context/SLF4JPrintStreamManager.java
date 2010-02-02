@@ -12,7 +12,7 @@ import org.slf4j.sysoutslf4j.common.SystemOutput;
 import org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import org.slf4j.sysoutslf4j.system.SLF4JPrintStream;
-import org.slf4j.sysoutslf4j.system.Wirer;
+import org.slf4j.sysoutslf4j.system.SLF4JPrintStreamConfigurator;
 
 class SLF4JPrintStreamManager {
 
@@ -42,8 +42,8 @@ class SLF4JPrintStreamManager {
 	}
 
 	private void makeSystemOutputsSLF4JPrintStreams() {
-		final ClassLoader classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(Wirer.class);
-		final Class<?> wirerClass = ClassLoaderUtils.loadClass(classLoader, Wirer.class);
+		final ClassLoader classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(SLF4JPrintStreamConfigurator.class);
+		final Class<?> wirerClass = ClassLoaderUtils.loadClass(classLoader, SLF4JPrintStreamConfigurator.class);
 		ReflectionUtils.invokeStaticMethod("replaceSystemOutputsWithSLF4JPrintStreamsIfNecessary", wirerClass);
 	}
 
@@ -73,8 +73,8 @@ class SLF4JPrintStreamManager {
 	}
 
 	void sendSystemOutAndErrToOriginals() {
-		final ClassLoader classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(Wirer.class, getSystemClassLoader());
-		final Class<?> wirerClass = ClassLoaderUtils.loadClass(classLoader, Wirer.class);
+		final ClassLoader classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(SLF4JPrintStreamConfigurator.class, getSystemClassLoader());
+		final Class<?> wirerClass = ClassLoaderUtils.loadClass(classLoader, SLF4JPrintStreamConfigurator.class);
 		ReflectionUtils.invokeStaticMethod("restoreOriginalSystemOutputsIfNecessary", wirerClass);
 		LOG.info("Restored original System.out and System.err");
 	}
