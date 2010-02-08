@@ -6,13 +6,13 @@ import org.slf4j.sysoutslf4j.common.SystemOutput;
 
 public final class SLF4JPrintStreamConfigurator {
 	
-	public static void replaceSystemOutputsWithSLF4JPrintStreamsIfNecessary() {
+	public static void replaceSystemOutputsWithSLF4JPrintStreams() {
 		for (SystemOutput systemOutput : SystemOutput.values()) {
-			replaceSystemOutputWithSLF4JPrintStreamIfNecessary(systemOutput);
+			replaceSystemOutputWithSLF4JPrintStream(systemOutput);
 		}
 	}
 
-	private static void replaceSystemOutputWithSLF4JPrintStreamIfNecessary(final SystemOutput systemOutput) {
+	private static void replaceSystemOutputWithSLF4JPrintStream(final SystemOutput systemOutput) {
 		final SLF4JPrintStream slf4jPrintStream = buildSLF4JPrintStream(systemOutput.get());
 		systemOutput.set(slf4jPrintStream);
 	}
