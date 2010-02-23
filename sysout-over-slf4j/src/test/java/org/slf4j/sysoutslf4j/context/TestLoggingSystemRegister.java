@@ -1,40 +1,38 @@
 package org.slf4j.sysoutslf4j.context;
 
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.mockStatic;
+import static org.powermock.api.easymock.PowerMock.replay;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import java.util.Set;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
-import org.slf4j.testutils.LoggingUtils;
+import org.slf4j.LoggerFactory;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ LoggingSystemRegister.class })
-@SuppressStaticInitializationFor("org.slf4j.sysoutslf4j.context.LoggingSystemRegister")
+@PrepareForTest({ LoggerFactory.class })
 public class TestLoggingSystemRegister {
 
-	private LoggingSystemRegister loggingSystemRegister = new LoggingSystemRegister();
-	private Logger loggerMock = createMock(Logger.class);
+	private LoggingSystemRegister loggingSystemRegister;
+	private Logger loggerMock;
 
-	@BeforeClass
-	public static void turnOffRootLogging() {
-		LoggingUtils.turnOffRootLogging();
-	}
-	
 	@Before
 	public void setStaticMocks() {
-		Whitebox.setInternalState(LoggingSystemRegister.class, loggerMock);
+		loggerMock = createMock(Logger.class);
+		mockStatic(LoggerFactory.class);
+		expect(LoggerFactory.getLogger(SysOutOverSLF4J.class)).andStubReturn(loggerMock);
+		replay(LoggerFactory.class);
+		loggingSystemRegister = new LoggingSystemRegister();
 	}
 	
 	@Test
@@ -59,7 +57,7 @@ public class TestLoggingSystemRegister {
 	public void registerLoggingSystemLogsThatItWasRegistered() {
 		loggerMock.info("Package {} registered; all classes within it or subpackages of it will "
 				+ "be allowed to print to System.out and System.err", "some.package");
-		replayAll();
+		replay(loggerMock);
 		loggingSystemRegister.registerLoggingSystem("some.package");
 		verifyAll();
 	}
@@ -70,14 +68,14 @@ public class TestLoggingSystemRegister {
 		Whitebox.getInternalState(loggingSystemRegister, Set.class).add("some.package");
 		loggerMock.info("Package {} unregistered; all classes within it or subpackages of it will "
 				+ "have System.out and System.err redirected to SLF4J", "some.package");
-		replayAll();
+		replay(loggerMock);
 		loggingSystemRegister.unregisterLoggingSystem("some.package");
 		verifyAll();
 	}
 	
 	@Test
 	public void unregisterLoggingSystemDoesNotLogIfLoggingSystemNotRegisterdPresent() {
-		replayAll();
+		replay(loggerMock);
 		loggingSystemRegister.unregisterLoggingSystem("some.package");
 		verifyAll();
 	}

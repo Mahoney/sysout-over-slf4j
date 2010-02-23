@@ -14,6 +14,7 @@ import org.apache.log4j.SimpleLayout;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
@@ -22,9 +23,11 @@ import org.slf4j.sysoutslf4j.context.SysOutOverSLF4J;
 import org.slf4j.testutils.Assert;
 
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.core.Context;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.layout.EchoLayout;
 
@@ -32,6 +35,8 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 
 	private static final String PACKAGE_NAME = StringUtils.substringBeforeLast(TestSysOutOverSlf4J.class.getName(), ".");
 	private static final Marker STACKTRACE_MARKER = MarkerFactory.getMarker("stacktrace");
+	
+	private Logger log = (Logger) LoggerFactory.getLogger(TestSysOutOverSlf4J.class);
 
 	@Before
 	public void setUp() {
@@ -92,7 +97,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 		log.detachAndStopAllAppenders();
 		Appender<ILoggingEvent> app = new ConsoleAppender<ILoggingEvent>();
 		app.setLayout(new EchoLayout<ILoggingEvent>());
-		app.setContext(lc);
+		app.setContext((Context) LoggerFactory.getILoggerFactory());
 		app.start();
 		log.addAppender(app);
 	}

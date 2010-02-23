@@ -11,8 +11,6 @@ import ch.qos.logback.core.read.ListAppender;
 
 public abstract class SLF4JTestCase {
 
-	protected static final LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-	protected final Logger log = lc.getLogger(getClass());
 	protected ListAppender<ILoggingEvent> appender;
 	
 	@BeforeClass
@@ -22,6 +20,8 @@ public abstract class SLF4JTestCase {
 
 	@Before
 	public void resetAppender() {
+		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+		Logger log = lc.getLogger(Logger.ROOT_LOGGER_NAME);
 		log.detachAndStopAllAppenders();
 		appender = new ListAppender<ILoggingEvent>();
 		appender.setContext(lc);

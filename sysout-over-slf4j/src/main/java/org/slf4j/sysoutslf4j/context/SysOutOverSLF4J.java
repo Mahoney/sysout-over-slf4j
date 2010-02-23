@@ -60,7 +60,7 @@ public final class SysOutOverSLF4J {
 	 * Can be called any number of times, and is synchronized on System.class.
 	 */
 	public static void sendSystemOutAndErrToOriginals() {
-		SLF4J_PRINT_STREAM_MANAGER.sendSystemOutAndErrToOriginals();
+		SLF4J_PRINT_STREAM_MANAGER.sendSystemOutAndErrToOriginalsIfNecessary();
 	}
 
 

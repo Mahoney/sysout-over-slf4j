@@ -51,7 +51,7 @@ public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
 	
 	@Test
 	public void sendSystemOutAndErrToOriginalsDelegatesToSLF4JPrintStreamManager() {
-		slf4jPrintStreamManager.sendSystemOutAndErrToOriginals();
+		slf4jPrintStreamManager.sendSystemOutAndErrToOriginalsIfNecessary();
 		replayAll();
 		SysOutOverSLF4J.sendSystemOutAndErrToOriginals();
 		verifyAll();

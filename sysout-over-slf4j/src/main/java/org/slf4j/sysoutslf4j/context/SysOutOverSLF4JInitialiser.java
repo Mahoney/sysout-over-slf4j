@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 class SysOutOverSLF4JInitialiser {
 	
-	private static final Logger LOG = LoggerFactory.getLogger(SysOutOverSLF4JInitialiser.class);
+	private final Logger log = LoggerFactory.getLogger(SysOutOverSLF4JInitialiser.class);
 	
 	private static final String UNKNOWN_LOGGING_SYSTEM_MESSAGE =
 		"Your logging framework {} is not known - if it needs access to the standard println "
@@ -29,9 +29,9 @@ class SysOutOverSLF4JInitialiser {
 		if (loggingSystemKnownAndMightAccessConsoleViaPrintln(currentLoggerImplementation)) {
 			registerCurrentLoggingSystemPackage(currentLoggerImplementation);
 		} else if (loggingSystemDoesNotAccessConsoleViaPrintln(currentLoggerImplementation)) {
-			LOG.debug(LOGGING_SYSTEM_DOES_NOT_NEED_PRINTLN_MESSAGE, currentLoggerImplementation.getClass());
+			log.debug(LOGGING_SYSTEM_DOES_NOT_NEED_PRINTLN_MESSAGE, currentLoggerImplementation.getClass());
 		} else {
-			LOG.warn(UNKNOWN_LOGGING_SYSTEM_MESSAGE, currentLoggerImplementation.getClass());
+			log.warn(UNKNOWN_LOGGING_SYSTEM_MESSAGE, currentLoggerImplementation.getClass());
 		}
 	}
 
