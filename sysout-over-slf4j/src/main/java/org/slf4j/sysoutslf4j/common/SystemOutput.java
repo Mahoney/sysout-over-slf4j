@@ -2,11 +2,9 @@ package org.slf4j.sysoutslf4j.common;
 
 import java.io.PrintStream;
 
-import org.slf4j.sysoutslf4j.context.LogLevel;
-
 public enum SystemOutput {
 
-	SYSOUT("System.out", LogLevel.INFO) {
+	OUT("System.out") {
 		public PrintStream get() {
 			return System.out;
 		}
@@ -14,7 +12,7 @@ public enum SystemOutput {
 		public void set(final PrintStream newPrintStream) {
 			System.setOut(newPrintStream);
 		}
-	}, SYSERR("System.err", LogLevel.ERROR) {
+	}, ERR("System.err") {
 		public PrintStream get() {
 			return System.err;
 		}
@@ -28,15 +26,9 @@ public enum SystemOutput {
 	public abstract void set(PrintStream newPrintStream);
 
 	private final String friendlyName;
-	private final LogLevel logLevel;
 
-	private SystemOutput(final String name, final LogLevel logLevel) {
+	private SystemOutput(final String name) {
 		this.friendlyName = name;
-		this.logLevel = logLevel;
-	}
-
-	public LogLevel getLogLevel() {
-		return logLevel;
 	}
 
 	@Override

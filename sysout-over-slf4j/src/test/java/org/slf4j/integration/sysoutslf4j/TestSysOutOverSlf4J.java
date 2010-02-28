@@ -50,7 +50,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 
 	@Test
 	public void systemOutNoLongerGoesToSystemOut() throws Exception {
-		OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.SYSOUT);
+		OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.OUT);
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		
 		System.out.println("Hello again");
@@ -84,7 +84,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	
 	@Test
 	public void logBackConsoleAppenderStillLogsToConsole() throws Exception {
-		OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.SYSOUT);
+		OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.OUT);
 		configureLogBackConsoleAppender();
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		
@@ -104,7 +104,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	
 	@Test
 	public void juliConsoleAppenderStillLogsToConsole() throws Exception {
-		OutputStream newSysErr = setUpMockSystemOutput(SystemOutput.SYSERR);
+		OutputStream newSysErr = setUpMockSystemOutput(SystemOutput.ERR);
 		java.util.logging.Logger log = configureJuliLoggerToUseConsoleHandler();
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 
@@ -121,7 +121,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	
 	@Test
 	public void log4JConsoleAppenderStillLogsToConsole() throws Exception {
-		OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.SYSOUT);
+		OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.OUT);
 		org.apache.log4j.Logger log = configureLog4jLoggerToUseConsoleAppender();
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		
@@ -235,7 +235,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 
 	@Test
 	public void testRegisteredLoggingSystemCanStillGetToConsole() {
-		OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.SYSOUT);
+		OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.OUT);
 		SysOutOverSLF4J.registerLoggingSystem(PACKAGE_NAME);
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		

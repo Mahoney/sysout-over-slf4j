@@ -18,7 +18,7 @@ public class TestSLF4JPrintStream {
 	
 	private SLF4JPrintStreamDelegater mockDelegater = createStrictMock(SLF4JPrintStreamDelegater.class);
 	private PrintStream mockOriginalPrintStream = createStrictMock(PrintStream.class);
-	private SLF4JPrintStream slf4jPrintStream = new SLF4JPrintStream(mockOriginalPrintStream, mockDelegater);
+	private SLF4JPrintStreamImpl slf4jPrintStream = new SLF4JPrintStreamImpl(mockOriginalPrintStream, mockDelegater);
 	
 	private void useMocks() {
 		replay(mockDelegater);

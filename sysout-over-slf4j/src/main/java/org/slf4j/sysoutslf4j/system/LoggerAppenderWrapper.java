@@ -5,7 +5,7 @@ import org.slf4j.sysoutslf4j.common.LoggerAppender;
 final class LoggerAppenderWrapper {
 
 	static LoggerAppender wrap(final Object targetLoggerAppender) {
-		LoggerAppender result;
+		final LoggerAppender result;
 		if (targetLoggerAppender instanceof LoggerAppender) {
 			result = (LoggerAppender) targetLoggerAppender;
 		} else {

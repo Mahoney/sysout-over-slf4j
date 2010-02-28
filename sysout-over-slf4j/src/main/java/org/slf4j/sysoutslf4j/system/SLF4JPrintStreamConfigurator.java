@@ -13,27 +13,25 @@ public final class SLF4JPrintStreamConfigurator {
 	}
 
 	private static void replaceSystemOutputWithSLF4JPrintStream(final SystemOutput systemOutput) {
-		final SLF4JPrintStream slf4jPrintStream = buildSLF4JPrintStream(systemOutput.get());
+		final SLF4JPrintStreamImpl slf4jPrintStream = buildSLF4JPrintStream(systemOutput.get());
 		systemOutput.set(slf4jPrintStream);
 	}
 
-	private static SLF4JPrintStream buildSLF4JPrintStream(final PrintStream originalPrintStream) {
+	private static SLF4JPrintStreamImpl buildSLF4JPrintStream(final PrintStream originalPrintStream) {
 		final LoggerAppenderStore loggerAppenderStore = new LoggerAppenderStore();
 		final SLF4JPrintStreamDelegater delegater = new SLF4JPrintStreamDelegater(originalPrintStream, loggerAppenderStore);
-		return new SLF4JPrintStream(originalPrintStream, delegater);
+		return new SLF4JPrintStreamImpl(originalPrintStream, delegater);
 	}
 
-	public static void restoreOriginalSystemOutputsIfNecessary() {
+	public static void restoreOriginalSystemOutputs() {
 		for (SystemOutput systemOutput : SystemOutput.values()) {
 			restoreSystemOutput(systemOutput);
 		}
 	}
 
 	private static void restoreSystemOutput(final SystemOutput systemOutput) {
-		if (systemOutput.get() instanceof SLF4JPrintStream) {
-			final SLF4JPrintStream slf4jPrintStream = (SLF4JPrintStream) systemOutput.get();
-			systemOutput.set(slf4jPrintStream.getOriginalPrintStream());
-		}
+		final SLF4JPrintStreamImpl slf4jPrintStream = (SLF4JPrintStreamImpl) systemOutput.get();
+		systemOutput.set(slf4jPrintStream.getOriginalPrintStream());
 	}
 
 	private SLF4JPrintStreamConfigurator() {

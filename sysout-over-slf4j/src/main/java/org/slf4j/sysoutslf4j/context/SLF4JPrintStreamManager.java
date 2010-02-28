@@ -8,10 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.sysoutslf4j.common.ClassLoaderUtils;
 import org.slf4j.sysoutslf4j.common.ReflectionUtils;
-import org.slf4j.sysoutslf4j.common.SystemOutput;
+import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
 import org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
-import org.slf4j.sysoutslf4j.system.SLF4JPrintStream;
+import org.slf4j.sysoutslf4j.system.SLF4JPrintStreamImpl;
 import org.slf4j.sysoutslf4j.system.SLF4JPrintStreamConfigurator;
 
 class SLF4JPrintStreamManager {
@@ -22,13 +22,13 @@ class SLF4JPrintStreamManager {
 		synchronized (System.class) {
 			makeSystemOutputsSLF4JPrintStreamsIfNecessary();
 			sendSystemOutAndErrToSLF4JForThisContext(exceptionHandlingStrategyFactory);
-			log.info("Redirected System.out and System.err to SLF4J");
+			log.info("Redirected System.out and System.err to SLF4J for this context");
 		}
 	}
 
 	private void makeSystemOutputsSLF4JPrintStreamsIfNecessary() {
 		if (systemOutputsAreSLF4JPrintStreams()) {
-			log.info("System.out and System.err are already SLF4JPrintStreams");
+			log.debug("System.out and System.err are already SLF4JPrintStreams");
 		} else {
 			makeSystemOutputsSLF4JPrintStreams();
 			log.info("Replaced standard System.out and System.err PrintStreams with SLF4JPrintStreams");
@@ -36,7 +36,7 @@ class SLF4JPrintStreamManager {
 	}
 
 	private boolean systemOutputsAreSLF4JPrintStreams() {
-		return System.out.getClass().getName().equals(SLF4JPrintStream.class.getName());
+		return System.out.getClass().getName().equals(SLF4JPrintStreamImpl.class.getName());
 	}
 
 	private void makeSystemOutputsSLF4JPrintStreams() {
@@ -48,35 +48,30 @@ class SLF4JPrintStreamManager {
 
 	private void sendSystemOutAndErrToSLF4JForThisContext(
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
-		for (SystemOutput systemOutput : SystemOutput.values()) {
-			registerNewLoggerAppender(exceptionHandlingStrategyFactory, systemOutput);
-		}
+		registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JSystemOutput.OUT.get(), LogLevel.INFO);
+		registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JSystemOutput.ERR.get(), LogLevel.ERROR);
 	}
 
 	private void registerNewLoggerAppender(
-			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory, final SystemOutput systemOutput) {
-		final PrintStream originalPrintStream = getOriginalPrintStream(systemOutput.get());
+			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
+			final SLF4JPrintStream slf4jPrintStream, final LogLevel logLevel) {
+
+		final PrintStream originalPrintStream = slf4jPrintStream.getOriginalPrintStream();
 		final ExceptionHandlingStrategy exceptionHandlingStrategy = 
-			exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(systemOutput.getLogLevel(), originalPrintStream);
+			exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(logLevel, originalPrintStream);
 		final LoggerAppenderImpl loggerAppender = 
-			new LoggerAppenderImpl(systemOutput.getLogLevel(), exceptionHandlingStrategy, originalPrintStream);
-		registerLoggerAppender(systemOutput, loggerAppender);
-	}
-
-	private PrintStream getOriginalPrintStream(final PrintStream slf4jPrintStream) {
-		return (PrintStream) ReflectionUtils.invokeMethod("getOriginalPrintStream", slf4jPrintStream);
-	}
-
-	private void registerLoggerAppender(final SystemOutput systemOutput, final LoggerAppenderImpl loggerAppender) {
-		ReflectionUtils.invokeMethod("registerLoggerAppender", systemOutput.get(), Object.class, loggerAppender);
+			new LoggerAppenderImpl(logLevel, exceptionHandlingStrategy, originalPrintStream);
+		slf4jPrintStream.registerLoggerAppender(loggerAppender);
 	}
 
 	void sendSystemOutAndErrToOriginalsIfNecessary() {
-		if (systemOutputsAreSLF4JPrintStreams()) {
-			sendSystemOutAndErrToOriginals();
-			log.info("Restored original System.out and System.err");
-		} else {
-			log.warn("System.out and System.err are not SLF4JPrintStreams - cannot restore");
+		synchronized (System.class) {
+			if (systemOutputsAreSLF4JPrintStreams()) {
+				sendSystemOutAndErrToOriginals();
+				log.info("Restored original System.out and System.err");
+			} else {
+				log.warn("System.out and System.err are not SLF4JPrintStreams - cannot restore");
+			}
 		}
 	}
 
@@ -84,6 +79,6 @@ class SLF4JPrintStreamManager {
 		final ClassLoader classLoader = 
 			ClassLoaderUtils.makeNewClassLoaderForJar(SLF4JPrintStreamConfigurator.class, getSystemClassLoader());
 		final Class<?> wirerClass = ClassLoaderUtils.loadClass(classLoader, SLF4JPrintStreamConfigurator.class);
-		ReflectionUtils.invokeStaticMethod("restoreOriginalSystemOutputsIfNecessary", wirerClass);
+		ReflectionUtils.invokeStaticMethod("restoreOriginalSystemOutputs", wirerClass);
 	}
 }

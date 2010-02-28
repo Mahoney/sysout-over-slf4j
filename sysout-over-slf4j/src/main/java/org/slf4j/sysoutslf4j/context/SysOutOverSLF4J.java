@@ -9,14 +9,14 @@ import org.slf4j.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandli
  *
  * Helper class that provides a method to wrap the existing
  * {@link System#out} and {@link System#err} {@link PrintStream}s with
- * custom {@link SLF4JPrintStream}s that redirect to a logging system
+ * custom {@link SLF4JPrintStreamImpl}s that redirect to a logging system
  * via SLF4J.
  *
  * Synchronizes on System.class to ensure proper synchronization even if this class is loaded
  * by multiple classloaders.
  *
  * @author Robert Elliot
- * @see SLF4JPrintStream
+ * @see SLF4JPrintStreamImpl
  */
 public final class SysOutOverSLF4J {
 	
