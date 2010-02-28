@@ -18,10 +18,10 @@ class SLF4JPrintStreamManager {
 
 	private final Logger log = LoggerFactory.getLogger(SysOutOverSLF4J.class);
 
-	void sendSystemOutAndErrToSLF4J(final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
+	void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel, final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
 		synchronized (System.class) {
 			makeSystemOutputsSLF4JPrintStreamsIfNecessary();
-			sendSystemOutAndErrToSLF4JForThisContext(exceptionHandlingStrategyFactory);
+			sendSystemOutAndErrToSLF4JForThisContext(outLevel, errLevel, exceptionHandlingStrategyFactory);
 			log.info("Redirected System.out and System.err to SLF4J for this context");
 		}
 	}
@@ -46,10 +46,10 @@ class SLF4JPrintStreamManager {
 		ReflectionUtils.invokeStaticMethod("replaceSystemOutputsWithSLF4JPrintStreams", slf4jPrintStreamConfiguratorClass);
 	}
 
-	private void sendSystemOutAndErrToSLF4JForThisContext(
+	private void sendSystemOutAndErrToSLF4JForThisContext(final LogLevel outLevel, final LogLevel errLevel, 
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
-		registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JSystemOutput.OUT.get(), LogLevel.INFO);
-		registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JSystemOutput.ERR.get(), LogLevel.ERROR);
+		registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JSystemOutput.OUT.get(), outLevel);
+		registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JSystemOutput.ERR.get(), errLevel);
 	}
 
 	private void registerNewLoggerAppender(

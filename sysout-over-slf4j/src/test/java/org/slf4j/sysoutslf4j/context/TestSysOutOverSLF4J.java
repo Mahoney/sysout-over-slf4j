@@ -33,19 +33,36 @@ public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
-	public void sendSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManagerWithLogPerLineExceptionHandlingStrategy() {
-		slf4jPrintStreamManager.sendSystemOutAndErrToSLF4J(LogPerLineExceptionHandlingStrategyFactory.getInstance());
+	public void sendSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManagerWithDefaultLevelsAndDefaultExceptionHandlingStrategy() {
+		slf4jPrintStreamManager.sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.ERROR, LogPerLineExceptionHandlingStrategyFactory.getInstance());
 		replayAll();
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		verifyAll();
 	}
 	
 	@Test
-	public void sendSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManagerWithGivenExceptionHandlingStrategy() {
+	public void sendSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManagerWithDefaultLevelsAndCustomExceptionHandlingStrategy() {
 		ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory = createMock(ExceptionHandlingStrategyFactory.class);
-		slf4jPrintStreamManager.sendSystemOutAndErrToSLF4J(exceptionHandlingStrategyFactory);
+		slf4jPrintStreamManager.sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.ERROR, exceptionHandlingStrategyFactory);
 		replayAll();
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(exceptionHandlingStrategyFactory);
+		verifyAll();
+	}
+	
+	@Test
+	public void sendSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManagerWithCustomLevelsAndDefaultExceptionHandlingStrategy() {
+		slf4jPrintStreamManager.sendSystemOutAndErrToSLF4J(LogLevel.DEBUG, LogLevel.WARN, LogPerLineExceptionHandlingStrategyFactory.getInstance());
+		replayAll();
+		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(LogLevel.DEBUG, LogLevel.WARN);
+		verifyAll();
+	}
+	
+	@Test
+	public void sendSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManagerWithCustomLevelsAndCustomExceptionHandlingStrategy() {
+		ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory = createMock(ExceptionHandlingStrategyFactory.class);
+		slf4jPrintStreamManager.sendSystemOutAndErrToSLF4J(LogLevel.DEBUG, LogLevel.WARN, exceptionHandlingStrategyFactory);
+		replayAll();
+		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(LogLevel.DEBUG, LogLevel.WARN, exceptionHandlingStrategyFactory);
 		verifyAll();
 	}
 	

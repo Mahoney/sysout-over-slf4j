@@ -57,10 +57,10 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     public void sendSystemOutAndErrToSLF4JMakesSystemOutputsSLF4JPrintStreamsWhenTheyAreNotAlready() throws Exception {
 
         expectSystemOutputsToBeReplacedWithSLF4JPrintStreams();
-        expectLoggerAppendersToBeRegistered();
+        expectLoggerAppendersToBeRegistered(LogLevel.DEBUG, LogLevel.WARN);
         replayAll();
 
-        slf4JPrintStreamManagerInstance.sendSystemOutAndErrToSLF4J(exceptionHandlingStrategyFactoryMock);
+        slf4JPrintStreamManagerInstance.sendSystemOutAndErrToSLF4J(LogLevel.DEBUG, LogLevel.WARN, exceptionHandlingStrategyFactoryMock);
         verifyAll();
         
         assertExpectedLoggingEvent(appender.list.get(0), "Replaced standard System.out and System.err PrintStreams with SLF4JPrintStreams", Level.INFO, null, SysOutOverSLF4J.class.getName());
@@ -70,19 +70,19 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     @Test
     public void sendSystemOutAndErrToSLF4JDoesNotMakeSystemOutputsSLF4JPrintStreamsWhenTheyAreAlready() throws Exception {
     	SLF4JPrintStreamConfigurator.replaceSystemOutputsWithSLF4JPrintStreams();
-        expectLoggerAppendersToBeRegistered();
+        expectLoggerAppendersToBeRegistered(LogLevel.INFO, LogLevel.ERROR);
         replayAll();
 
-        slf4JPrintStreamManagerInstance.sendSystemOutAndErrToSLF4J(exceptionHandlingStrategyFactoryMock);
+        slf4JPrintStreamManagerInstance.sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.ERROR, exceptionHandlingStrategyFactoryMock);
         verifyAll();
         
         assertExpectedLoggingEvent(appender.list.get(0), "System.out and System.err are already SLF4JPrintStreams", Level.DEBUG, null, SysOutOverSLF4J.class.getName());
         assertExpectedLoggingEvent(appender.list.get(1), "Redirected System.out and System.err to SLF4J for this context", Level.INFO, null, SysOutOverSLF4J.class.getName());
     }
     
-    private void expectLoggerAppendersToBeRegistered() throws Exception {
-    	expectLoggerAppenderToBeRegistered(SLF4JSystemOutput.OUT, LogLevel.INFO);
-    	expectLoggerAppenderToBeRegistered(SLF4JSystemOutput.ERR, LogLevel.ERROR);
+    private void expectLoggerAppendersToBeRegistered(LogLevel outLevel, LogLevel errLevel) throws Exception {
+    	expectLoggerAppenderToBeRegistered(SLF4JSystemOutput.OUT, outLevel);
+    	expectLoggerAppenderToBeRegistered(SLF4JSystemOutput.ERR, errLevel);
     }
 
 	private void expectLoggerAppenderToBeRegistered(SLF4JSystemOutput systemOutput, LogLevel logLevel) throws Exception {
