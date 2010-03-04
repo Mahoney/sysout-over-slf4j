@@ -1,7 +1,5 @@
 package org.slf4j.sysoutslf4j.context;
 
-import static java.lang.ClassLoader.getSystemClassLoader;
-
 import java.io.PrintStream;
 
 import org.slf4j.Logger;
@@ -77,7 +75,7 @@ class SLF4JPrintStreamManager {
 
 	private void sendSystemOutAndErrToOriginals() {
 		final ClassLoader classLoader = 
-			ClassLoaderUtils.makeNewClassLoaderForJar(SLF4JPrintStreamConfigurator.class, getSystemClassLoader());
+			ClassLoaderUtils.makeNewClassLoaderForJar(SLF4JPrintStreamConfigurator.class);
 		final Class<?> wirerClass = ClassLoaderUtils.loadClass(classLoader, SLF4JPrintStreamConfigurator.class);
 		ReflectionUtils.invokeStaticMethod("restoreOriginalSystemOutputs", wirerClass);
 	}

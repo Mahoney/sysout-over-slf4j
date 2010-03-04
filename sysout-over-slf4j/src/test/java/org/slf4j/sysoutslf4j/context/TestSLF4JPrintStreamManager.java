@@ -80,6 +80,30 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
         assertExpectedLoggingEvent(appender.list.get(1), "Redirected System.out and System.err to SLF4J for this context", Level.INFO, null, SysOutOverSLF4J.class.getName());
     }
     
+    @Test
+    public void sendSystemOutAndErrToOriginalsIfNecessaryRestoresOriginalPrintStreams() {
+    	SLF4JPrintStreamConfigurator.replaceSystemOutputsWithSLF4JPrintStreams();
+    	expectConfiguratorClassToBeLoaded();
+        expect(ReflectionUtils.invokeStaticMethod(
+        		"restoreOriginalSystemOutputs", SLF4JPrintStreamConfigurator.class)).andReturn(null);
+        replayAll();
+
+        slf4JPrintStreamManagerInstance.sendSystemOutAndErrToOriginalsIfNecessary();
+        verifyAll();
+        
+        assertExpectedLoggingEvent(appender.list.get(0), "Restored original System.out and System.err", Level.INFO, null, SysOutOverSLF4J.class.getName());
+    }
+    
+    @Test
+    public void sendSystemOutAndErrToOriginalsIfNecessaryDoesNotRestoreOriginalPrintStreamsIfNotSLF4JPrintStreams() {
+        replayAll();
+
+        slf4JPrintStreamManagerInstance.sendSystemOutAndErrToOriginalsIfNecessary();
+        verifyAll();
+        
+        assertExpectedLoggingEvent(appender.list.get(0), "System.out and System.err are not SLF4JPrintStreams - cannot restore", Level.WARN, null, SysOutOverSLF4J.class.getName());
+    }
+    
     private void expectLoggerAppendersToBeRegistered(LogLevel outLevel, LogLevel errLevel) throws Exception {
     	expectLoggerAppenderToBeRegistered(SLF4JSystemOutput.OUT, outLevel);
     	expectLoggerAppenderToBeRegistered(SLF4JSystemOutput.ERR, errLevel);

@@ -1,6 +1,7 @@
 package org.slf4j.integration.sysoutslf4j;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
@@ -177,7 +178,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
-	public void testPrintfMethods() {
+	public void printfMethods() {
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		
 		System.out.printf("Hello %1$s", "World");
@@ -187,7 +188,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
-	public void testPrintStackTrace() {
+	public void printStackTrace() {
 		
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		
@@ -207,7 +208,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
-	public void testPrintStackTraceWithSysOut() {
+	public void printStackTraceWithSysOut() {
 		
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		
@@ -226,7 +227,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
-	public void testInnerClassLoggedAsOuterClass() {
+	public void innerClassLoggedAsOuterClass() {
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		
 		(new Runnable() {
@@ -239,7 +240,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	}
 
 	@Test
-	public void testRegisteredLoggingSystemCanStillGetToConsole() {
+	public void registeredLoggingSystemCanStillGetToConsole() {
 		OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.OUT);
 		SysOutOverSLF4J.registerLoggingSystem(PACKAGE_NAME);
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
@@ -258,5 +259,13 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 		
 		assertExpectedLoggingEvent(appender.list.get(0), "Message 1", Level.DEBUG);
 		assertExpectedLoggingEvent(appender.list.get(1), "Message 2", Level.WARN);
+	}
+	
+	@Test
+	public void oldPrintStreamsCanBeRestored() {
+		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+		SysOutOverSLF4J.sendSystemOutAndErrToOriginals();
+		assertSame(SYS_OUT, System.out);
+		assertSame(SYS_ERR, System.err);
 	}
 }

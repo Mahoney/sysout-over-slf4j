@@ -21,7 +21,7 @@ class SLF4JPrintStreamProxy implements SLF4JPrintStream {
 			this.registerLoggerAppenderMethod = loggerAppenderClass.getDeclaredMethod("registerLoggerAppender", Object.class);
 		} catch (NoSuchMethodException e) {
 			throw new IllegalArgumentException(
-					"Must only be instantiated with a SLF4JPrintStream instance, got a " + targetSLF4JPrintStream.getClass(), e);
+					"Must only be instantiated with an SLF4JPrintStream instance, got a " + targetSLF4JPrintStream.getClass(), e);
 		}
 	}
 
