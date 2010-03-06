@@ -6,13 +6,13 @@ import java.lang.reflect.Method;
 import org.slf4j.sysoutslf4j.common.ReflectionUtils;
 import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
 
-class SLF4JPrintStreamProxy implements SLF4JPrintStream {
+final class SLF4JPrintStreamProxy implements SLF4JPrintStream {
 	
 	private final Object targetSLF4JPrintStream;
 	private final Method getOriginalPrintStreamMethod;
 	private final Method registerLoggerAppenderMethod;
 
-	SLF4JPrintStreamProxy(final Object targetSLF4JPrintStream) {
+	private SLF4JPrintStreamProxy(final Object targetSLF4JPrintStream) {
 		super();
 		try {
 			final Class<?> loggerAppenderClass = targetSLF4JPrintStream.getClass();
@@ -31,5 +31,15 @@ class SLF4JPrintStreamProxy implements SLF4JPrintStream {
 	
 	public void registerLoggerAppender(final Object loggerAppender) {
 		ReflectionUtils.invokeMethod(registerLoggerAppenderMethod, targetSLF4JPrintStream, loggerAppender);
+	}
+	
+	static SLF4JPrintStream wrap(final Object targetPrintStream) {
+		final SLF4JPrintStream result;
+		if (targetPrintStream instanceof SLF4JPrintStream) {
+			result = (SLF4JPrintStream) targetPrintStream;
+		} else {
+			result = new SLF4JPrintStreamProxy(targetPrintStream);
+		}
+		return result;
 	}
 }

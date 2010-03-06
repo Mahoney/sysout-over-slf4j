@@ -2,6 +2,7 @@ package org.slf4j.sysoutslf4j.system;
 
 import java.io.PrintStream;
 
+import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
 import org.slf4j.sysoutslf4j.common.SystemOutput;
 
 public final class SLF4JPrintStreamConfigurator {
@@ -30,7 +31,7 @@ public final class SLF4JPrintStreamConfigurator {
 	}
 
 	private static void restoreSystemOutput(final SystemOutput systemOutput) {
-		final SLF4JPrintStreamImpl slf4jPrintStream = (SLF4JPrintStreamImpl) systemOutput.get();
+		final SLF4JPrintStream slf4jPrintStream = (SLF4JPrintStream) systemOutput.get();
 		systemOutput.set(slf4jPrintStream.getOriginalPrintStream());
 	}
 

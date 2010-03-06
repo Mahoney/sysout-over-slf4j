@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Locale;
 
+import org.slf4j.sysoutslf4j.common.LoggerAppender;
 import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
 
 /**
@@ -259,7 +260,8 @@ public final class SLF4JPrintStreamImpl extends PrintStream implements SLF4JPrin
 		originalPrintStream.write(bytes);
 	}
 
-	public void registerLoggerAppender(final Object loggerAppender) {
+	public void registerLoggerAppender(final Object loggerAppenderObject) {
+		final LoggerAppender loggerAppender = LoggerAppenderProxy.wrap(loggerAppenderObject);
 		delegater.registerLoggerAppender(loggerAppender);
 	}
 

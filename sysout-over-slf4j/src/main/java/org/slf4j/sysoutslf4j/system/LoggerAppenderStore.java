@@ -7,10 +7,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.slf4j.sysoutslf4j.common.ClassLoaderUtils;
 import org.slf4j.sysoutslf4j.common.LoggerAppender;
-import org.slf4j.sysoutslf4j.common.ReflectionUtils;
-import org.slf4j.sysoutslf4j.context.ReferenceHolder;
 
 class LoggerAppenderStore {
 
@@ -35,33 +32,25 @@ class LoggerAppenderStore {
 	private LoggerAppender get(final ClassLoader classLoader) {
 		final WeakReference<LoggerAppender> loggerAppenderReference = loggerAppenderMap.get(classLoader);
 		final LoggerAppender result;
-		if (loggerAppenderReference != null) { //NOPMD
-			result = loggerAppenderReference.get();
-		} else if (classLoader == null) {
-			result = null;
+		if (loggerAppenderReference == null) {
+			if (classLoader == null) {
+				result = null;
+			} else {
+				result = get(classLoader.getParent());
+			}
 		} else {
-			result = get(classLoader.getParent());
+			result = loggerAppenderReference.get();
 		}
 		return result;
 	}
 
-	void set(final Object loggerAppenderObject) {
-		final LoggerAppender loggerAppender = LoggerAppenderWrapper.wrap(loggerAppenderObject);
-		preventLoggerAppenderFromBeingGarbageCollected(loggerAppenderObject.getClass().getClassLoader(), loggerAppender); //NOPMD
-
+	void set(final LoggerAppender loggerAppender) {
 		writeLock.lock();
 		try {
 			loggerAppenderMap.put(contextClassLoader(), new WeakReference<LoggerAppender>(loggerAppender));
 		} finally {
 			writeLock.unlock();
 		}
-	}
-
-	private void preventLoggerAppenderFromBeingGarbageCollected(
-			final ClassLoader originatingClassLoader, final LoggerAppender loggerAppender) {
-		final Class<?> referenceHolderClass = ClassLoaderUtils.loadClass(originatingClassLoader, ReferenceHolder.class);
-		ReflectionUtils.invokeStaticMethod(
-				"preventGarbageCollectionForLifeOfClassLoader", referenceHolderClass, Object.class, loggerAppender);
 	}
 
 	private ClassLoader contextClassLoader() {

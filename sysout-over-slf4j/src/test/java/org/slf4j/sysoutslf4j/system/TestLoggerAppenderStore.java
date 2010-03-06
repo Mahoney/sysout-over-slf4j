@@ -2,6 +2,7 @@ package org.slf4j.sysoutslf4j.system;
 
 import static java.lang.Thread.currentThread;
 import static org.easymock.classextension.EasyMock.createMock;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
@@ -37,9 +38,9 @@ public class TestLoggerAppenderStore extends SysOutOverSLF4JTestCase {
 	@Test
 	public void loggerAppenderStoreWorksIfContextClassLoaderIsNull() {
 		currentThread().setContextClassLoader(null);
-		LoggerAppender loggerAppender = createMock(LoggerAppender.class);
-		storeUnderTest.set(loggerAppender);
-		assertSame(loggerAppender, storeUnderTest.get());
+		storeUnderTest.set(loggerAppenders[0]);
+		assertNull(currentThread().getContextClassLoader());
+		assertSame(loggerAppenders[0], storeUnderTest.get());
 	}
 	
 	@Test
@@ -53,5 +54,10 @@ public class TestLoggerAppenderStore extends SysOutOverSLF4JTestCase {
 		currentThread().setContextClassLoader(child);
 		
 		assertSame(loggerAppender, storeUnderTest.get());
+	}
+	
+	@Test
+	public void loggerAppenderStoreReturnsNullIfNoClassLoaderStored() {
+		assertNull(storeUnderTest.get());
 	}
 }

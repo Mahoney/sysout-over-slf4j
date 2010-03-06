@@ -5,13 +5,13 @@ import java.lang.reflect.Method;
 import org.slf4j.sysoutslf4j.common.LoggerAppender;
 import org.slf4j.sysoutslf4j.common.ReflectionUtils;
 
-class LoggerAppenderProxy implements LoggerAppender {
+final class LoggerAppenderProxy implements LoggerAppender {
 	
 	private final Object targetLoggerAppender;
 	private final Method appendMethod;
 	private final Method appendAndLogMethod;
 
-	LoggerAppenderProxy(final Object targetLoggerAppender) {
+	private LoggerAppenderProxy(final Object targetLoggerAppender) {
 		super();
 		try {
 			final Class<?> loggerAppenderClass = targetLoggerAppender.getClass();
@@ -21,7 +21,7 @@ class LoggerAppenderProxy implements LoggerAppender {
 				loggerAppenderClass.getDeclaredMethod("appendAndLog", String.class, String.class, boolean.class);
 		} catch (NoSuchMethodException e) {
 			throw new IllegalArgumentException(
-					"Must only be instantiated with a LoggerAppenderImpl instance, got a " + targetLoggerAppender.getClass(), e);
+					"Must only be instantiated with a LoggerAppender instance, got a " + targetLoggerAppender.getClass(), e);
 		}
 	}
 
@@ -31,5 +31,15 @@ class LoggerAppenderProxy implements LoggerAppender {
 
 	public void appendAndLog(final String message, final String className, final boolean isStackTrace) {
 		ReflectionUtils.invokeMethod(appendAndLogMethod, targetLoggerAppender, message, className, isStackTrace);
+	}
+	
+	static LoggerAppender wrap(final Object targetLoggerAppender) {
+		final LoggerAppender result;
+		if (targetLoggerAppender instanceof LoggerAppender) {
+			result = (LoggerAppender) targetLoggerAppender;
+		} else {
+			result = new LoggerAppenderProxy(targetLoggerAppender);
+		}
+		return result;
 	}
 }

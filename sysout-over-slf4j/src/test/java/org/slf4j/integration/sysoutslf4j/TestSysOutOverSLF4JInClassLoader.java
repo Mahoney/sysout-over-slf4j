@@ -35,7 +35,7 @@ public class TestSysOutOverSLF4JInClassLoader extends SysOutOverSlf4jIntegration
 	}
 	
 	@Test
-	public void sysOutOverSLF3JWorksInsideAnotherClassLoader() throws Exception {
+	public void sysOutOverSLF4JWorksInsideAnotherClassLoader() throws Exception {
 		callSendSystemOutAndErrToSLF4JInClassLoader(app1ClassLoader);
 		
 		resetSysOutUserAppender(app1ClassLoader);

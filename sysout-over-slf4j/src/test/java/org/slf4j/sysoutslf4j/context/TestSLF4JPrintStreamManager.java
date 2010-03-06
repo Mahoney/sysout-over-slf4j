@@ -16,12 +16,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 import org.slf4j.LoggerFactory;
 import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
 import org.slf4j.sysoutslf4j.common.ClassLoaderUtils;
 import org.slf4j.sysoutslf4j.common.ReflectionUtils;
 import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
+import org.slf4j.sysoutslf4j.common.SystemOutput;
 import org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import org.slf4j.sysoutslf4j.system.SLF4JPrintStreamConfigurator;
@@ -30,13 +30,11 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ReflectionUtils.class, ClassLoaderUtils.class, SLF4JPrintStreamManager.class, SLF4JSystemOutput.class})
+@PrepareForTest({ ReflectionUtils.class, ClassLoaderUtils.class, SLF4JPrintStreamManager.class, SLF4JPrintStreamProxy.class, ReferenceHolder.class })
 public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
 
     private SLF4JPrintStreamManager slf4JPrintStreamManagerInstance;
     private ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactoryMock;
-    private SLF4JSystemOutput slf4jSystemOutMock;
-    private SLF4JSystemOutput slf4jSystemErrMock;
     
     private Logger log = (Logger) LoggerFactory.getLogger(SysOutOverSLF4J.class);
 
@@ -46,11 +44,9 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
         slf4JPrintStreamManagerInstance = new SLF4JPrintStreamManager();
         mockStatic(ReflectionUtils.class);
         mockStatic(ClassLoaderUtils.class);
+        mockStatic(ReferenceHolder.class);
+        mockStatic(SLF4JPrintStreamProxy.class);
         log.setLevel(Level.TRACE);
-        slf4jSystemOutMock = createMock(SLF4JSystemOutput.class);
-        slf4jSystemErrMock = createMock(SLF4JSystemOutput.class);
-        Whitebox.setInternalState(SLF4JSystemOutput.class, "OUT", slf4jSystemOutMock);
-        Whitebox.setInternalState(SLF4JSystemOutput.class, "ERR", slf4jSystemErrMock);
     }
 
     @Test
@@ -105,19 +101,20 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     }
     
     private void expectLoggerAppendersToBeRegistered(LogLevel outLevel, LogLevel errLevel) throws Exception {
-    	expectLoggerAppenderToBeRegistered(SLF4JSystemOutput.OUT, outLevel);
-    	expectLoggerAppenderToBeRegistered(SLF4JSystemOutput.ERR, errLevel);
+    	expectLoggerAppenderToBeRegistered(SystemOutput.OUT, outLevel);
+    	expectLoggerAppenderToBeRegistered(SystemOutput.ERR, errLevel);
     }
 
-	private void expectLoggerAppenderToBeRegistered(SLF4JSystemOutput systemOutput, LogLevel logLevel) throws Exception {
+	private void expectLoggerAppenderToBeRegistered(SystemOutput systemOutput, LogLevel logLevel) throws Exception {
 		SLF4JPrintStream slf4jPrintStreamMock = createMock(SLF4JPrintStream.class);
-		expect(systemOutput.get()).andReturn(slf4jPrintStreamMock);
+		expect(SLF4JPrintStreamProxy.wrap(systemOutput.get())).andReturn(slf4jPrintStreamMock);
         PrintStream originalPrintStreamMock = createMock(PrintStream.class);
         expect(slf4jPrintStreamMock.getOriginalPrintStream()).andReturn(originalPrintStreamMock);
         ExceptionHandlingStrategy exceptionHandlingStrategyMock = createMock(ExceptionHandlingStrategy.class);
         expect(exceptionHandlingStrategyFactoryMock.makeExceptionHandlingStrategy(logLevel, originalPrintStreamMock)).andReturn(exceptionHandlingStrategyMock);
         LoggerAppenderImpl loggerAppenderMock = createMock(LoggerAppenderImpl.class);
         expectNew(LoggerAppenderImpl.class, logLevel, exceptionHandlingStrategyMock, originalPrintStreamMock).andReturn(loggerAppenderMock);
+        ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(loggerAppenderMock);
         slf4jPrintStreamMock.registerLoggerAppender(loggerAppenderMock);
 	}
 

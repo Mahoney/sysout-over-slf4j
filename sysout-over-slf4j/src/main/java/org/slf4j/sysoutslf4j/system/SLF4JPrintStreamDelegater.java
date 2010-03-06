@@ -16,8 +16,8 @@ class SLF4JPrintStreamDelegater {
 		this.loggerAppenderStore = loggerAppenderStore;
 	}
 
-	void registerLoggerAppender(final Object loggerAppenderObject) {
-		loggerAppenderStore.set(loggerAppenderObject);
+	void registerLoggerAppender(final LoggerAppender loggerAppender) {
+		loggerAppenderStore.set(loggerAppender);
 	}
 
 	void delegatePrintln(final String message) {

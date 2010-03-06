@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.sysoutslf4j.common.ClassLoaderUtils;
 import org.slf4j.sysoutslf4j.common.ReflectionUtils;
 import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
+import org.slf4j.sysoutslf4j.common.SystemOutput;
 import org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import org.slf4j.sysoutslf4j.system.SLF4JPrintStreamImpl;
@@ -38,16 +39,20 @@ class SLF4JPrintStreamManager {
 	}
 
 	private void makeSystemOutputsSLF4JPrintStreams() {
+		ReflectionUtils.invokeStaticMethod("replaceSystemOutputsWithSLF4JPrintStreams", getSlf4jPrintStreamConfiguratorClass());
+	}
+
+	private Class<?> getSlf4jPrintStreamConfiguratorClass() {
 		final ClassLoader classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(SLF4JPrintStreamConfigurator.class);
 		final Class<?> slf4jPrintStreamConfiguratorClass =
 			ClassLoaderUtils.loadClass(classLoader, SLF4JPrintStreamConfigurator.class);
-		ReflectionUtils.invokeStaticMethod("replaceSystemOutputsWithSLF4JPrintStreams", slf4jPrintStreamConfiguratorClass);
+		return slf4jPrintStreamConfiguratorClass;
 	}
 
 	private void sendSystemOutAndErrToSLF4JForThisContext(final LogLevel outLevel, final LogLevel errLevel, 
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
-		registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JSystemOutput.OUT.get(), outLevel);
-		registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JSystemOutput.ERR.get(), errLevel);
+		registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JPrintStreamProxy.wrap(SystemOutput.OUT.get()), outLevel);
+		registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JPrintStreamProxy.wrap(SystemOutput.ERR.get()), errLevel);
 	}
 
 	private void registerNewLoggerAppender(
@@ -57,8 +62,9 @@ class SLF4JPrintStreamManager {
 		final PrintStream originalPrintStream = slf4jPrintStream.getOriginalPrintStream();
 		final ExceptionHandlingStrategy exceptionHandlingStrategy = 
 			exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(logLevel, originalPrintStream);
-		final LoggerAppenderImpl loggerAppender = 
+		final Object loggerAppender = 
 			new LoggerAppenderImpl(logLevel, exceptionHandlingStrategy, originalPrintStream);
+		ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(loggerAppender);
 		slf4jPrintStream.registerLoggerAppender(loggerAppender);
 	}
 
@@ -74,9 +80,6 @@ class SLF4JPrintStreamManager {
 	}
 
 	private void sendSystemOutAndErrToOriginals() {
-		final ClassLoader classLoader = 
-			ClassLoaderUtils.makeNewClassLoaderForJar(SLF4JPrintStreamConfigurator.class);
-		final Class<?> wirerClass = ClassLoaderUtils.loadClass(classLoader, SLF4JPrintStreamConfigurator.class);
-		ReflectionUtils.invokeStaticMethod("restoreOriginalSystemOutputs", wirerClass);
+		ReflectionUtils.invokeStaticMethod("restoreOriginalSystemOutputs", getSlf4jPrintStreamConfiguratorClass());
 	}
 }

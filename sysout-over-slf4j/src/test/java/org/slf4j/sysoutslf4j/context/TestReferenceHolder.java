@@ -1,6 +1,6 @@
 package org.slf4j.sysoutslf4j.context;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.slf4j.testutils.Assert.assertNotInstantiable;
 
 import java.lang.ref.WeakReference;
@@ -18,7 +18,7 @@ public class TestReferenceHolder {
 		object = null;
 		System.gc();
 		
-		assertNotNull(ref.get());
+		assertFalse(ref.isEnqueued());
 	}
 
 	@Test

@@ -266,6 +266,5 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		SysOutOverSLF4J.sendSystemOutAndErrToOriginals();
 		assertSame(SYS_OUT, System.out);
-		assertSame(SYS_ERR, System.err);
 	}
 }
