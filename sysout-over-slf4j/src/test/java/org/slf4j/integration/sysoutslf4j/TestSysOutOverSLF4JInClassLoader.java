@@ -2,6 +2,9 @@ package org.slf4j.integration.sysoutslf4j;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -9,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.LoggerFactory;
+import org.slf4j.sysoutslf4j.common.SystemOutput;
 import org.slf4j.testutils.Assert;
 import org.slf4j.testutils.CrossClassLoaderTestUtils;
 import org.slf4j.testutils.LoggingUtils;
@@ -25,20 +29,15 @@ public class TestSysOutOverSLF4JInClassLoader extends SysOutOverSlf4jIntegration
 	private final ClassLoader app1ClassLoader = new SimpleClassloader();
 	
 	@Before
-	public void turnOffRootLoggingInClassLoaders() {
+	public void prepareLogging() throws Exception {
 		LoggingUtils.turnOffRootLogging(app1ClassLoader);
-	}
-	
-	@Before
-	public void resetLoggingInClassloader() {
-		
+		resetSysOutUserAppender(app1ClassLoader);
 	}
 	
 	@Test
 	public void sysOutOverSLF4JWorksInsideAnotherClassLoader() throws Exception {
 		callSendSystemOutAndErrToSLF4JInClassLoader(app1ClassLoader);
 		
-		resetSysOutUserAppender(app1ClassLoader);
 		ISysOutUser sysOutUser1 = newInstanceInClassLoader(ISysOutUser.class, app1ClassLoader, SysOutUser.class, new Class[]{});
 		
 		Thread.currentThread().setContextClassLoader(app1ClassLoader);
@@ -64,15 +63,15 @@ public class TestSysOutOverSLF4JInClassLoader extends SysOutOverSlf4jIntegration
 	}
 	
 	public static void resetSysOutUserAppender() {
-		LoggerContext LC = (LoggerContext) LoggerFactory.getILoggerFactory();
-		Logger rootLogger = LC.getLogger(SysOutUser.class.getName());
-		rootLogger.detachAndStopAllAppenders();
+		LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+		Logger sysOutUserLogger = loggerContext.getLogger(SysOutUser.class.getName());
+		sysOutUserLogger.detachAndStopAllAppenders();
 		ListAppender<ILoggingEvent> appender = new ListAppender<ILoggingEvent>();
 		appender.setName("list");
-		appender.setContext(LC);
+		appender.setContext(loggerContext);
 		appender.start();
-		rootLogger.addAppender(appender);
-		rootLogger.setLevel(Level.INFO);
+		sysOutUserLogger.addAppender(appender);
+		sysOutUserLogger.setLevel(Level.INFO);
 	}
 	
 	static List<?> getRootAppender(ClassLoader classLoader) throws Exception {
@@ -88,5 +87,21 @@ public class TestSysOutOverSLF4JInClassLoader extends SysOutOverSlf4jIntegration
 		LoggerContext LC = (LoggerContext) LoggerFactory.getILoggerFactory();
 		Logger sysOutLogger = LC.getLogger(SysOutUser.class.getName());
 		return (ListAppender<ILoggingEvent>) sysOutLogger.getAppender("list");
+	}
+	
+	@Test
+	public void systemOutStillGoesToSystemOutInClassLoaderThatHasNotSentSysOutToLSF4J() throws Exception {
+		OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.OUT);
+		callSendSystemOutAndErrToSLF4JInClassLoader(app1ClassLoader);
+		
+		System.out.println("Hello again");
+		
+		assertEquals("Hello again" + System.getProperty("line.separator"), sysOutMock.toString());
+	}
+
+	private OutputStream setUpMockSystemOutput(SystemOutput systemOutput) {
+		OutputStream sysOutMock = new ByteArrayOutputStream();
+		systemOutput.set(new PrintStream(sysOutMock));
+		return sysOutMock;
 	}
 }
