@@ -94,6 +94,7 @@ public class TestClassLoaderUtils extends SysOutOverSLF4JTestCase {
 			}
 		});
 		assertEquals(MalformedURLException.class, expectedException.getCause().getClass());
+		assertEquals("Unable to build jar URL from url [null] from class [class org.Something]", expectedException.getMessage());
 	}
 	
 	@Test

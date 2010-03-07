@@ -29,7 +29,8 @@ public final class ClassLoaderUtils {
 		try {
 			return new URL(jarURLString);
 		} catch (MalformedURLException malformedURLException) {
-			throw new WrappedCheckedException("Unable to build jar URL from url " + classURL, malformedURLException);
+			throw new WrappedCheckedException(
+					"Unable to build jar URL from url [" + classURL + "] from class [" + classInJar + "]", malformedURLException);
 		}
 	}
 
