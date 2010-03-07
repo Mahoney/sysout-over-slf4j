@@ -20,8 +20,8 @@ public final class SLF4JPrintStreamConfigurator {
 
 	private static SLF4JPrintStreamImpl buildSLF4JPrintStream(final PrintStream originalPrintStream) {
 		final LoggerAppenderStore loggerAppenderStore = new LoggerAppenderStore();
-		final SLF4JPrintStreamDelegater delegater = new SLF4JPrintStreamDelegater(originalPrintStream, loggerAppenderStore);
-		return new SLF4JPrintStreamImpl(originalPrintStream, delegater);
+		final SLF4JPrintStreamDelegate delegate = new SLF4JPrintStreamDelegate(originalPrintStream, loggerAppenderStore);
+		return new SLF4JPrintStreamImpl(originalPrintStream, delegate);
 	}
 
 	public static void restoreOriginalSystemOutputs() {

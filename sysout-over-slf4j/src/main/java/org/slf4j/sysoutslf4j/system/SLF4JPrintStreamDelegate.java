@@ -5,12 +5,12 @@ import java.io.PrintStream;
 import org.slf4j.sysoutslf4j.common.LoggerAppender;
 import org.slf4j.sysoutslf4j.common.StringUtils;
 
-class SLF4JPrintStreamDelegater {
+class SLF4JPrintStreamDelegate {
 	
 	private final PrintStream originalPrintStream;
 	private final LoggerAppenderStore loggerAppenderStore;
 
-	SLF4JPrintStreamDelegater(final PrintStream originalPrintStream, final LoggerAppenderStore loggerAppenderStore) {
+	SLF4JPrintStreamDelegate(final PrintStream originalPrintStream, final LoggerAppenderStore loggerAppenderStore) {
 		super();
 		this.originalPrintStream = originalPrintStream;
 		this.loggerAppenderStore = loggerAppenderStore;

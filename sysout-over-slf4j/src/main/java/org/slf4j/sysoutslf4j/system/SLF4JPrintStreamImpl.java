@@ -71,84 +71,84 @@ import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
  *         SLF4J, though a performance hit will occur.
  *         </p>
  */
-public final class SLF4JPrintStreamImpl extends PrintStream implements SLF4JPrintStream { // NOPMD - too many methods but can't be helped
+public final class SLF4JPrintStreamImpl extends PrintStream implements SLF4JPrintStream { // NOPMD - too many methods
 
 	private final PrintStream originalPrintStream;
-	private final SLF4JPrintStreamDelegater delegater;
+	private final SLF4JPrintStreamDelegate delegate;
 
-	SLF4JPrintStreamImpl(final PrintStream originalPrintStream, final SLF4JPrintStreamDelegater delegater) {
+	SLF4JPrintStreamImpl(final PrintStream originalPrintStream, final SLF4JPrintStreamDelegate delegate) {
 		// This ByteArrayOutputStream will be unused - we aren't going to touch
 		// the super class.
 		super(new ByteArrayOutputStream());
 		this.originalPrintStream = originalPrintStream;
-		this.delegater = delegater;
+		this.delegate = delegate;
 	}
 
 	@Override
 	public void println(final String string) {
-		delegater.delegatePrintln(string);
+		delegate.delegatePrintln(string);
 	}
 
 	@Override
 	public void println(final Object object) {
-		delegater.delegatePrintln(String.valueOf(object));
+		delegate.delegatePrintln(String.valueOf(object));
 	}
 
 	@Override
 	public void println() {
-		delegater.delegatePrintln("");
+		delegate.delegatePrintln("");
 	}
 
 	@Override
 	public void println(final boolean bool) {
-		delegater.delegatePrintln(String.valueOf(bool));
+		delegate.delegatePrintln(String.valueOf(bool));
 	}
 
 	@Override
 	public void println(final char character) {
-		delegater.delegatePrintln(String.valueOf(character));
+		delegate.delegatePrintln(String.valueOf(character));
 	}
 
 	@Override
 	public void println(final char[] charArray) {
-		delegater.delegatePrintln(String.valueOf(charArray));
+		delegate.delegatePrintln(String.valueOf(charArray));
 	}
 
 	@Override
 	public void println(final double doub) {
-		delegater.delegatePrintln(String.valueOf(doub));
+		delegate.delegatePrintln(String.valueOf(doub));
 	}
 
 	@Override
 	public void println(final float floa) {
-		delegater.delegatePrintln(String.valueOf(floa));
+		delegate.delegatePrintln(String.valueOf(floa));
 	}
 
 	@Override
 	public void println(final int integer) {
-		delegater.delegatePrintln(String.valueOf(integer));
+		delegate.delegatePrintln(String.valueOf(integer));
 	}
 
 	@Override
 	public void println(final long lon) {
-		delegater.delegatePrintln(String.valueOf(lon));
+		delegate.delegatePrintln(String.valueOf(lon));
 	}
 
 	@Override
 	public PrintStream append(final char character) {
-		delegater.delegatePrint(String.valueOf(character));
+		delegate.delegatePrint(String.valueOf(character));
 		return this;
 	}
 
 	@Override
 	public PrintStream append(final CharSequence csq, final int start, final int end) {
-		delegater.delegatePrint(csq.subSequence(start, end).toString());
+		delegate.delegatePrint(csq.subSequence(start, end).toString());
 		return this;
 	}
 
 	@Override
 	public PrintStream append(final CharSequence csq) {
-		delegater.delegatePrint(csq.toString());
+		delegate.delegatePrint(csq.toString());
 		return this;
 	}
 
@@ -175,73 +175,73 @@ public final class SLF4JPrintStreamImpl extends PrintStream implements SLF4JPrin
 	@Override
 	public PrintStream format(final Locale locale, final String format, final Object... args) {
 		final String string = String.format(locale, format, args);
-		delegater.delegatePrint(string);
+		delegate.delegatePrint(string);
 		return this;
 	}
 
 	@Override
 	public PrintStream format(final String format, final Object... args) {
 		final String string = String.format(format, args);
-		delegater.delegatePrint(string);
+		delegate.delegatePrint(string);
 		return this;
 	}
 
 	@Override
 	public void print(final boolean bool) {
-		delegater.delegatePrint(String.valueOf(bool));
+		delegate.delegatePrint(String.valueOf(bool));
 	}
 
 	@Override
 	public void print(final char character) {
-		delegater.delegatePrint(String.valueOf(character));
+		delegate.delegatePrint(String.valueOf(character));
 	}
 
 	@Override
 	public void print(final char[] charArray) {
-		delegater.delegatePrint(String.valueOf(charArray));
+		delegate.delegatePrint(String.valueOf(charArray));
 	}
 
 	@Override
 	public void print(final double doubl) {
-		delegater.delegatePrint(String.valueOf(doubl));
+		delegate.delegatePrint(String.valueOf(doubl));
 	}
 
 	@Override
 	public void print(final float floa) {
-		delegater.delegatePrint(String.valueOf(floa));
+		delegate.delegatePrint(String.valueOf(floa));
 	}
 
 	@Override
 	public void print(final int integer) {
-		delegater.delegatePrint(String.valueOf(integer));
+		delegate.delegatePrint(String.valueOf(integer));
 	}
 
 	@Override
 	public void print(final long lon) {
-		delegater.delegatePrint(String.valueOf(lon));
+		delegate.delegatePrint(String.valueOf(lon));
 	}
 
 	@Override
 	public void print(final Object object) {
-		delegater.delegatePrint(String.valueOf(object));
+		delegate.delegatePrint(String.valueOf(object));
 	}
 
 	@Override
 	public void print(final String string) {
-		delegater.delegatePrint(String.valueOf(string));
+		delegate.delegatePrint(String.valueOf(string));
 	}
 
 	@Override
 	public PrintStream printf(final Locale locale, final String format, final Object... args) {
 		final String string = String.format(locale, format, args);
-		delegater.delegatePrint(string);
+		delegate.delegatePrint(string);
 		return this;
 	}
 
 	@Override
 	public PrintStream printf(final String format, final Object... args) {
 		final String string = String.format(format, args);
-		delegater.delegatePrint(string);
+		delegate.delegatePrint(string);
 		return this;
 	}
 	
@@ -262,7 +262,7 @@ public final class SLF4JPrintStreamImpl extends PrintStream implements SLF4JPrin
 
 	public void registerLoggerAppender(final Object loggerAppenderObject) {
 		final LoggerAppender loggerAppender = LoggerAppenderProxy.wrap(loggerAppenderObject);
-		delegater.registerLoggerAppender(loggerAppender);
+		delegate.registerLoggerAppender(loggerAppender);
 	}
 
 	public PrintStream getOriginalPrintStream() {

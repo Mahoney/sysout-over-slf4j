@@ -62,7 +62,7 @@
 			<plugin>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
-					<configLocation>checkstyle.xml</configLocation>
+					<configLocation>${basedir}/checkstyle.xml</configLocation>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -78,7 +78,7 @@
 				<configuration>
 					<targetJdk>1.5</targetJdk>
 					<rulesets>
-						<ruleset>pmd-rules.xml</ruleset>
+						<ruleset>${basedir}/pmd-rules.xml</ruleset>
 					</rulesets>
 				</configuration>
 			</plugin>

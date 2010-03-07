@@ -17,7 +17,8 @@ class SLF4JPrintStreamManager {
 
 	private final Logger log = LoggerFactory.getLogger(SysOutOverSLF4J.class);
 
-	void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel, final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
+	void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel,
+			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
 		synchronized (System.class) {
 			makeSystemOutputsSLF4JPrintStreamsIfNecessary();
 			sendSystemOutAndErrToSLF4JForThisContext(outLevel, errLevel, exceptionHandlingStrategyFactory);

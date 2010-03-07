@@ -21,7 +21,6 @@ public final class ClassLoaderUtils {
 		});
 	}
 
-	// TODO give a bit more context in the thrown exception...
 	private static URL getJarURL(final Class<?> classInJar) {
 		final String relativeClassFilePath = getRelativeFilePathOfClass(classInJar); // NOPMD
 		final URL classURL = getResource(relativeClassFilePath);
@@ -30,7 +29,7 @@ public final class ClassLoaderUtils {
 		try {
 			return new URL(jarURLString);
 		} catch (MalformedURLException malformedURLException) {
-			throw new WrappedCheckedException(malformedURLException);
+			throw new WrappedCheckedException("Unable to build jar URL from url " + classURL, malformedURLException);
 		}
 	}
 

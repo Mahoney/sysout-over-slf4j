@@ -58,7 +58,8 @@ public final class SysOutOverSLF4J {
 		sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.ERROR, exceptionHandlingStrategyFactory);
 	}
 	
-	public static void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel, final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
+	public static void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel,
+			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
 		SLF4J_PRINT_STREAM_MANAGER.sendSystemOutAndErrToSLF4J(outLevel, errLevel, exceptionHandlingStrategyFactory);
 	}
 

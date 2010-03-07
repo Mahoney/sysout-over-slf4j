@@ -19,14 +19,12 @@ class LoggerAppenderStore {
 	private final Lock writeLock = lock.writeLock();
 
 	LoggerAppender get() {
-		LoggerAppender loggerAppender = null;
 		readLock.lock();
 		try {
-			loggerAppender = get(contextClassLoader());
+			return get(contextClassLoader());
 		} finally {
 			readLock.unlock();
 		}
-		return loggerAppender;
 	}
 
 	private LoggerAppender get(final ClassLoader classLoader) {

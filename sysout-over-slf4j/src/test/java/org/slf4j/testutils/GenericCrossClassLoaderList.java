@@ -35,13 +35,11 @@ public class GenericCrossClassLoaderList<E> extends GenericCrossClassLoaderColle
 	}
 
 	public ListIterator<E> listIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	public ListIterator<E> listIterator(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	public E remove(int index) {
@@ -53,8 +51,7 @@ public class GenericCrossClassLoaderList<E> extends GenericCrossClassLoaderColle
 	}
 
 	public List<E> subList(int fromIndex, int toIndex) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 }

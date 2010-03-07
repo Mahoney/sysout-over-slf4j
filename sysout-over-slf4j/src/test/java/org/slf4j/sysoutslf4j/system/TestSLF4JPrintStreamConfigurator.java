@@ -45,10 +45,10 @@ public class TestSLF4JPrintStreamConfigurator extends SysOutOverSLF4JTestCase {
 	private SLF4JPrintStreamImpl expectSLF4JPrintStreamToBeBuilt(PrintStream originalPrintStream) throws Exception {
 		LoggerAppenderStore loggerAppenderStoreMock = createMock(LoggerAppenderStore.class);
 		expectNew(LoggerAppenderStore.class).andReturn(loggerAppenderStoreMock);
-		SLF4JPrintStreamDelegater slf4jPrintStreamDelegaterMock = createMock(SLF4JPrintStreamDelegater.class);
-		expectNew(SLF4JPrintStreamDelegater.class, originalPrintStream, loggerAppenderStoreMock).andReturn(slf4jPrintStreamDelegaterMock);
+		SLF4JPrintStreamDelegate slf4jPrintStreamDelegateMock = createMock(SLF4JPrintStreamDelegate.class);
+		expectNew(SLF4JPrintStreamDelegate.class, originalPrintStream, loggerAppenderStoreMock).andReturn(slf4jPrintStreamDelegateMock);
 		SLF4JPrintStreamImpl slf4jPrintStreamImplMock = createMock(SLF4JPrintStreamImpl.class);
-		expectNew(SLF4JPrintStreamImpl.class, originalPrintStream, slf4jPrintStreamDelegaterMock).andReturn(slf4jPrintStreamImplMock);
+		expectNew(SLF4JPrintStreamImpl.class, originalPrintStream, slf4jPrintStreamDelegateMock).andReturn(slf4jPrintStreamImplMock);
 		return slf4jPrintStreamImplMock;
 	}
 }
