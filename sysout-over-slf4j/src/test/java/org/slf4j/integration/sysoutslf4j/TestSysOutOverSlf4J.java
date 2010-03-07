@@ -262,9 +262,23 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
-	public void oldPrintStreamsCanBeRestored() {
+	public void sendSystemOutAndErrToOriginalsRestoresOldPrintStreams() {
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		SysOutOverSLF4J.sendSystemOutAndErrToOriginals();
 		assertSame(SYS_OUT, System.out);
+		assertSame(SYS_ERR, System.err);
+	}
+	
+	@Test
+	public void methodsCanBeCalledMultipleTimes() {
+		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+		
+		SysOutOverSLF4J.sendSystemOutAndErrToOriginals();
+		SysOutOverSLF4J.sendSystemOutAndErrToOriginals();
+		SysOutOverSLF4J.sendSystemOutAndErrToOriginals();
+		assertSame(SYS_OUT, System.out);
+		assertSame(SYS_ERR, System.err);
 	}
 }
