@@ -181,9 +181,7 @@ public final class SLF4JPrintStreamImpl extends PrintStream implements SLF4JPrin
 
 	@Override
 	public PrintStream format(final String format, final Object... args) {
-		final String string = String.format(format, args);
-		delegate.delegatePrint(string);
-		return this;
+		return format(Locale.getDefault(), format, args);
 	}
 
 	@Override
@@ -233,16 +231,12 @@ public final class SLF4JPrintStreamImpl extends PrintStream implements SLF4JPrin
 
 	@Override
 	public PrintStream printf(final Locale locale, final String format, final Object... args) {
-		final String string = String.format(locale, format, args);
-		delegate.delegatePrint(string);
-		return this;
+		return format(locale, format, args);
 	}
 
 	@Override
 	public PrintStream printf(final String format, final Object... args) {
-		final String string = String.format(format, args);
-		delegate.delegatePrint(string);
-		return this;
+		return format(format, args);
 	}
 	
 	@Override
