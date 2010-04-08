@@ -66,7 +66,7 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
    * against. The value of this field is usually modified with each release.
    */
   // to avoid constant folding by the compiler, this field must *not* be final
-  public static String REQUESTED_API_VERSION = "1.5.11"; // !final
+  public static String REQUESTED_API_VERSION = "1.6"; // !final
 
   private static final String loggerFactoryClassStr = Log4jLoggerFactory.class
       .getName();
@@ -83,7 +83,7 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
       Level level = Level.TRACE;
     } catch (NoSuchFieldError nsfe) {
       Util
-          .reportFailure("This version of SLF4J requires log4j version 1.2.12 or later. See also http://www.slf4j.org/codes.html#log4j_version");
+          .report("This version of SLF4J requires log4j version 1.2.12 or later. See also http://www.slf4j.org/codes.html#log4j_version");
     }
   }
 

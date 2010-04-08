@@ -40,12 +40,8 @@ public class StaticLoggerBinder {
  
   /**
    * The unique instance of this class.
-   * 
-   * @deprecated Please use the {@link #getSingleton()} method instead of
-   *             accessing this field directly. In future versions, this field
-   *             will become private.
    */
-  public static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();
+  private static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();
   
   /**
    * Return the singleton of this class.
@@ -61,7 +57,7 @@ public class StaticLoggerBinder {
    * The value of this field is usually modified with each release. 
    */
   // to avoid constant folding by the compiler, this field must *not* be final
-  public static String REQUESTED_API_VERSION = "1.5.11";  // !final
+  public static String REQUESTED_API_VERSION = "1.6";  // !final
   
   private StaticLoggerBinder() {
     throw new UnsupportedOperationException("This code should have never made it into the jar");
