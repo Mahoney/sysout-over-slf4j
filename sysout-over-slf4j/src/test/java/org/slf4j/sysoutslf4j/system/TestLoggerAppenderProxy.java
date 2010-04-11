@@ -10,9 +10,10 @@ import static org.slf4j.testutils.Assert.shouldThrow;
 import java.util.concurrent.Callable;
 
 import org.junit.Test;
+import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
 import org.slf4j.sysoutslf4j.common.LoggerAppender;
 
-public class TestLoggerAppenderProxy {
+public class TestLoggerAppenderProxy extends SysOutOverSLF4JTestCase {
 	
 	@Test
 	public void wrapReturnsUnwrappedLoggerAppenderIfInSameClassLoader() {

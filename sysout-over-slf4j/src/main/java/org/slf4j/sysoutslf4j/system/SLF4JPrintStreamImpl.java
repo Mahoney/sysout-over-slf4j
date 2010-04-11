@@ -258,6 +258,10 @@ public final class SLF4JPrintStreamImpl extends PrintStream implements SLF4JPrin
 		final LoggerAppender loggerAppender = LoggerAppenderProxy.wrap(loggerAppenderObject);
 		delegate.registerLoggerAppender(loggerAppender);
 	}
+	
+	public void deregisterLoggerAppender() {
+		delegate.deregisterLoggerAppender();
+	}
 
 	public PrintStream getOriginalPrintStream() {
 		return originalPrintStream;

@@ -33,10 +33,18 @@ public class TestSLF4JPrintStreamDelegate {
 
 	@Test
 	public void registerLoggerAppenderAddsLoggerAppenderToStore() {
-		loggerAppenderStoreMock.set(loggerAppenderMock);
+		loggerAppenderStoreMock.put(loggerAppenderMock);
 		replayAll();
 		
 		delegate.registerLoggerAppender(loggerAppenderMock);
+	}
+	
+	@Test
+	public void deregisterLoggerAppenderRemovesLoggerAppenderToStore() {
+		loggerAppenderStoreMock.remove();
+		replayAll();
+		
+		delegate.deregisterLoggerAppender();
 	}
 	
 	@Test

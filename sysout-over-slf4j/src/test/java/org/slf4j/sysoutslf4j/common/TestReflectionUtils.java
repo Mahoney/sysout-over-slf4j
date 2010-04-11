@@ -20,10 +20,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ExceptionUtils.class)
-public class TestReflectionUtils {
+public class TestReflectionUtils extends SysOutOverSLF4JTestCase {
 	
 	@Test
 	public void invokeMethodCallsMethod() {

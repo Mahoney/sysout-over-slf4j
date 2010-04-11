@@ -11,6 +11,7 @@ final class SLF4JPrintStreamProxy implements SLF4JPrintStream {
 	private final Object targetSLF4JPrintStream;
 	private final Method getOriginalPrintStreamMethod;
 	private final Method registerLoggerAppenderMethod;
+	private final Method deregisterLoggerAppenderMethod;
 
 	private SLF4JPrintStreamProxy(final Object targetSLF4JPrintStream) {
 		super();
@@ -19,6 +20,7 @@ final class SLF4JPrintStreamProxy implements SLF4JPrintStream {
 			this.targetSLF4JPrintStream = targetSLF4JPrintStream;
 			this.getOriginalPrintStreamMethod = loggerAppenderClass.getDeclaredMethod("getOriginalPrintStream");
 			this.registerLoggerAppenderMethod = loggerAppenderClass.getDeclaredMethod("registerLoggerAppender", Object.class);
+			this.deregisterLoggerAppenderMethod = loggerAppenderClass.getDeclaredMethod("deregisterLoggerAppender");
 		} catch (NoSuchMethodException e) {
 			throw new IllegalArgumentException(
 					"Must only be instantiated with an SLF4JPrintStream instance, got a " + targetSLF4JPrintStream.getClass(), e);
@@ -31,6 +33,10 @@ final class SLF4JPrintStreamProxy implements SLF4JPrintStream {
 	
 	public void registerLoggerAppender(final Object loggerAppender) {
 		ReflectionUtils.invokeMethod(registerLoggerAppenderMethod, targetSLF4JPrintStream, loggerAppender);
+	}
+	
+	public void deregisterLoggerAppender() {
+		ReflectionUtils.invokeMethod(deregisterLoggerAppenderMethod, targetSLF4JPrintStream);
 	}
 	
 	static SLF4JPrintStream wrap(final Object targetPrintStream) {

@@ -6,8 +6,9 @@ import static org.junit.Assert.assertSame;
 import java.rmi.RemoteException;
 
 import org.junit.Test;
+import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
 
-public class TestWrappedCheckedException {
+public class TestWrappedCheckedException extends SysOutOverSLF4JTestCase {
 
 	@Test
 	public void wrappedExceptionIsCause() {

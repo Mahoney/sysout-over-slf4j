@@ -4,14 +4,13 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
+import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
 import org.slf4j.sysoutslf4j.context.LogLevel;
-import org.slf4j.testutils.SLF4JTestCase;
-
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
-public class TestLogPerLineExceptionHandlingStrategyFactory extends SLF4JTestCase {
+public class TestLogPerLineExceptionHandlingStrategyFactory extends SysOutOverSLF4JTestCase {
 	
 	private static final ExceptionHandlingStrategyFactory STRATEGY_FACTORY =
 		LogPerLineExceptionHandlingStrategyFactory.getInstance();

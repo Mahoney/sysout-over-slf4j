@@ -1,57 +1,52 @@
 package org.slf4j.sysoutslf4j.system;
 
-import java.lang.ref.WeakReference;
 import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.sysoutslf4j.common.LoggerAppender;
 
 class LoggerAppenderStore {
-
-	private final Map<ClassLoader, WeakReference<LoggerAppender>> loggerAppenderMap =
-		new WeakHashMap<ClassLoader, WeakReference<LoggerAppender>>();
 	
-	private final ReadWriteLock lock = new ReentrantReadWriteLock();
-	private final Lock readLock = lock.readLock();
-	private final Lock writeLock = lock.writeLock();
+	private static final Object NULL_KEY = new Object();
 
+	private final Map<Object, LoggerAppender> loggerAppenderMap =
+		new ConcurrentHashMap<Object, LoggerAppender>();
+	
 	LoggerAppender get() {
-		readLock.lock();
-		try {
-			return get(contextClassLoader());
-		} finally {
-			readLock.unlock();
-		}
+		return get(contextClassLoader());
 	}
 
 	private LoggerAppender get(final ClassLoader classLoader) {
-		final WeakReference<LoggerAppender> loggerAppenderReference = loggerAppenderMap.get(classLoader);
+		Object classLoaderAsKey = getClassLoaderAsKey(classLoader);
+		final LoggerAppender possible = loggerAppenderMap.get(classLoaderAsKey);
+		
 		final LoggerAppender result;
-		if (loggerAppenderReference == null) {
+		if (possible == null) {
 			if (classLoader == null) {
 				result = null;
 			} else {
 				result = get(classLoader.getParent());
 			}
 		} else {
-			result = loggerAppenderReference.get();
+			result = possible;
 		}
 		return result;
 	}
 
-	void set(final LoggerAppender loggerAppender) {
-		writeLock.lock();
-		try {
-			loggerAppenderMap.put(contextClassLoader(), new WeakReference<LoggerAppender>(loggerAppender));
-		} finally {
-			writeLock.unlock();
-		}
+	private Object getClassLoaderAsKey(final ClassLoader classLoader) {
+		return classLoader == null ? NULL_KEY : classLoader;
+	}
+
+	void put(final LoggerAppender loggerAppender) {
+		Object classLoaderAsKey = getClassLoaderAsKey(contextClassLoader());
+		loggerAppenderMap.put(classLoaderAsKey, loggerAppender);
 	}
 
 	private ClassLoader contextClassLoader() {
 		return Thread.currentThread().getContextClassLoader();
+	}
+
+	void remove() {
+		loggerAppenderMap.remove(contextClassLoader());
 	}
 }

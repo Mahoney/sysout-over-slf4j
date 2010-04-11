@@ -17,12 +17,13 @@ import org.powermock.core.classloader.annotations.SuppressStaticInitializationFo
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
 import org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({LoggerFactory.class, SysOutOverSLF4J.class})
 @SuppressStaticInitializationFor("org.slf4j.sysoutslf4j.context.SysOutOverSLF4J")
-public class TestLoggerAppenderImpl {
+public class TestLoggerAppenderImpl extends SysOutOverSLF4JTestCase {
 
 	private static final String CLASS_IN_LOGGING_SYSTEM = "org.logging.LoggerClass";
 	private static final String CLASS_NAME = "org.something.SomeClass";

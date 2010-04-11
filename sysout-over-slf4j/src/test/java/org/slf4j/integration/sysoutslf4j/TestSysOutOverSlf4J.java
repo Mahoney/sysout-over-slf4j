@@ -262,9 +262,32 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
-	public void sendSystemOutAndErrToOriginalsRestoresOldPrintStreams() {
+	public void stopSendingSystemOutAndErrToSLF4JSendsOutputToOldSystemOut() {
+		OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.OUT);
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
-		SysOutOverSLF4J.sendSystemOutAndErrToOriginals();
+		SysOutOverSLF4J.stopSendingSystemOutAndErrToSLF4J();
+		
+		System.out.println("Hello");
+		
+		assertEquals("Hello" + CoreConstants.LINE_SEPARATOR, sysOutMock.toString());
+	}
+	
+	@Test
+	public void stopSendingSystemOutAndErrToSLF4JLeavesSLF4JPrintStreams() {
+		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+		PrintStream newOutPrintStream = System.out;
+		PrintStream newErrPrintStream = System.err;
+		
+		SysOutOverSLF4J.stopSendingSystemOutAndErrToSLF4J();
+
+		assertSame(newOutPrintStream, System.out);
+		assertSame(newErrPrintStream, System.err);
+	}
+	
+	@Test
+	public void restoreOriginalSystemOutputsRestoresOldPrintStreams() {
+		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+		SysOutOverSLF4J.restoreOriginalSystemOutputs();
 		assertSame(SYS_OUT, System.out);
 		assertSame(SYS_ERR, System.err);
 	}
@@ -275,9 +298,9 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		
-		SysOutOverSLF4J.sendSystemOutAndErrToOriginals();
-		SysOutOverSLF4J.sendSystemOutAndErrToOriginals();
-		SysOutOverSLF4J.sendSystemOutAndErrToOriginals();
+		SysOutOverSLF4J.restoreOriginalSystemOutputs();
+		SysOutOverSLF4J.restoreOriginalSystemOutputs();
+		SysOutOverSLF4J.restoreOriginalSystemOutputs();
 		assertSame(SYS_OUT, System.out);
 		assertSame(SYS_ERR, System.err);
 	}

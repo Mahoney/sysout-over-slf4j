@@ -17,7 +17,11 @@ class SLF4JPrintStreamDelegate {
 	}
 
 	void registerLoggerAppender(final LoggerAppender loggerAppender) {
-		loggerAppenderStore.set(loggerAppender);
+		loggerAppenderStore.put(loggerAppender);
+	}
+	
+	void deregisterLoggerAppender() {
+		loggerAppenderStore.remove();
 	}
 
 	void delegatePrintln(final String message) {

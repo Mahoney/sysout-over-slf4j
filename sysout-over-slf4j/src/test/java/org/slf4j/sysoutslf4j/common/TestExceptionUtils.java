@@ -10,8 +10,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 
 import org.junit.Test;
+import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
 
-public class TestExceptionUtils {
+public class TestExceptionUtils extends SysOutOverSLF4JTestCase {
 
 	@Test
 	public void asRuntimeExceptionThrowsIllegalArgumentExceptionWhenNullPassedIn() throws Throwable {

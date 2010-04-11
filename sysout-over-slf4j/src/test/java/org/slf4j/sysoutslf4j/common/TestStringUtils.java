@@ -7,8 +7,9 @@ import static org.slf4j.testutils.Assert.shouldThrow;
 import java.util.concurrent.Callable;
 
 import org.junit.Test;
+import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
 
-public class TestStringUtils {
+public class TestStringUtils extends SysOutOverSLF4JTestCase {
 
 	@Test
 	public void substringBeforeReturnsStringBeforeSuppliedString() {

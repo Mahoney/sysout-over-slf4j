@@ -40,6 +40,7 @@ public class TestSLF4JPrintStreamProxy {
 	private static interface FakeSLF4JPrintStream {
 		PrintStream getOriginalPrintStream();
 		void registerLoggerAppender(Object loggerAppender);
+		void deregisterLoggerAppender();
 	}
 	
 	@Test

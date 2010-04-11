@@ -63,13 +63,17 @@ public final class SysOutOverSLF4J {
 		SLF4J_PRINT_STREAM_MANAGER.sendSystemOutAndErrToSLF4J(outLevel, errLevel, exceptionHandlingStrategyFactory);
 	}
 
+	public static void stopSendingSystemOutAndErrToSLF4J() {
+		SLF4J_PRINT_STREAM_MANAGER.stopSendingSystemOutAndErrToSLF4J();
+	}
+
 	/**
 	 * If System.out and System.err have been redirected to SLF4J, restores the originals
 	 * allowing direct access to the console again.
 	 * Can be called any number of times, and is synchronized on System.class.
 	 */
-	public static void sendSystemOutAndErrToOriginals() {
-		SLF4J_PRINT_STREAM_MANAGER.sendSystemOutAndErrToOriginalsIfNecessary();
+	public static void restoreOriginalSystemOutputs() {
+		SLF4J_PRINT_STREAM_MANAGER.restoreOriginalSystemOutputsIfNecessary();
 	}
 
 
@@ -109,5 +113,6 @@ public final class SysOutOverSLF4J {
 	private SysOutOverSLF4J() {
 		throw new UnsupportedOperationException("Not instantiable");
 	}
+
 
 }

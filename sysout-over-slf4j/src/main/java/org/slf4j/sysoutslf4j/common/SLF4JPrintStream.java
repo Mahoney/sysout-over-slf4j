@@ -5,6 +5,8 @@ import java.io.PrintStream;
 public interface SLF4JPrintStream {
 
 	void registerLoggerAppender(final Object loggerAppender);
+	
+	void deregisterLoggerAppender();
 
 	PrintStream getOriginalPrintStream();
 

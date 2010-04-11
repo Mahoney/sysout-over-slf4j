@@ -1,8 +1,8 @@
 package org.slf4j.sysoutslf4j.system;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createStrictMock;
 import static org.junit.Assert.assertSame;
+import static org.powermock.api.easymock.PowerMock.createStrictMock;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
@@ -317,5 +317,12 @@ public class TestSLF4JPrintStreamImpl {
 		mockDelegate.registerLoggerAppender(loggerAppender);
 		replayAll();
 		slf4jPrintStreamImpl.registerLoggerAppender(loggerAppender);
+	}
+	
+	@Test
+	public void deregisterLoggerAppenderDelegatesToDelegate() {
+		mockDelegate.deregisterLoggerAppender();
+		replayAll();
+		slf4jPrintStreamImpl.deregisterLoggerAppender();
 	}
 }

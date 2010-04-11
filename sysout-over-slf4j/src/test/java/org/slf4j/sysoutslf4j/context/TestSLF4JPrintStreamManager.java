@@ -30,7 +30,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ReflectionUtils.class, ClassLoaderUtils.class, SLF4JPrintStreamManager.class, SLF4JPrintStreamProxy.class, ReferenceHolder.class })
+@PrepareForTest({ ReflectionUtils.class, ClassLoaderUtils.class, SLF4JPrintStreamManager.class, SLF4JPrintStreamProxy.class })
 public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
 
     private SLF4JPrintStreamManager slf4JPrintStreamManagerInstance;
@@ -44,7 +44,6 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
         slf4JPrintStreamManagerInstance = new SLF4JPrintStreamManager();
         mockStatic(ReflectionUtils.class);
         mockStatic(ClassLoaderUtils.class);
-        mockStatic(ReferenceHolder.class);
         mockStatic(SLF4JPrintStreamProxy.class);
         log.setLevel(Level.TRACE);
     }
@@ -77,24 +76,53 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     }
     
     @Test
-    public void sendSystemOutAndErrToOriginalsIfNecessaryRestoresOriginalPrintStreams() {
+    public void stopSendingSystemOutAndErrToSLF4JDeregistersLoggerAppenders() {
+    	
+    	expectLoggerAppenderToBeDeregistered(SystemOutput.OUT);
+    	expectLoggerAppenderToBeDeregistered(SystemOutput.ERR);
+    	
+    	replayAll();
+    	
+    	slf4JPrintStreamManagerInstance.stopSendingSystemOutAndErrToSLF4J();
+    	
+    	verifyAll();
+		
+//    	expectConfiguratorClassToBeLoaded();
+//        expect(ReflectionUtils.invokeStaticMethod(
+//        		"stopSendingSystemOutAndErrToSLF4J", SLF4JPrintStreamConfigurator.class)).andReturn(null);
+//        replayAll();
+//
+//        slf4JPrintStreamManagerInstance.restoreOriginalSystemOutputsIfNecessary();
+//        verifyAll();
+//        
+//        assertExpectedLoggingEvent(appender.list.get(0), "Restored original System.out and System.err", Level.INFO, null, SysOutOverSLF4J.class.getName());
+    }
+    
+    private void expectLoggerAppenderToBeDeregistered(SystemOutput systemOutput) {
+    	SLF4JPrintStream slf4jPrintStreamMock = createMock(SLF4JPrintStream.class);
+		expect(SLF4JPrintStreamProxy.wrap(systemOutput.get())).andReturn(slf4jPrintStreamMock);
+		slf4jPrintStreamMock.deregisterLoggerAppender();
+    }
+    
+    @Test
+    public void restoreOriginalSystemOutputsIfNecessaryRestoresOriginalPrintStreams() {
     	SLF4JPrintStreamConfigurator.replaceSystemOutputsWithSLF4JPrintStreams();
     	expectConfiguratorClassToBeLoaded();
         expect(ReflectionUtils.invokeStaticMethod(
         		"restoreOriginalSystemOutputs", SLF4JPrintStreamConfigurator.class)).andReturn(null);
         replayAll();
 
-        slf4JPrintStreamManagerInstance.sendSystemOutAndErrToOriginalsIfNecessary();
+        slf4JPrintStreamManagerInstance.restoreOriginalSystemOutputsIfNecessary();
         verifyAll();
         
         assertExpectedLoggingEvent(appender.list.get(0), "Restored original System.out and System.err", Level.INFO, null, SysOutOverSLF4J.class.getName());
     }
     
     @Test
-    public void sendSystemOutAndErrToOriginalsIfNecessaryDoesNotRestoreOriginalPrintStreamsIfNotSLF4JPrintStreams() {
+    public void restoreOriginalSystemOutputsIfNecessaryDoesNotRestoreOriginalPrintStreamsIfNotSLF4JPrintStreams() {
         replayAll();
 
-        slf4JPrintStreamManagerInstance.sendSystemOutAndErrToOriginalsIfNecessary();
+        slf4JPrintStreamManagerInstance.restoreOriginalSystemOutputsIfNecessary();
         verifyAll();
         
         assertExpectedLoggingEvent(appender.list.get(0), "System.out and System.err are not SLF4JPrintStreams - cannot restore", Level.WARN, null, SysOutOverSLF4J.class.getName());
@@ -114,7 +142,6 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
         expect(exceptionHandlingStrategyFactoryMock.makeExceptionHandlingStrategy(logLevel, originalPrintStreamMock)).andReturn(exceptionHandlingStrategyMock);
         LoggerAppenderImpl loggerAppenderMock = createMock(LoggerAppenderImpl.class);
         expectNew(LoggerAppenderImpl.class, logLevel, exceptionHandlingStrategyMock, originalPrintStreamMock).andReturn(loggerAppenderMock);
-        ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(loggerAppenderMock);
         slf4jPrintStreamMock.registerLoggerAppender(loggerAppenderMock);
 	}
 
