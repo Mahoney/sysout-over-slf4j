@@ -16,13 +16,14 @@ public class TestForClassloaderLeaks extends SysOutOverSlf4jIntegrationTestCase 
 	public void classLoaderCanBeGarbageCollectedAfterCallingSendSystemOutAndErrToSLF4J() throws Exception {
 		ClassLoaderHolder classLoaderHolder = new ClassLoaderHolder(0);
 		
-		givenThatSystemOutAndErrHaveBeenSentToSLF4JInAClassLoader(classLoaderHolder);
+		givenThatSystemOutAndErrHaveBeenSentToSLF4JAndThenStoppedBeingSentToSLF4JInAClassLoader(classLoaderHolder);
 		whenNoReferencesToThatClassLoaderExist(classLoaderHolder);
 		thenThatClassLoaderShouldBeGarbageCollected(classLoaderHolder);
 	}
 
-	private void givenThatSystemOutAndErrHaveBeenSentToSLF4JInAClassLoader(ClassLoaderHolder classLoaderHolder) throws Exception {
+	private void givenThatSystemOutAndErrHaveBeenSentToSLF4JAndThenStoppedBeingSentToSLF4JInAClassLoader(ClassLoaderHolder classLoaderHolder) throws Exception {
 		callSendSystemOutAndErrToSLF4JInClassLoader(classLoaderHolder.classLoader);
+		callStopSendingSystemOutAndErrToSLF4JInClassLoader(classLoaderHolder.classLoader);
 	}
 	
 	private void whenNoReferencesToThatClassLoaderExist(ClassLoaderHolder classLoaderHolder) {
@@ -40,15 +41,16 @@ public class TestForClassloaderLeaks extends SysOutOverSlf4jIntegrationTestCase 
 		for (int i = 0; i < NUMBER_OF_CLASSLOADERS; i++) {
 			classLoaderHolders[i] = new ClassLoaderHolder(i);
 		}
-		givenThatSystemOutAndErrHaveBeenSentToSLF4JInSeveralClassLoaders(classLoaderHolders);
+		givenThatSystemOutAndErrHaveBeenSentToSLF4JAndThenStoppedBeingSentToSLF4JInSeveralClassLoaders(classLoaderHolders);
 		whenNoReferencesToThoseClassLoadersExist(classLoaderHolders);
 		thenThoseClassLoadersShouldBeGarbageCollected(classLoaderHolders);
 	}
 	
-	private void givenThatSystemOutAndErrHaveBeenSentToSLF4JInSeveralClassLoaders(
+	private void givenThatSystemOutAndErrHaveBeenSentToSLF4JAndThenStoppedBeingSentToSLF4JInSeveralClassLoaders(
 			ClassLoaderHolder[] classLoaderHolders) throws Exception {
 		for (ClassLoaderHolder classLoaderHolder : classLoaderHolders) {
 			callSendSystemOutAndErrToSLF4JInClassLoader(classLoaderHolder.classLoader);
+			callStopSendingSystemOutAndErrToSLF4JInClassLoader(classLoaderHolder.classLoader);
 		}
 	}
 

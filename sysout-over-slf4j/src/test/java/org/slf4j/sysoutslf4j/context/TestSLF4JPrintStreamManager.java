@@ -86,22 +86,25 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     	slf4JPrintStreamManagerInstance.stopSendingSystemOutAndErrToSLF4J();
     	
     	verifyAll();
-		
-//    	expectConfiguratorClassToBeLoaded();
-//        expect(ReflectionUtils.invokeStaticMethod(
-//        		"stopSendingSystemOutAndErrToSLF4J", SLF4JPrintStreamConfigurator.class)).andReturn(null);
-//        replayAll();
-//
-//        slf4JPrintStreamManagerInstance.restoreOriginalSystemOutputsIfNecessary();
-//        verifyAll();
-//        
-//        assertExpectedLoggingEvent(appender.list.get(0), "Restored original System.out and System.err", Level.INFO, null, SysOutOverSLF4J.class.getName());
     }
     
     private void expectLoggerAppenderToBeDeregistered(SystemOutput systemOutput) {
     	SLF4JPrintStream slf4jPrintStreamMock = createMock(SLF4JPrintStream.class);
 		expect(SLF4JPrintStreamProxy.wrap(systemOutput.get())).andReturn(slf4jPrintStreamMock);
 		slf4jPrintStreamMock.deregisterLoggerAppender();
+    }
+    
+    @Test
+    public void stopSendingSystemOutAndErrToSLF4JLogsWarningIfSystemOutputsAreNotSLF4JPrintStreams() {
+    	expect(SLF4JPrintStreamProxy.wrap(System.out)).andThrow(new IllegalArgumentException());
+    	
+    	replayAll();
+    	
+    	slf4JPrintStreamManagerInstance.stopSendingSystemOutAndErrToSLF4J();
+    	
+    	assertExpectedLoggingEvent(appender.list.get(0),
+    			"Cannot stop sending System.out and System.err to SLF4J - they are not being sent there at the moment",
+    			Level.WARN, null, SysOutOverSLF4J.class.getName());
     }
     
     @Test
