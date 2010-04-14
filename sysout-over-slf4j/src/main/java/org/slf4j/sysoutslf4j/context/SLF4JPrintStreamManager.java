@@ -69,13 +69,15 @@ class SLF4JPrintStreamManager {
 	}
 
 	void stopSendingSystemOutAndErrToSLF4J() {
-		try {
-			for (SystemOutput systemOutput : SystemOutput.values()) {
-				SLF4JPrintStream slf4jPrintStream = SLF4JPrintStreamProxy.wrap(systemOutput.get());
-				slf4jPrintStream.deregisterLoggerAppender();
+		synchronized (System.class) {
+			try {
+				for (SystemOutput systemOutput : SystemOutput.values()) {
+					SLF4JPrintStream slf4jPrintStream = SLF4JPrintStreamProxy.wrap(systemOutput.get());
+					slf4jPrintStream.deregisterLoggerAppender();
+				}
+			} catch (IllegalArgumentException iae) {
+				log.warn("Cannot stop sending System.out and System.err to SLF4J - they are not being sent there at the moment");
 			}
-		} catch (IllegalArgumentException iae) {
-			log.warn("Cannot stop sending System.out and System.err to SLF4J - they are not being sent there at the moment");
 		}
 	}
 

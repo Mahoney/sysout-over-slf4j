@@ -96,7 +96,8 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     
     @Test
     public void stopSendingSystemOutAndErrToSLF4JLogsWarningIfSystemOutputsAreNotSLF4JPrintStreams() {
-    	expect(SLF4JPrintStreamProxy.wrap(System.out)).andThrow(new IllegalArgumentException());
+    	expect(SLF4JPrintStreamProxy.wrap(System.out)).andStubThrow(new IllegalArgumentException());
+    	expect(SLF4JPrintStreamProxy.wrap(System.err)).andStubThrow(new IllegalArgumentException());
     	
     	replayAll();
     	
