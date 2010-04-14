@@ -301,7 +301,7 @@
     is only one System.out and one System.err for the whole JVM.
     In order to ensure that the correct SLF4J instance is used
     for the correct web application, inside the new PrintStreams
-    SLF4J instances are mapped against the current thread's context
+    SLF4J instances are mapped against the context
     class loader to ensure that the same SLF4J instance used in
     "normal" logging is also used when calling System.out.println.
     </p>
