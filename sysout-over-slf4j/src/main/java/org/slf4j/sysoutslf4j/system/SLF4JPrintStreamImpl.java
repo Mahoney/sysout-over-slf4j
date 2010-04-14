@@ -41,9 +41,7 @@ import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
  *         PrintStream passed to the latter is either the {@link System#out} or
  *         the {@link System#err} {@link PrintStream}) are handled by
  *         calculating the name of the class which called printStackTrace and
- *         logging using a logger named after that class. This approach has the
- *         unavoidable limitation that each line of the stack trace is likely to
- *         be printed by the logging system with date, logger etc. information.
+ *         logging using a logger named after that class.
  *         </p>
  * 
  *         <p>

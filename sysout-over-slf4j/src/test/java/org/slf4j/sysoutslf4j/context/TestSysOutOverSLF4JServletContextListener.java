@@ -29,7 +29,12 @@ public class TestSysOutOverSLF4JServletContextListener extends SysOutOverSLF4JTe
 	
 	@Test
 	public void testContextDestroyedDoesNothing() {
+		mockStatic(SysOutOverSLF4J.class);
+		SysOutOverSLF4J.stopSendingSystemOutAndErrToSLF4J();
+		replay(SysOutOverSLF4J.class);
+		
 		servletContextListener.contextDestroyed(null);
-		// How do we assert that nothing happened??!
+		
+		verify(SysOutOverSLF4J.class);
 	}
 }

@@ -6,10 +6,9 @@ import org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy
 import org.slf4j.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory;
 
 /**
- *
- * Helper class that provides a method to wrap the existing
- * {@link System#out} and {@link System#err} {@link PrintStream}s with
- * custom {@link SLF4JPrintStreamImpl}s that redirect to a logging system
+ * Public interface to the sysout-over-slf4j module. Provides all methods necessary to manage wrapping the existing
+ * {@link System#out} and {@link System#err} {@link java.io.PrintStream}s with
+ * custom {@link org.slf4j.sysoutslf4j.system.SLF4JPrintStreamImpl}s that redirect to a logging system
  * via SLF4J.
  *
  * Synchronizes on System.class to ensure proper synchronization even if this class is loaded
@@ -31,15 +30,28 @@ public final class SysOutOverSLF4J {
 
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
-	 * System.err PrintStreams in a LoggerPrintStream. <br/>
-	 * Can be called any number of times, and is synchronized on System.class.
-	 * Uses the LogPerLineExceptionHandlingStrategy for handling printlns coming from
-	 * Throwable.printStackTrace()
+	 * System.err PrintStreams in an {@link org.slf4j.sysoutslf4j.system.SLF4JPrintStreamImpl} and registers
+	 * SLF4J for the current context.<br/>
+	 * Can be called any number of times, and is synchronized on System.class.<br/>
+	 * Uses the {@link org.slf4j.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory}
+	 * for handling printlns coming from Throwable.printStackTrace().<br/>
+	 * Logs at info level for System.out and at error level for System.err.
 	 */
 	public static void sendSystemOutAndErrToSLF4J() {
 		sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.ERROR);
 	}
 	
+	/**
+	 * If they have not previously been wrapped, wraps the System.out and
+	 * System.err PrintStreams in an {@link org.slf4j.sysoutslf4j.system.SLF4JPrintStreamImpl} and registers
+	 * SLF4J for the current context's classloader.<br/>
+	 * Can be called any number of times, and is synchronized on System.class.<br/>
+	 * Uses the LogPerLineExceptionHandlingStrategy for handling printlns coming from
+	 * Throwable.printStackTrace().
+	 * 
+	 * @param outLevel The SLF4J {@link org.slf4j.sysoutslf4j.context.LogLevel} at which calls to System.out should be logged
+	 * @param errLevel The SLF4J {@link org.slf4j.sysoutslf4j.context.LogLevel} at which calls to System.err should be logged
+	 */
 	public static void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel) {
 		final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory =
 			LogPerLineExceptionHandlingStrategyFactory.getInstance();
@@ -48,32 +60,62 @@ public final class SysOutOverSLF4J {
 
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
-	 * System.err PrintStreams in a LoggerPrintStream.
+	 * System.err PrintStreams in an {@link org.slf4j.sysoutslf4j.system.SLF4JPrintStreamImpl} and registers
+	 * SLF4J for the current context's classloader.<br/>
 	 * Can be called any number of times, and is synchronized on System.class.
+	 * Logs at info level for System.out and at error level for System.err.
 	 *
-	 * @param exceptionHandlingStrategyFactory A factory for creating strategues for handling printlns coming from
-	 *			Throwable.printStackTrace()
+	 * @param exceptionHandlingStrategyFactory
+	 * 			The {@link org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory}
+	 * 			for creating strategies for handling printlns coming from Throwable.printStackTrace()
 	 */
 	public static void sendSystemOutAndErrToSLF4J(final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
 		sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.ERROR, exceptionHandlingStrategyFactory);
 	}
 	
+	/**
+	 * If they have not previously been wrapped, wraps the System.out and
+	 * System.err PrintStreams in an {@link org.slf4j.sysoutslf4j.system.SLF4JPrintStreamImpl} and registers
+	 * SLF4J for the current context's classloader.<br/>
+	 * Can be called any number of times, and is synchronized on System.class.<br/>
+	 * 
+	 * @param outLevel The SLF4J {@link org.slf4j.sysoutslf4j.context.LogLevel} at which calls to System.out should be logged
+	 * @param errLevel The SLF4J {@link org.slf4j.sysoutslf4j.context.LogLevel} at which calls to System.err should be logged
+	 * @param exceptionHandlingStrategyFactory
+	 * 			The {@link org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory}
+	 * 			for creating strategies for handling printlns coming from Throwable.printStackTrace()
+	 */
 	public static void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel,
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
-		SLF4J_PRINT_STREAM_MANAGER.sendSystemOutAndErrToSLF4J(outLevel, errLevel, exceptionHandlingStrategyFactory);
-	}
-
-	public static void stopSendingSystemOutAndErrToSLF4J() {
-		SLF4J_PRINT_STREAM_MANAGER.stopSendingSystemOutAndErrToSLF4J();
+		synchronized (System.class) {
+			SLF4J_PRINT_STREAM_MANAGER.sendSystemOutAndErrToSLF4J(outLevel, errLevel, exceptionHandlingStrategyFactory);
+		}
 	}
 
 	/**
-	 * If System.out and System.err have been redirected to SLF4J, restores the originals
-	 * allowing direct access to the console again.
+	 * Stops using SLF4J for calls to System.out and System.err in the current context.
+	 * Has no effect on any other contexts that may be using sysout-over-slf4j.<br/>
+	 * It is important to call this prior to unloading a context as otherwise there will be a
+	 * classloader leak leading to PermGen OutOfMemory errors.<br/>
+	 * Can be called any number of times, and is synchronized on System.class.
+	 */
+	public static void stopSendingSystemOutAndErrToSLF4J() {
+		synchronized (System.class) {
+			SLF4J_PRINT_STREAM_MANAGER.stopSendingSystemOutAndErrToSLF4J();
+		}
+	}
+
+	/**
+	 * If System.out and System.err have been redirected to SLF4J, restores the original PrintStreams
+	 * allowing direct access to the console again.<br/>
+	 * This will stop all contexts in the JVM from using sysout-over-slf4j. It is not necessary to call
+	 * @link{SysOutOverSLF4J#stopSendingSystemOutAndErrToSLF4J()} as well as this method.
 	 * Can be called any number of times, and is synchronized on System.class.
 	 */
 	public static void restoreOriginalSystemOutputs() {
-		SLF4J_PRINT_STREAM_MANAGER.restoreOriginalSystemOutputsIfNecessary();
+		synchronized (System.class) {
+			SLF4J_PRINT_STREAM_MANAGER.restoreOriginalSystemOutputsIfNecessary();
+		}
 	}
 
 
@@ -82,7 +124,7 @@ public final class SysOutOverSLF4J {
 	 * System.out/err println from classes within it should be allowed through
 	 * to the original PrintStreams rather than redirected to SLF4J.
 	 *
-	 * @param packageName A package name e.g. org.apache.log4j
+	 * @param packageName A package name e.g. org.someloggingsystem
 	 */
 	public static void registerLoggingSystem(final String packageName) {
 		LOGGING_SYSTEM_REGISTER.registerLoggingSystem(packageName);
@@ -92,7 +134,7 @@ public final class SysOutOverSLF4J {
 	 * Unregisters a package as being a logging system and hence any calls to
 	 * System.out/err println from classes within it will be redirected to SLF4J.
 	 *
-	 * @param packageName A package name e.g. org.apache.log4j
+	 * @param packageName A package name e.g. org.someloggingsystem
 	 */
 	public static void unregisterLoggingSystem(final String packageName) {
 		LOGGING_SYSTEM_REGISTER.unregisterLoggingSystem(packageName);

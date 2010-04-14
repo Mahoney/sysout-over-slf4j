@@ -11,6 +11,6 @@ public class SysOutOverSLF4JServletContextListener implements ServletContextList
 	}
 
 	public void contextDestroyed(final ServletContextEvent servletContextEvent) {
-		// Not interested...
+		SysOutOverSLF4J.stopSendingSystemOutAndErrToSLF4J();
 	}
 }

@@ -19,11 +19,9 @@ class SLF4JPrintStreamManager {
 
 	void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel,
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
-		synchronized (System.class) {
-			makeSystemOutputsSLF4JPrintStreamsIfNecessary();
-			sendSystemOutAndErrToSLF4JForThisContext(outLevel, errLevel, exceptionHandlingStrategyFactory);
-			log.info("Redirected System.out and System.err to SLF4J for this context");
-		}
+		makeSystemOutputsSLF4JPrintStreamsIfNecessary();
+		sendSystemOutAndErrToSLF4JForThisContext(outLevel, errLevel, exceptionHandlingStrategyFactory);
+		log.info("Redirected System.out and System.err to SLF4J for this context");
 	}
 
 	private void makeSystemOutputsSLF4JPrintStreamsIfNecessary() {
@@ -69,26 +67,22 @@ class SLF4JPrintStreamManager {
 	}
 
 	void stopSendingSystemOutAndErrToSLF4J() {
-		synchronized (System.class) {
-			try {
-				for (SystemOutput systemOutput : SystemOutput.values()) {
-					SLF4JPrintStream slf4jPrintStream = SLF4JPrintStreamProxy.wrap(systemOutput.get());
-					slf4jPrintStream.deregisterLoggerAppender();
-				}
-			} catch (IllegalArgumentException iae) {
-				log.warn("Cannot stop sending System.out and System.err to SLF4J - they are not being sent there at the moment");
+		try {
+			for (SystemOutput systemOutput : SystemOutput.values()) {
+				SLF4JPrintStream slf4jPrintStream = SLF4JPrintStreamProxy.wrap(systemOutput.get());
+				slf4jPrintStream.deregisterLoggerAppender();
 			}
+		} catch (IllegalArgumentException iae) {
+			log.warn("Cannot stop sending System.out and System.err to SLF4J - they are not being sent there at the moment");
 		}
 	}
 
 	void restoreOriginalSystemOutputsIfNecessary() {
-		synchronized (System.class) {
-			if (systemOutputsAreSLF4JPrintStreams()) {
-				restoreOriginalSystemOutputs();
-				log.info("Restored original System.out and System.err");
-			} else {
-				log.warn("System.out and System.err are not SLF4JPrintStreams - cannot restore");
-			}
+		if (systemOutputsAreSLF4JPrintStreams()) {
+			restoreOriginalSystemOutputs();
+			log.info("Restored original System.out and System.err");
+		} else {
+			log.warn("System.out and System.err are not SLF4JPrintStreams - cannot restore");
 		}
 	}
 
