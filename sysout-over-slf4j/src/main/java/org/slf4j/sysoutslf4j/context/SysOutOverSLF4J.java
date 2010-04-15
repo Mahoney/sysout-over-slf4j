@@ -15,7 +15,7 @@ import org.slf4j.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandli
  * by multiple classloaders.
  *
  * @author Robert Elliot
- * @see SLF4JPrintStreamImpl
+ * @see org.slf4j.sysoutslf4j.system.SLF4JPrintStreamImpl
  */
 public final class SysOutOverSLF4J {
 	
@@ -49,8 +49,8 @@ public final class SysOutOverSLF4J {
 	 * Uses the LogPerLineExceptionHandlingStrategy for handling printlns coming from
 	 * Throwable.printStackTrace().
 	 * 
-	 * @param outLevel The SLF4J {@link org.slf4j.sysoutslf4j.context.LogLevel} at which calls to System.out should be logged
-	 * @param errLevel The SLF4J {@link org.slf4j.sysoutslf4j.context.LogLevel} at which calls to System.err should be logged
+	 * @param outLevel The SLF4J {@link LogLevel} at which calls to System.out should be logged
+	 * @param errLevel The SLF4J {@link LogLevel} at which calls to System.err should be logged
 	 */
 	public static void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel) {
 		final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory =
@@ -79,8 +79,8 @@ public final class SysOutOverSLF4J {
 	 * SLF4J for the current context's classloader.<br/>
 	 * Can be called any number of times, and is synchronized on System.class.<br/>
 	 * 
-	 * @param outLevel The SLF4J {@link org.slf4j.sysoutslf4j.context.LogLevel} at which calls to System.out should be logged
-	 * @param errLevel The SLF4J {@link org.slf4j.sysoutslf4j.context.LogLevel} at which calls to System.err should be logged
+	 * @param outLevel The SLF4J {@link LogLevel} at which calls to System.out should be logged
+	 * @param errLevel The SLF4J {@link LogLevel} at which calls to System.err should be logged
 	 * @param exceptionHandlingStrategyFactory
 	 * 			The {@link org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory}
 	 * 			for creating strategies for handling printlns coming from Throwable.printStackTrace()
@@ -144,7 +144,8 @@ public final class SysOutOverSLF4J {
 	 * Checks whether the given fully qualified class name is a member of a
 	 * package registered as being a logging system.
 	 *
-	 * @param className
+	 * @param className The fully qualifed name of the class which may be in
+	 *         a registered logging system
 	 * @return true if the class is in one of the registered logging system
 	 *         packages, false otherwise
 	 */
