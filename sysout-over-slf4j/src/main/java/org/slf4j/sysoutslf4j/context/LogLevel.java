@@ -3,6 +3,11 @@ package org.slf4j.sysoutslf4j.context;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 
+/**
+ * Enumeration representing the five levels on an SLF4J Logger.
+ * A call to log on a particular level will call the corresponding
+ * method on the given Logger.
+ */
 public enum LogLevel {
 	
 	TRACE {
@@ -60,6 +65,17 @@ public enum LogLevel {
 		}
 	};
 	
+	/**
+	 * Calls logger.&lt;level&gt;(message)
+	 * @param logger
+	 * @param message
+	 */
 	public abstract void log(Logger logger, String message);
+	
+	/**
+	 * Calls logger.&lt;level&gt;(marker, message)
+	 * @param logger
+	 * @param message
+	 */
 	public abstract void log(Logger logger, Marker marker, String message);
 }

@@ -7,6 +7,10 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import org.slf4j.sysoutslf4j.context.LogLevel;
 
+/**
+ * Implementation of {@link LogPerLineExceptionHandlingStrategyFactory} which returns an
+ * {@link ExceptionHandlingStrategy} that simply logs each line of the stack trace as a separate logging event.
+ */
 public final class LogPerLineExceptionHandlingStrategyFactory implements ExceptionHandlingStrategyFactory {
 
 	private static final ExceptionHandlingStrategyFactory INSTANCE = new LogPerLineExceptionHandlingStrategyFactory();
@@ -34,6 +38,9 @@ public final class LogPerLineExceptionHandlingStrategyFactory implements Excepti
 			this.logLevel = logLevel;
 		}
 
+		/**
+		 * This method is not used since nothing is buffered
+		 */
 		public void notifyNotStackTrace() {
 			// Do nothing
 		}
