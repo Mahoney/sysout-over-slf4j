@@ -26,8 +26,8 @@ import org.slf4j.testutils.Assert;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.CoreConstants;
@@ -96,10 +96,11 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	}
 
 	private void configureLogBackConsoleAppender() {
-		log.detachAndStopAllAppenders();
-		Appender<ILoggingEvent> app = new ConsoleAppender<ILoggingEvent>();
-		app.setLayout(new EchoLayout<ILoggingEvent>());
+		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+		Logger log = lc.getLogger(Logger.ROOT_LOGGER_NAME);
+		ConsoleAppender<ILoggingEvent> app = new ConsoleAppender<ILoggingEvent>();
 		app.setContext((Context) LoggerFactory.getILoggerFactory());
+		app.setLayout(new EchoLayout<ILoggingEvent>());
 		app.start();
 		log.addAppender(app);
 	}
