@@ -36,17 +36,16 @@
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<forkMode>always</forkMode>
+					<forkMode>never</forkMode>
 					<excludes>
 						<exclude>**/*$*.java</exclude>
 					</excludes>
-					<systemProperties>
+					<systemPropertyVariables>
 						<property>
 							<name>cobertura.use.java.nio</name>
 							<value>false</value>
 						</property>
-					</systemProperties>
-					<parallel>classes</parallel>
+					</systemPropertyVariables>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -26,7 +26,7 @@ import ch.qos.logback.core.read.ListAppender;
 
 public class TestSysOutOverSLF4JInClassLoader extends SysOutOverSlf4jIntegrationTestCase {
 
-	private final ClassLoader app1ClassLoader = new SimpleClassloader();
+	private final ClassLoader app1ClassLoader = SimpleClassloader.make();
 	
 	@Before
 	public void prepareLogging() throws Exception {

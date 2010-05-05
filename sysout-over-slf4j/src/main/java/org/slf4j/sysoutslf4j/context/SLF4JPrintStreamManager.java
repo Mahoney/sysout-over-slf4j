@@ -4,7 +4,6 @@ import java.io.PrintStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.sysoutslf4j.common.ClassLoaderUtils;
 import org.slf4j.sysoutslf4j.common.ReflectionUtils;
 import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
 import org.slf4j.sysoutslf4j.common.SystemOutput;
@@ -42,7 +41,12 @@ class SLF4JPrintStreamManager {
 	}
 
 	private Class<?> getSlf4jPrintStreamConfiguratorClass() {
-		final ClassLoader classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(SLF4JPrintStreamConfigurator.class);
+		final ClassLoader classLoader;
+		if (systemOutputsAreSLF4JPrintStreams()) {
+			classLoader = System.out.getClass().getClassLoader();
+		} else {
+			classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(SLF4JPrintStreamConfigurator.class);
+		}
 		final Class<?> slf4jPrintStreamConfiguratorClass =
 			ClassLoaderUtils.loadClass(classLoader, SLF4JPrintStreamConfigurator.class);
 		return slf4jPrintStreamConfiguratorClass;

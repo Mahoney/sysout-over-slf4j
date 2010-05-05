@@ -1,26 +1,21 @@
-package org.slf4j.sysoutslf4j.common;
+package org.slf4j.sysoutslf4j.context;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
+import java.util.Arrays;
 
-public final class ClassLoaderUtils {
+import org.slf4j.sysoutslf4j.common.StringUtils;
+import org.slf4j.sysoutslf4j.common.WrappedCheckedException;
+
+final class ClassLoaderUtils {
 	
-	public static ClassLoader makeNewClassLoaderForJar(final Class<?> classInJar) {
-		return makeNewClassLoaderForJar(classInJar, ClassLoader.getSystemClassLoader());
-	}
+	private static ClassLoader SYSTEM_CLASSLOADER = ClassLoader.getSystemClassLoader();
 	
-	public static ClassLoader makeNewClassLoaderForJar(final Class<?> classInJar, final ClassLoader parent) {
+	static ClassLoader makeNewClassLoaderForJar(final Class<?> classInJar) {
 		final URL jarURL = getJarURL(classInJar);
-		return AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
-			public URLClassLoader run() {
-				return new URLClassLoader(new URL[]{jarURL}, parent);
-			}
-		});
+		return InsecureURLClassLoader.newInstance(Arrays.asList(new URL[]{jarURL}), SYSTEM_CLASSLOADER);
 	}
-
+	
 	private static URL getJarURL(final Class<?> classInJar) {
 		final String relativeClassFilePath = getRelativeFilePathOfClass(classInJar); // NOPMD
 		final URL classURL = getResource(relativeClassFilePath);
@@ -42,7 +37,7 @@ public final class ClassLoaderUtils {
 		return Thread.currentThread().getContextClassLoader().getResource(relativeFilePath);
 	}
 
-	public static Class<?> loadClass(final ClassLoader classLoader, final Class<?> classToLoad) {
+	static Class<?> loadClass(final ClassLoader classLoader, final Class<?> classToLoad) {
 		try {
 			return classLoader.loadClass(classToLoad.getName());
 		} catch (ClassNotFoundException cne) {

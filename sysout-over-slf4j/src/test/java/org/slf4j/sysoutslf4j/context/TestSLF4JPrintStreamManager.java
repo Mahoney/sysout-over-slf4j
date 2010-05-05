@@ -18,7 +18,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.LoggerFactory;
 import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
-import org.slf4j.sysoutslf4j.common.ClassLoaderUtils;
 import org.slf4j.sysoutslf4j.common.ReflectionUtils;
 import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
 import org.slf4j.sysoutslf4j.common.SystemOutput;
@@ -111,7 +110,7 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     @Test
     public void restoreOriginalSystemOutputsIfNecessaryRestoresOriginalPrintStreams() {
     	SLF4JPrintStreamConfigurator.replaceSystemOutputsWithSLF4JPrintStreams();
-    	expectConfiguratorClassToBeLoaded();
+    	expectConfiguratorClassToBeLoadedFromExistingClassLoader();
         expect(ReflectionUtils.invokeStaticMethod(
         		"restoreOriginalSystemOutputs", SLF4JPrintStreamConfigurator.class)).andReturn(null);
         replayAll();
@@ -150,12 +149,17 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
 	}
 
 	private void expectSystemOutputsToBeReplacedWithSLF4JPrintStreams() {
-		expectConfiguratorClassToBeLoaded();
+		expectConfiguratorClassToBeLoadedFromNewClassLoader();
         expect(ReflectionUtils.invokeStaticMethod(
         		"replaceSystemOutputsWithSLF4JPrintStreams", SLF4JPrintStreamConfigurator.class)).andReturn(null);
 	}
+	
+	private void expectConfiguratorClassToBeLoadedFromExistingClassLoader() {
+		ClassLoaderUtils.loadClass(System.out.getClass().getClassLoader(), SLF4JPrintStreamConfigurator.class);
+        expectLastCall().andReturn(SLF4JPrintStreamConfigurator.class);
+	}
 
-	private void expectConfiguratorClassToBeLoaded() {
+	private void expectConfiguratorClassToBeLoadedFromNewClassLoader() {
         ClassLoader classLoaderMock = createMock(ClassLoader.class);
         expect(ClassLoaderUtils.makeNewClassLoaderForJar(SLF4JPrintStreamConfigurator.class)).andReturn(classLoaderMock);
         ClassLoaderUtils.loadClass(classLoaderMock, SLF4JPrintStreamConfigurator.class);

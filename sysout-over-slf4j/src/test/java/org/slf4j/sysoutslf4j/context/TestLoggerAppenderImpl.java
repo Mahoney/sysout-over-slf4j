@@ -8,6 +8,7 @@ import static org.powermock.api.easymock.PowerMock.mockStatic;
 import java.io.PrintStream;
 
 import org.easymock.classextension.IMocksControl;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,12 +40,12 @@ public class TestLoggerAppenderImpl extends SysOutOverSLF4JTestCase {
 	
 	@Before
 	public void setUp() {
-		mockStatic(LoggerFactory.class);
-		expect(LoggerFactory.getLogger(CLASS_NAME)).andStubReturn(loggerMock);
-		
 		mockStatic(SysOutOverSLF4J.class);
 		expect(SysOutOverSLF4J.isInLoggingSystem(CLASS_IN_LOGGING_SYSTEM)).andStubReturn(true);
 		expect(SysOutOverSLF4J.isInLoggingSystem(CLASS_NAME)).andStubReturn(false);
+
+		mockStatic(LoggerFactory.class);
+		expect(LoggerFactory.getLogger(CLASS_NAME)).andStubReturn(loggerMock);	
 	}
 	
 	@Test
@@ -53,8 +54,6 @@ public class TestLoggerAppenderImpl extends SysOutOverSLF4JTestCase {
 		replayAll();
 		
 		loggerAppenderImplInstance.append("irrelevant");
-		mocksControl.verify();
-		verifyAll();
 	}
 	
 	@Test
@@ -63,7 +62,6 @@ public class TestLoggerAppenderImpl extends SysOutOverSLF4JTestCase {
 		replayAll();
 		
 		loggerAppenderImplInstance.appendAndLog("some text", CLASS_IN_LOGGING_SYSTEM, false);
-		verifyAll();
 	}
 	
 	@Test
@@ -73,7 +71,6 @@ public class TestLoggerAppenderImpl extends SysOutOverSLF4JTestCase {
 		replayAll();
 		
 		loggerAppenderImplInstance.appendAndLog("some text", CLASS_NAME, false);
-		verifyAll();
 	}
 	
 	@Test
@@ -82,7 +79,6 @@ public class TestLoggerAppenderImpl extends SysOutOverSLF4JTestCase {
 		replayAll();
 		
 		loggerAppenderImplInstance.appendAndLog("some text", CLASS_NAME, true);
-		verifyAll();
 	}
 	
 	@Test
@@ -98,7 +94,6 @@ public class TestLoggerAppenderImpl extends SysOutOverSLF4JTestCase {
 		loggerAppenderImplInstance.appendAndLog("2", CLASS_NAME, false);
 		loggerAppenderImplInstance.append("3");
 		loggerAppenderImplInstance.appendAndLog("4", CLASS_NAME, false);
-		verifyAll();
 	}
 	
 	private void replayAll() {
@@ -106,8 +101,8 @@ public class TestLoggerAppenderImpl extends SysOutOverSLF4JTestCase {
 		PowerMock.replayAll();
 	}
 	
-	private void verifyAll() {
+	@After
+	public void verifyAll() {
 		mocksControl.verify();
-		PowerMock.verifyAll();
 	}
 }

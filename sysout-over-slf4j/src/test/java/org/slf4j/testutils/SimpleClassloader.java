@@ -6,17 +6,15 @@ package org.slf4j.testutils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import org.apache.commons.io.IOUtils;
 
 public class SimpleClassloader extends ClassLoader {
 	private final ClassLoader realClassLoader = getClass().getClassLoader();
 	
-	public SimpleClassloader() {
-        this(null);
-    }
-	
-    public SimpleClassloader(ClassLoader parent) {
+    private SimpleClassloader(ClassLoader parent) {
         super(parent);
     }
 
@@ -34,6 +32,18 @@ public class SimpleClassloader extends ClassLoader {
     @Override
     public URL getResource(String name) {
     	return realClassLoader.getResource(name);
+    }
+    
+    public static SimpleClassloader make() {
+    	return make(null);
+    }
+    		
+    public static SimpleClassloader make(final ClassLoader parent) {
+    	return AccessController.doPrivileged(new PrivilegedAction<SimpleClassloader>() {
+			public SimpleClassloader run() {
+				return new SimpleClassloader(parent);
+			}
+		});
     }
 
 }

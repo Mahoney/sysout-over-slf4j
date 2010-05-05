@@ -6,19 +6,29 @@ import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
 import org.junit.Test;
+import org.powermock.reflect.Whitebox;
 import org.slf4j.testutils.LoggingUtils;
 import org.slf4j.testutils.SimpleClassloader;
 
 public class TestForClassloaderLeaks extends SysOutOverSlf4jIntegrationTestCase {
 	private static final int NUMBER_OF_CLASSLOADERS = 3;
+	
+	ClassLoader fakeSystemClassLoader = new SystemClassLoaderWrapper();
 
 	@Test
 	public void classLoaderCanBeGarbageCollectedAfterCallingSendSystemOutAndErrToSLF4J() throws Exception {
 		ClassLoaderHolder classLoaderHolder = new ClassLoaderHolder(0);
+		setSystemClassLoaderUnableToLoadSysoutOverSLF4J(classLoaderHolder);
 		
 		givenThatSystemOutAndErrHaveBeenSentToSLF4JAndThenStoppedBeingSentToSLF4JInAClassLoader(classLoaderHolder);
 		whenNoReferencesToThatClassLoaderExist(classLoaderHolder);
 		thenThatClassLoaderShouldBeGarbageCollected(classLoaderHolder);
+	}
+
+	private void setSystemClassLoaderUnableToLoadSysoutOverSLF4J(
+			ClassLoaderHolder classLoaderHolder) throws ClassNotFoundException {
+		Class<?> classLoaderUtilsClass = classLoaderHolder.classLoader.loadClass("org.slf4j.sysoutslf4j.context.ClassLoaderUtils");
+		Whitebox.setInternalState(classLoaderUtilsClass, fakeSystemClassLoader);
 	}
 
 	private void givenThatSystemOutAndErrHaveBeenSentToSLF4JAndThenStoppedBeingSentToSLF4JInAClassLoader(ClassLoaderHolder classLoaderHolder) throws Exception {
@@ -40,6 +50,7 @@ public class TestForClassloaderLeaks extends SysOutOverSlf4jIntegrationTestCase 
 		ClassLoaderHolder[] classLoaderHolders = new ClassLoaderHolder[NUMBER_OF_CLASSLOADERS];
 		for (int i = 0; i < NUMBER_OF_CLASSLOADERS; i++) {
 			classLoaderHolders[i] = new ClassLoaderHolder(i);
+			setSystemClassLoaderUnableToLoadSysoutOverSLF4J(classLoaderHolders[i]);
 		}
 		givenThatSystemOutAndErrHaveBeenSentToSLF4JAndThenStoppedBeingSentToSLF4JInSeveralClassLoaders(classLoaderHolders);
 		whenNoReferencesToThoseClassLoadersExist(classLoaderHolders);
@@ -78,7 +89,7 @@ public class TestForClassloaderLeaks extends SysOutOverSlf4jIntegrationTestCase 
 	}
 
 	private static class ClassLoaderHolder {
-		private ClassLoader classLoader = new SimpleClassloader();
+		private ClassLoader classLoader = SimpleClassloader.make();
 		private WeakReference<ClassLoader> referenceToClassLoader =
 			new WeakReference<ClassLoader>(classLoader, new ReferenceQueue<ClassLoader>());
 		private int number;
@@ -86,6 +97,24 @@ public class TestForClassloaderLeaks extends SysOutOverSlf4jIntegrationTestCase 
 		private ClassLoaderHolder(int number) {
 			this.number = number;
 			LoggingUtils.turnOffRootLogging(classLoader);
+		}
+	}
+	
+	private static class SystemClassLoaderWrapper extends ClassLoader {
+		
+		@Override
+		public Class<?> loadClass(String name, boolean blah) throws ClassNotFoundException {
+			if (name.startsWith("org.slf4j.sysoutslf4j")) {
+				throw new ClassNotFoundException();
+			}
+			return super.loadClass(name, blah);
+		}
+		@Override
+		protected Class<?> findClass(String name) throws ClassNotFoundException {
+			if (name.startsWith("org.slf4j.sysoutoverslf4j")) {
+				throw new ClassNotFoundException();
+			}
+			return super.findClass("org.slf4j.sysoutslf4j");
 		}
 	}
 }

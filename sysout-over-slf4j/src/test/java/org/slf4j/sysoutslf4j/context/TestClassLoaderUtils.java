@@ -1,11 +1,10 @@
-package org.slf4j.sysoutslf4j.common;
+package org.slf4j.sysoutslf4j.context;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.slf4j.testutils.Assert.assertNotInstantiable;
@@ -13,29 +12,23 @@ import static org.slf4j.testutils.Assert.shouldThrow;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.concurrent.Callable;
 
 import org.junit.Test;
 import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
+import org.slf4j.sysoutslf4j.common.WrappedCheckedException;
 import org.slf4j.testutils.ClassCreationUtils;
 
 public class TestClassLoaderUtils extends SysOutOverSLF4JTestCase {
 	
 	@Test
 	public void makeNewClassLoaderForJarHasCorrectJarURL() throws Exception {
-		URLClassLoader classLoader = (URLClassLoader) ClassLoaderUtils.makeNewClassLoaderForJar(Test.class);
-		URL junitJarUrl = classLoader.getURLs()[0];
+		InsecureURLClassLoader classLoader = (InsecureURLClassLoader) ClassLoaderUtils.makeNewClassLoaderForJar(Test.class);
+		assertEquals(1, classLoader.getURLs().size());
+		URL junitJarUrl = classLoader.getURLs().get(0);
 		assertNotNull(junitJarUrl.getContent());
 		assertTrue(junitJarUrl.toString().startsWith("jar:file:/"));
 		assertTrue(junitJarUrl.toString().endsWith(".jar!/"));
-	}
-
-	@Test
-	public void makeNewClassLoaderForJarHasOnlyOneURL() throws Exception {
-		URLClassLoader classLoader = (URLClassLoader) ClassLoaderUtils.makeNewClassLoaderForJar(Test.class);
-		URL[] classLoaderUrls = classLoader.getURLs();
-		assertEquals(1, classLoaderUrls.length);
 	}
 	
 	@Test
@@ -43,40 +36,11 @@ public class TestClassLoaderUtils extends SysOutOverSLF4JTestCase {
 		ClassLoader classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(Test.class);
 		assertSame(ClassLoader.getSystemClassLoader(), classLoader.getParent());
 	}
-
-	@Test
-	public void makeNewClassLoaderForJarWithNullParentHasCorrectJarURL() throws Exception {
-		URLClassLoader classLoader = (URLClassLoader) ClassLoaderUtils.makeNewClassLoaderForJar(Test.class, null);
-		URL junitJarUrl = classLoader.getURLs()[0];
-		assertNotNull(junitJarUrl.getContent());
-		assertTrue(junitJarUrl.toString().startsWith("jar:file:/"));
-		assertTrue(junitJarUrl.toString().endsWith(".jar!/"));
-	}
-
-	@Test
-	public void makeNewClassLoaderForJarWithNullParentHasOnlyOneURL() throws Exception {
-		URLClassLoader classLoader = (URLClassLoader) ClassLoaderUtils.makeNewClassLoaderForJar(Test.class, null);
-		URL[] classLoaderUrls = classLoader.getURLs();
-		assertEquals(1, classLoaderUrls.length);
-	}
-	
-	@Test
-	public void makeNewClassLoaderForJarWithNullParentHasNullParent() throws Exception {
-		ClassLoader classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(Test.class, null);
-		assertNull(classLoader.getParent());
-	}
-	
-	@Test
-	public void makeNewClassLoaderForJarHasGivenParent() throws Exception {
-		ClassLoader expectedParentClassLoader = new ClassLoader() { };
-		ClassLoader classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(Test.class, expectedParentClassLoader);
-		assertSame(expectedParentClassLoader, classLoader.getParent());
-	}
 	
 	@Test
 	public void makeNewClassLoaderForJarWithClassNotInJar() throws Exception {
-		URLClassLoader classLoader = (URLClassLoader) ClassLoaderUtils.makeNewClassLoaderForJar(TestClassLoaderUtils.class, null);
-		URL classFolderUrl = classLoader.getURLs()[0];
+		InsecureURLClassLoader classLoader = (InsecureURLClassLoader) ClassLoaderUtils.makeNewClassLoaderForJar(TestClassLoaderUtils.class);
+		URL classFolderUrl = classLoader.getURLs().get(0);
 		assertNotNull(classFolderUrl.getContent());
 		assertTrue(classFolderUrl + "should start with file:/", classFolderUrl.toString().startsWith("file:/"));
 		String classFolderSuffix = "/target/test-classes/";
@@ -89,7 +53,7 @@ public class TestClassLoaderUtils extends SysOutOverSLF4JTestCase {
 		final Class<?> randomClass = ClassCreationUtils.makeClass("org.Something");
 		final WrappedCheckedException expectedException = shouldThrow(WrappedCheckedException.class, new Callable<Void>() {
 			public Void call() throws Exception {
-				ClassLoaderUtils.makeNewClassLoaderForJar(randomClass, null);
+				ClassLoaderUtils.makeNewClassLoaderForJar(randomClass);
 				return null;
 			}
 		});
