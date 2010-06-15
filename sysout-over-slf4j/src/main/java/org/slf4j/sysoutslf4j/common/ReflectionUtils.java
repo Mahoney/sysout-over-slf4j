@@ -11,6 +11,9 @@ public final class ReflectionUtils {
 	
 	public static Object invokeMethod(final String methodName, final Object target, final Class<?> argType, final Object arg) {
 		final Method method = getMethod(methodName, target.getClass(), argType);
+		if (!method.isAccessible()) {
+			method.setAccessible(true);
+		}
 		return invokeMethod(method, target, arg);
 	}
 	

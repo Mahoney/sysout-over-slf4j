@@ -1,12 +1,14 @@
 package org.slf4j.sysoutslf4j.context;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.slf4j.testutils.SimpleClassloader;
 
 public class TestInsecureURLClassLoader {
 
@@ -27,7 +29,28 @@ public class TestInsecureURLClassLoader {
 	
 	@Test
 	public void findClass() throws Exception {
-		ClassLoader classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(Test.class);
-		System.out.println(classLoader.loadClass("org.junit.Test"));
+		URL jarUrl = ClassLoaderUtils.getJarURL(Test.class);
+		List<URL> urls = Arrays.asList(new URL[] { jarUrl });
+		ClassLoader classLoader = InsecureURLClassLoader.newInstance(urls, new SystemClassLoaderWrapper());
+		Class<?> loadedClass = classLoader.loadClass("org.junit.Test");
+		assertSame(classLoader, loadedClass.getClassLoader());
+	}
+	
+		private static class SystemClassLoaderWrapper extends ClassLoader {
+		
+		@Override
+		public Class<?> loadClass(String name, boolean blah) throws ClassNotFoundException {
+			if (name.startsWith("org.junit")) {
+				throw new ClassNotFoundException();
+			}
+			return super.loadClass(name, blah);
+		}
+		@Override
+		protected Class<?> findClass(String name) throws ClassNotFoundException {
+			if (name.startsWith("org.junit")) {
+				throw new ClassNotFoundException();
+			}
+			return super.findClass("org.slf4j.sysoutslf4j");
+		}
 	}
 }

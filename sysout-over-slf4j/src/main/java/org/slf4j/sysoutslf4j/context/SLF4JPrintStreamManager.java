@@ -1,6 +1,7 @@
 package org.slf4j.sysoutslf4j.context;
 
 import java.io.PrintStream;
+import java.net.URL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,14 +42,26 @@ class SLF4JPrintStreamManager {
 	}
 
 	private Class<?> getSlf4jPrintStreamConfiguratorClass() {
-		final ClassLoader classLoader;
+		Class<?> slf4jPrintStreamConfiguratorClass;
 		if (systemOutputsAreSLF4JPrintStreams()) {
-			classLoader = System.out.getClass().getClassLoader();
+			ClassLoader classLoader = System.out.getClass().getClassLoader();
+			slf4jPrintStreamConfiguratorClass =
+				ClassLoaderUtils.loadClass(classLoader, SLF4JPrintStreamConfigurator.class);
 		} else {
-			classLoader = ClassLoaderUtils.makeNewClassLoaderForJar(SLF4JPrintStreamConfigurator.class);
+			try {
+				slf4jPrintStreamConfiguratorClass =
+					ClassLoader.getSystemClassLoader().loadClass(SLF4JPrintStreamConfigurator.class.getName());
+			} catch (ClassNotFoundException cnfe) {
+				try {
+					URL jarUrl = ClassLoaderUtils.getJarURL(SLF4JPrintStreamConfigurator.class);
+					ReflectionUtils.invokeMethod("addUrl", ClassLoader.getSystemClassLoader(), URL.class, jarUrl);
+					slf4jPrintStreamConfiguratorClass =
+						ClassLoader.getSystemClassLoader().loadClass(SLF4JPrintStreamConfigurator.class.getName());
+				} catch (Exception e) {
+					slf4jPrintStreamConfiguratorClass = SLF4JPrintStreamConfigurator.class;
+				}
+			}
 		}
-		final Class<?> slf4jPrintStreamConfiguratorClass =
-			ClassLoaderUtils.loadClass(classLoader, SLF4JPrintStreamConfigurator.class);
 		return slf4jPrintStreamConfiguratorClass;
 	}
 

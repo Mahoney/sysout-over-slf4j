@@ -84,6 +84,7 @@ public class TestForClassloaderLeaks extends SysOutOverSlf4jIntegrationTestCase 
 
 	private void assertThatClassLoaderHasBeenGarbageCollected(ClassLoaderHolder classLoaderHolder) {
 		System.gc();
+		
 		assertTrue("classLoader " + classLoaderHolder.number + " has not been garbage collected",
 				classLoaderHolder.referenceToClassLoader.isEnqueued());
 	}

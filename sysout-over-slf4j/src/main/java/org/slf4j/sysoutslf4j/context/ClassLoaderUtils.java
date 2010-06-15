@@ -16,7 +16,7 @@ final class ClassLoaderUtils {
 		return InsecureURLClassLoader.newInstance(Arrays.asList(new URL[]{jarURL}), SYSTEM_CLASSLOADER);
 	}
 	
-	private static URL getJarURL(final Class<?> classInJar) {
+	static URL getJarURL(final Class<?> classInJar) {
 		final String relativeClassFilePath = getRelativeFilePathOfClass(classInJar); // NOPMD
 		final URL classURL = getResource(relativeClassFilePath);
 		final String classUrlString = classURL == null ? "" : classURL.toString();
