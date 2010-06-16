@@ -2,19 +2,11 @@ package org.slf4j.sysoutslf4j.context;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 
 import org.slf4j.sysoutslf4j.common.StringUtils;
 import org.slf4j.sysoutslf4j.common.WrappedCheckedException;
 
 final class ClassLoaderUtils {
-	
-	private static ClassLoader SYSTEM_CLASSLOADER = ClassLoader.getSystemClassLoader();
-	
-	static ClassLoader makeNewClassLoaderForJar(final Class<?> classInJar) {
-		final URL jarURL = getJarURL(classInJar);
-		return InsecureURLClassLoader.newInstance(Arrays.asList(new URL[]{jarURL}), SYSTEM_CLASSLOADER);
-	}
 	
 	static URL getJarURL(final Class<?> classInJar) {
 		final String relativeClassFilePath = getRelativeFilePathOfClass(classInJar); // NOPMD

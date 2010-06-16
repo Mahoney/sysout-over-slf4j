@@ -48,16 +48,25 @@ class SLF4JPrintStreamManager {
 			slf4jPrintStreamConfiguratorClass =
 				ClassLoaderUtils.loadClass(classLoader, SLF4JPrintStreamConfigurator.class);
 		} else {
+			ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
 			try {
 				slf4jPrintStreamConfiguratorClass =
-					ClassLoader.getSystemClassLoader().loadClass(SLF4JPrintStreamConfigurator.class.getName());
+					systemClassLoader.loadClass(SLF4JPrintStreamConfigurator.class.getName());
 			} catch (ClassNotFoundException cnfe) {
+				URL jarUrl = null;
 				try {
-					URL jarUrl = ClassLoaderUtils.getJarURL(SLF4JPrintStreamConfigurator.class);
-					ReflectionUtils.invokeMethod("addUrl", ClassLoader.getSystemClassLoader(), URL.class, jarUrl);
+					jarUrl = ClassLoaderUtils.getJarURL(SLF4JPrintStreamConfigurator.class);
+					ReflectionUtils.invokeMethod("addUrl", systemClassLoader, URL.class, jarUrl);
 					slf4jPrintStreamConfiguratorClass =
-						ClassLoader.getSystemClassLoader().loadClass(SLF4JPrintStreamConfigurator.class.getName());
+						systemClassLoader.loadClass(SLF4JPrintStreamConfigurator.class.getName());
 				} catch (Exception e) {
+					log.debug("Unable to force jar url [" + jarUrl + "] into SystemClassLoader [" + systemClassLoader + "] and " +
+							"load class [" + SLF4JPrintStreamConfigurator.class + "] from SystemClassLoader", e);
+					log.warn("Unfortunately it is not possible to set up Sysout over SLF4J on this system without introducing " +
+							"a classloader memory leak.  If you do not need to discard this classloader this will not be a " +
+							"problem and you can suppress this warning.  If you wish to avoid a classloader memory leak you " +
+							"can turn on debug output for this class to get more context into why it was not possible, or " +
+							"place sysout-over-slf4j.jar on the system classloader as well as the local context's classloader");
 					slf4jPrintStreamConfiguratorClass = SLF4JPrintStreamConfigurator.class;
 				}
 			}
