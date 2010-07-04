@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.slf4j</groupId>
 		<artifactId>slf4j-parent</artifactId>
-		<version>1.6.0-alpha2</version>
+		<version>1.6.1-SNAPSHOT</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -20,7 +20,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<powermock.version>1.2.5</powermock.version>
-		<logback.version>0.9.21-SNAPSHOT</logback.version>
+		<logback.version>0.9.24</logback.version>
 	</properties>
 
 	<build>
