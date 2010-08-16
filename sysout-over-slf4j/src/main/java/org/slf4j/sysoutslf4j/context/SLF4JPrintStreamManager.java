@@ -84,20 +84,20 @@ class SLF4JPrintStreamManager {
 			URL jarUrl = ClassLoaderUtils.getJarURL(SLF4JPrintStreamConfigurator.class);
 			ReflectionUtils.invokeMethod("addUrl", getSystemClassLoader(), URL.class, jarUrl);
 			return getSystemClassLoader().loadClass(SLF4JPrintStreamConfigurator.class.getName());
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			reportFailureToAvoidClassLoaderLeak(e);
 			return null;
 		}
 	}
 
-	private void reportFailureToAvoidClassLoaderLeak(Exception e) {
+	private void reportFailureToAvoidClassLoaderLeak(Throwable e) {
 		log.warn("Unable to force syout-over-slf4j jar url into system class loader [" + getSystemClassLoader() + "] and " +
 				"then load class [" + SLF4JPrintStreamConfigurator.class + "] from the system class loader." + LINE_END +
 				"Unfortunately it is not possible to set up Sysout over SLF4J on this system without introducing " +
 				"a classloader memory leak." + LINE_END +
-				"If you do not need to discard this classloader this will not be a problem and you can suppress this " +
-				"warning." + LINE_END +
-				"If you wish to avoid a classloader memory leak you can place sysout-over-slf4j.jar on the system class loader " +
+				"If you do not need to discard the current classloader [" + getClass().getClassLoader() + "] this will not be " +
+				"a problem and you can suppress this warning." + LINE_END +
+				"If you wish to avoid a classloader memory leak you can place sysout-over-slf4j.jar on the system classpath " +
 				"as well as the local context's classloader", e);
 	}
 
