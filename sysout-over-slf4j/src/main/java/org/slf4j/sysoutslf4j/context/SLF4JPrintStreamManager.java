@@ -1,6 +1,8 @@
 package org.slf4j.sysoutslf4j.context;
 
-import static java.lang.ClassLoader.getSystemClassLoader;
+import static org.slf4j.sysoutslf4j.context.ClassLoaderUtils.getJarURL;
+import static org.slf4j.sysoutslf4j.context.ClassLoaderUtils.loadClass;
+import static org.slf4j.sysoutslf4j.context.ClassLoaderUtils.getSystemClassLoader;
 
 import java.io.PrintStream;
 import java.net.URL;
@@ -46,22 +48,10 @@ class SLF4JPrintStreamManager {
 	}
 
 	private Class<?> getSlf4jPrintStreamConfiguratorClass() {
-		Class<?> slf4jPrintStreamConfiguratorClass;
-		if (systemOutputsAreSLF4JPrintStreams()) {
-			slf4jPrintStreamConfiguratorClass = getConfiguratorClassFromSLF4JPrintStreamClassLoader();
-		} else {
-			slf4jPrintStreamConfiguratorClass = tryToGetConfiguratorClassFromSystemClassLoader();
+		Class<?> slf4jPrintStreamConfiguratorClass = getConfiguratorClassFromSLF4JPrintStreamClassLoader();
+		if (slf4jPrintStreamConfiguratorClass == null) {
+			slf4jPrintStreamConfiguratorClass = getConfiguratorClassFromSystemClassLoader();
 		}
-		return slf4jPrintStreamConfiguratorClass;
-	}
-
-	private Class<?> getConfiguratorClassFromSLF4JPrintStreamClassLoader() {
-		final ClassLoader classLoader = System.out.getClass().getClassLoader();
-		return ClassLoaderUtils.loadClass(classLoader, SLF4JPrintStreamConfigurator.class);
-	}
-	
-	private Class<?> tryToGetConfiguratorClassFromSystemClassLoader() {
-		Class<?> slf4jPrintStreamConfiguratorClass = getConfiguratorClassFromSystemClassLoader();
 		if (slf4jPrintStreamConfiguratorClass == null) {
 			slf4jPrintStreamConfiguratorClass = addConfiguratorClassToSystemClassLoaderAndGet();
 		}
@@ -71,27 +61,37 @@ class SLF4JPrintStreamManager {
 		return slf4jPrintStreamConfiguratorClass;
 	}
 
+	private Class<?> getConfiguratorClassFromSLF4JPrintStreamClassLoader() {
+		if (systemOutputsAreSLF4JPrintStreams()) {
+			try {
+				final ClassLoader classLoader = System.out.getClass().getClassLoader();
+				return loadClass(classLoader, SLF4JPrintStreamConfigurator.class);
+			} catch (SecurityException se) { /* ignore */}
+		}
+		return null;
+	}
+
 	private Class<?> getConfiguratorClassFromSystemClassLoader() {
 		try {
 			return getSystemClassLoader().loadClass(SLF4JPrintStreamConfigurator.class.getName());
-		} catch (ClassNotFoundException cnfe) {
+		} catch (Exception e) {
 			return null;
 		}
 	}
 
 	private Class<?> addConfiguratorClassToSystemClassLoaderAndGet() {
 		try {
-			URL jarUrl = ClassLoaderUtils.getJarURL(SLF4JPrintStreamConfigurator.class);
+			URL jarUrl = getJarURL(SLF4JPrintStreamConfigurator.class);
 			ReflectionUtils.invokeMethod("addUrl", getSystemClassLoader(), URL.class, jarUrl);
 			return getSystemClassLoader().loadClass(SLF4JPrintStreamConfigurator.class.getName());
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			reportFailureToAvoidClassLoaderLeak(e);
 			return null;
 		}
 	}
 
-	private void reportFailureToAvoidClassLoaderLeak(Throwable e) {
-		log.warn("Unable to force syout-over-slf4j jar url into system class loader [" + getSystemClassLoader() + "] and " +
+	private void reportFailureToAvoidClassLoaderLeak(Exception e) {
+		log.warn("Unable to force syout-over-slf4j jar url into system class loader  and " +
 				"then load class [" + SLF4JPrintStreamConfigurator.class + "] from the system class loader." + LINE_END +
 				"Unfortunately it is not possible to set up Sysout over SLF4J on this system without introducing " +
 				"a class loader memory leak." + LINE_END +
@@ -101,7 +101,7 @@ class SLF4JPrintStreamManager {
 				"IN ADDITION TO (*not* instead of) the local context's classpath", e);
 	}
 
-	private Class<?> getConfiguratorClassFromCurrentClassLoader() {
+	private Class<SLF4JPrintStreamConfigurator> getConfiguratorClassFromCurrentClassLoader() {
 		return SLF4JPrintStreamConfigurator.class;
 	}
 

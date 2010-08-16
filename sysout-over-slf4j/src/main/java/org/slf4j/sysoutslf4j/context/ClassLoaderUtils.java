@@ -41,4 +41,16 @@ final class ClassLoaderUtils {
 		throw new UnsupportedOperationException("Not instantiable");
 	}
 
+	static ClassLoader getSystemClassLoader() {
+		return ClassLoader.getSystemClassLoader();
+	}
+	
+	static ClassLoader getClassLoader(Class<?> aClass) {
+		try {
+			return aClass.getClassLoader();
+		} catch (SecurityException e) {
+			return null;
+		}
+	}
+
 }
