@@ -89,6 +89,7 @@ class SLF4JPrintStreamManager {
 			exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(logLevel, originalPrintStream);
 		final Object loggerAppender = 
 			new LoggerAppenderImpl(logLevel, exceptionHandlingStrategy, originalPrintStream);
+		ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(loggerAppender);
 		slf4jPrintStream.registerLoggerAppender(loggerAppender);
 	}
 
