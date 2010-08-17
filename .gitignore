@@ -11,3 +11,4 @@ integration/felix-cache
 integration/felix-cache//.settings
 .pmd
 bin
+.DS_Store
