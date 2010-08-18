@@ -1,6 +1,8 @@
 package org.slf4j.sysoutslf4j.common;
 
 import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 public final class ReflectionUtils {
 	
@@ -11,12 +13,9 @@ public final class ReflectionUtils {
 	
 	public static Object invokeMethod(final String methodName, final Object target, final Class<?> argType, final Object arg) {
 		final Method method = getMethod(methodName, target.getClass(), argType);
-		if (!method.isAccessible()) {
-			method.setAccessible(true);
-		}
 		return invokeMethod(method, target, arg);
 	}
-	
+
 	public static Object invokeStaticMethod(final String methodName, final Class<?> targetClass) {
 		final Method method = getMethod(methodName, targetClass);
 		return invokeMethod(method, targetClass);
@@ -38,6 +37,14 @@ public final class ReflectionUtils {
 
 	public static Object invokeMethod(final Method method, final Object target, final Object... args) {
 		try {
+			if (!method.isAccessible()) {
+				AccessController.doPrivileged(new PrivilegedAction<Void>() {
+					public Void run() {
+						method.setAccessible(true);
+						return null;
+					}
+				});
+			}
 			return method.invoke(target, args);
 		} catch (Exception exception) {
 			throw ExceptionUtils.asRuntimeException(exception);

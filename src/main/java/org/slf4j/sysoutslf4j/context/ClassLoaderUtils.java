@@ -44,13 +44,4 @@ final class ClassLoaderUtils {
 	static ClassLoader getSystemClassLoader() {
 		return ClassLoader.getSystemClassLoader();
 	}
-	
-	static ClassLoader getClassLoader(Class<?> aClass) {
-		try {
-			return aClass.getClassLoader();
-		} catch (SecurityException e) {
-			return null;
-		}
-	}
-
 }
