@@ -64,7 +64,7 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     
     @Test
     public void sendSystemOutAndErrToSLF4JDoesNotMakeSystemOutputsSLF4JPrintStreamsWhenTheyAreAlready() throws Exception {
-    	SLF4JPrintStreamConfigurator.replaceSystemOutputsWithSLF4JPrintStreams();
+    	(new SLF4JPrintStreamConfigurator()).replaceSystemOutputsWithSLF4JPrintStreams();
         expectLoggerAppendersToBeRegistered(LogLevel.INFO, LogLevel.ERROR);
         replayAll();
 

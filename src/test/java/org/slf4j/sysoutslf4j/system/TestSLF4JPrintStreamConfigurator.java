@@ -17,11 +17,6 @@ import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ SLF4JPrintStreamConfigurator.class, SLF4JPrintStreamImpl.class })
 public class TestSLF4JPrintStreamConfigurator extends SysOutOverSLF4JTestCase {
-
-	@Test
-	public void notInstantiable() throws Throwable {
-		assertNotInstantiable(SLF4JPrintStreamConfigurator.class);
-	}
 	
 	@Test
 	public void replaceSystemOutputsWithSLF4JPrintStreams() throws Exception {

@@ -34,8 +34,4 @@ public final class SLF4JPrintStreamConfigurator {
 		final SLF4JPrintStream slf4jPrintStream = (SLF4JPrintStream) systemOutput.get();
 		systemOutput.set(slf4jPrintStream.getOriginalPrintStream());
 	}
-
-	private SLF4JPrintStreamConfigurator() {
-		throw new UnsupportedOperationException("Not instantiable");
-	}
 }
