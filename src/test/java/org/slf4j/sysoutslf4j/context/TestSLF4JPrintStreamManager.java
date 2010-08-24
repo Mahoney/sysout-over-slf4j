@@ -12,7 +12,6 @@ import static org.slf4j.testutils.Assert.assertExpectedLoggingEvent;
 import java.io.PrintStream;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -30,7 +29,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ReflectionUtils.class, ClassLoaderUtils.class, SLF4JPrintStreamManager.class, SLF4JPrintStreamProxy.class })
+@PrepareForTest({ ReflectionUtils.class, ClassLoaderUtils.class, SLF4JPrintStreamManager.class, SLF4JPrintStreamProxy.class, SLF4JPrintStreamConfiguratorClass.class })
 public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
 
     private SLF4JPrintStreamManager slf4JPrintStreamManagerInstance;
@@ -48,7 +47,7 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
         log.setLevel(Level.TRACE);
     }
 
-    @Test @Ignore("temporarily until I've worked out how to test this...")
+    @Test
     public void sendSystemOutAndErrToSLF4JMakesSystemOutputsSLF4JPrintStreamsWhenTheyAreNotAlready() throws Exception {
 
         expectSystemOutputsToBeReplacedWithSLF4JPrintStreams();
@@ -149,10 +148,18 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
         slf4jPrintStreamMock.registerLoggerAppender(loggerAppenderMock);
 	}
 
-	private void expectSystemOutputsToBeReplacedWithSLF4JPrintStreams() {
-//		expectConfiguratorClassToBeLoadedFromNewClassLoader();
+	private void expectSystemOutputsToBeReplacedWithSLF4JPrintStreams() throws Exception {
+		expectConfiguratorClassToBeLoadedFromSystemClassLoader();
         expect(ReflectionUtils.invokeStaticMethod(
         		"replaceSystemOutputsWithSLF4JPrintStreams", SLF4JPrintStreamConfigurator.class)).andReturn(null);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void expectConfiguratorClassToBeLoadedFromSystemClassLoader() throws Exception {
+		ClassLoader mockSystemClassLoader = createMock(ClassLoader.class);
+		expect(mockSystemClassLoader.loadClass(SLF4JPrintStreamConfigurator.class.getName())).andReturn((Class) SLF4JPrintStreamConfigurator.class);
+		mockStatic(ClassLoader.class);
+		expect(ClassLoader.getSystemClassLoader()).andReturn(mockSystemClassLoader);
 	}
 	
 	private void expectConfiguratorClassToBeLoadedFromExistingClassLoader() {
