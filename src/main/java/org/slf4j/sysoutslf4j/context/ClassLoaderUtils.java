@@ -40,8 +40,4 @@ final class ClassLoaderUtils {
 	private ClassLoaderUtils() {
 		throw new UnsupportedOperationException("Not instantiable");
 	}
-
-	static ClassLoader getSystemClassLoader() {
-		return ClassLoader.getSystemClassLoader();
-	}
 }

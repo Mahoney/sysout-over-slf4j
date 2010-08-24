@@ -1,7 +1,6 @@
 package org.slf4j.sysoutslf4j.context;
 
 import static org.slf4j.sysoutslf4j.context.ClassLoaderUtils.getJarURL;
-import static org.slf4j.sysoutslf4j.context.ClassLoaderUtils.getSystemClassLoader;
 import static org.slf4j.sysoutslf4j.context.ClassLoaderUtils.loadClass;
 
 import java.net.URL;
@@ -49,7 +48,7 @@ class SLF4JPrintStreamConfiguratorClass {
 	private static Class<?> getConfiguratorClassFromSystemClassLoader() {
 		Class<?> configuratorClass = null;
 		try {
-			configuratorClass = getSystemClassLoader().loadClass(SLF4JPrintStreamConfigurator.class.getName());
+			configuratorClass = ClassLoader.getSystemClassLoader().loadClass(SLF4JPrintStreamConfigurator.class.getName());
 		} catch (Exception e) {
 			LOG.debug("failed to load " + SLF4JPrintStreamConfigurator.class.getName() + " from system class loader due to " + e);
 		}
@@ -60,8 +59,8 @@ class SLF4JPrintStreamConfiguratorClass {
 		Class<?> configuratorClass = null;
 		try {
 			final URL jarUrl = getJarURL(SLF4JPrintStreamConfigurator.class);
-			ReflectionUtils.invokeMethod("addUrl", getSystemClassLoader(), URL.class, jarUrl);
-			configuratorClass = getSystemClassLoader().loadClass(SLF4JPrintStreamConfigurator.class.getName());
+			ReflectionUtils.invokeMethod("addUrl", ClassLoader.getSystemClassLoader(), URL.class, jarUrl);
+			configuratorClass = ClassLoader.getSystemClassLoader().loadClass(SLF4JPrintStreamConfigurator.class.getName());
 		} catch (Exception exception) {
 			reportFailureToAvoidClassLoaderLeak(exception);
 		}

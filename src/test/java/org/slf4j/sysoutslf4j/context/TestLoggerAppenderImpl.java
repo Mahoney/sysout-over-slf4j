@@ -1,13 +1,13 @@
 package org.slf4j.sysoutslf4j.context;
 
-import static org.easymock.classextension.EasyMock.createStrictControl;
+import static org.easymock.EasyMock.createStrictControl;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 
 import java.io.PrintStream;
 
-import org.easymock.classextension.IMocksControl;
+import org.easymock.IMocksControl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

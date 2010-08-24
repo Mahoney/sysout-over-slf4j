@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.expectNew;
 import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.slf4j.testutils.Assert.assertNotInstantiable;
 
 import java.io.PrintStream;
 
