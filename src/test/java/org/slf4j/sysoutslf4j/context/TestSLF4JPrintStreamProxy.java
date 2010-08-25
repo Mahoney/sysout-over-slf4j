@@ -29,11 +29,13 @@ public class TestSLF4JPrintStreamProxy {
 		PrintStream originalPrintStream = createMock(PrintStream.class);
 		expect(slf4jPrintStream.getOriginalPrintStream()).andStubReturn(originalPrintStream);
 		slf4jPrintStream.registerLoggerAppender(loggerAppender);
+		slf4jPrintStream.deregisterLoggerAppender();
 		replayAll();
 		
 		SLF4JPrintStream wrappedSlf4jPrintStream = SLF4JPrintStreamProxy.wrap(slf4jPrintStream);
 		assertEquals(originalPrintStream, wrappedSlf4jPrintStream.getOriginalPrintStream());
 		wrappedSlf4jPrintStream.registerLoggerAppender(loggerAppender);
+		wrappedSlf4jPrintStream.deregisterLoggerAppender();
 		verifyAll();
 	}
 	

@@ -22,7 +22,7 @@ class SLF4JPrintStreamManager {
 	}
 
 	private void makeSystemOutputsSLF4JPrintStreamsIfNecessary() {
-		if (SLF4JPrintStreamConfiguratorClass.systemOutputsAreSLF4JPrintStreams()) {
+		if (SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams()) {
 			LOG.debug("System.out and System.err are already SLF4JPrintStreams");
 		} else {
 			makeSystemOutputsSLF4JPrintStreams();
@@ -65,7 +65,7 @@ class SLF4JPrintStreamManager {
 	}
 
 	void restoreOriginalSystemOutputsIfNecessary() {
-		if (SLF4JPrintStreamConfiguratorClass.systemOutputsAreSLF4JPrintStreams()) {
+		if (SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams()) {
 			restoreOriginalSystemOutputs();
 			LOG.info("Restored original System.out and System.err");
 		} else {

@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import org.slf4j.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory;
+import org.slf4j.sysoutslf4j.system.SLF4JPrintStreamImpl;
 
 /**
  * Public interface to the sysout-over-slf4j module. Provides all methods necessary to manage wrapping the existing
@@ -153,6 +154,10 @@ public final class SysOutOverSLF4J {
 
 	private SysOutOverSLF4J() {
 		throw new UnsupportedOperationException("Not instantiable");
+	}
+
+	public static boolean systemOutputsAreSLF4JPrintStreams() {
+		return System.out.getClass().getName().equals(SLF4JPrintStreamImpl.class.getName());
 	}
 
 

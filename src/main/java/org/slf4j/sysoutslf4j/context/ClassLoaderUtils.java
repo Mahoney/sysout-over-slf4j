@@ -1,6 +1,5 @@
 package org.slf4j.sysoutslf4j.context;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.slf4j.sysoutslf4j.common.StringUtils;
@@ -10,14 +9,15 @@ final class ClassLoaderUtils {
 	
 	static URL getJarURL(final Class<?> classInJar) {
 		final String relativeClassFilePath = getRelativeFilePathOfClass(classInJar); // NOPMD
-		final URL classURL = getResource(relativeClassFilePath);
-		final String classUrlString = classURL == null ? "" : classURL.toString();
-		final String jarURLString = StringUtils.substringBefore(classUrlString, relativeClassFilePath);
+		
 		try {
+			final URL classURL = getResource(relativeClassFilePath);
+			final String classUrlString = classURL.toString();
+			final String jarURLString = StringUtils.substringBefore(classUrlString, relativeClassFilePath);
 			return new URL(jarURLString);
-		} catch (MalformedURLException malformedURLException) {
-			throw new WrappedCheckedException(
-					"Unable to build jar URL from url [" + classURL + "] from class [" + classInJar + "]", malformedURLException);
+		} catch (Exception exception) {
+			throw new IllegalStateException(
+					"Unable to build jar URL from class [" + classInJar + "]", exception);
 		}
 	}
 

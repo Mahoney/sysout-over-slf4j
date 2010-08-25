@@ -1,7 +1,6 @@
 package org.slf4j.sysoutslf4j.context;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.expectNew;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
@@ -29,7 +28,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ReflectionUtils.class, ClassLoaderUtils.class, SLF4JPrintStreamManager.class, SLF4JPrintStreamProxy.class, SLF4JPrintStreamConfiguratorClass.class })
+@PrepareForTest({ ReflectionUtils.class, SLF4JPrintStreamManager.class, SLF4JPrintStreamProxy.class, SLF4JPrintStreamConfiguratorClass.class })
 public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
 
     private SLF4JPrintStreamManager slf4JPrintStreamManagerInstance;
@@ -42,8 +41,8 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
         exceptionHandlingStrategyFactoryMock = createMock(ExceptionHandlingStrategyFactory.class);
         slf4JPrintStreamManagerInstance = new SLF4JPrintStreamManager();
         mockStatic(ReflectionUtils.class);
-        mockStatic(ClassLoaderUtils.class);
         mockStatic(SLF4JPrintStreamProxy.class);
+        mockStatic(SLF4JPrintStreamConfiguratorClass.class);
         log.setLevel(Level.TRACE);
     }
 
@@ -110,7 +109,7 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     @Test
     public void restoreOriginalSystemOutputsIfNecessaryRestoresOriginalPrintStreams() {
     	SLF4JPrintStreamConfigurator.replaceSystemOutputsWithSLF4JPrintStreams();
-    	expectConfiguratorClassToBeLoadedFromExistingClassLoader();
+		expect(SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass()).andReturn((Class) SLF4JPrintStreamConfigurator.class);
         expect(ReflectionUtils.invokeStaticMethod(
         		"restoreOriginalSystemOutputs", SLF4JPrintStreamConfigurator.class)).andReturn(null);
         replayAll();
@@ -149,22 +148,9 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
 	}
 
 	private void expectSystemOutputsToBeReplacedWithSLF4JPrintStreams() throws Exception {
-		expectConfiguratorClassToBeLoadedFromSystemClassLoader();
+		expect(SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass()).andReturn((Class) SLF4JPrintStreamConfigurator.class);
         expect(ReflectionUtils.invokeStaticMethod(
         		"replaceSystemOutputsWithSLF4JPrintStreams", SLF4JPrintStreamConfigurator.class)).andReturn(null);
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void expectConfiguratorClassToBeLoadedFromSystemClassLoader() throws Exception {
-		ClassLoader mockSystemClassLoader = createMock(ClassLoader.class);
-		expect(mockSystemClassLoader.loadClass(SLF4JPrintStreamConfigurator.class.getName())).andReturn((Class) SLF4JPrintStreamConfigurator.class);
-		mockStatic(ClassLoader.class);
-		expect(ClassLoader.getSystemClassLoader()).andReturn(mockSystemClassLoader);
-	}
-	
-	private void expectConfiguratorClassToBeLoadedFromExistingClassLoader() {
-		ClassLoaderUtils.loadClass(System.out.getClass().getClassLoader(), SLF4JPrintStreamConfigurator.class);
-        expectLastCall().andReturn(SLF4JPrintStreamConfigurator.class);
 	}
 
 //	private void expectConfiguratorClassToBeLoadedFromNewClassLoader() {

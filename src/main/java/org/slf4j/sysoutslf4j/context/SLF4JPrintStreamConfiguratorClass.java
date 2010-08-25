@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.sysoutslf4j.common.ReflectionUtils;
 import org.slf4j.sysoutslf4j.system.SLF4JPrintStreamConfigurator;
-import org.slf4j.sysoutslf4j.system.SLF4JPrintStreamImpl;
 
 class SLF4JPrintStreamConfiguratorClass {
 	
@@ -30,13 +29,9 @@ class SLF4JPrintStreamConfiguratorClass {
 		return slf4jPrintStreamConfiguratorClass;
 	}
 	
-	static boolean systemOutputsAreSLF4JPrintStreams() {
-		return System.out.getClass().getName().equals(SLF4JPrintStreamImpl.class.getName());
-	}
-
 	private static Class<?> getConfiguratorClassFromSLF4JPrintStreamClassLoader() {
 		final Class<?> configuratorClass;
-		if (systemOutputsAreSLF4JPrintStreams()) {
+		if (SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams()) {
 			final ClassLoader classLoader = System.out.getClass().getClassLoader();
 			configuratorClass = loadClass(classLoader, SLF4JPrintStreamConfigurator.class);
 		} else {
@@ -59,7 +54,7 @@ class SLF4JPrintStreamConfiguratorClass {
 		Class<?> configuratorClass = null;
 		try {
 			final URL jarUrl = getJarURL(SLF4JPrintStreamConfigurator.class);
-			ReflectionUtils.invokeMethod("addUrl", ClassLoader.getSystemClassLoader(), URL.class, jarUrl);
+			ReflectionUtils.invokeMethod("addURL", ClassLoader.getSystemClassLoader(), URL.class, jarUrl);
 			configuratorClass = ClassLoader.getSystemClassLoader().loadClass(SLF4JPrintStreamConfigurator.class.getName());
 		} catch (Exception exception) {
 			reportFailureToAvoidClassLoaderLeak(exception);
@@ -68,7 +63,7 @@ class SLF4JPrintStreamConfiguratorClass {
 	}
 
 	private static void reportFailureToAvoidClassLoaderLeak(final Exception exception) {
-		LOG.warn("Unable to force syout-over-slf4j jar url into system class loader  and " +
+		LOG.warn("Unable to force sysout-over-slf4j jar url into system class loader  and " +
 				"then load class [" + SLF4JPrintStreamConfigurator.class + "] from the system class loader." + LINE_END +
 				"Unfortunately it is not possible to set up Sysout over SLF4J on this system without introducing " +
 				"a class loader memory leak." + LINE_END +
@@ -80,5 +75,9 @@ class SLF4JPrintStreamConfiguratorClass {
 
 	private static Class<SLF4JPrintStreamConfigurator> getConfiguratorClassFromCurrentClassLoader() {
 		return SLF4JPrintStreamConfigurator.class;
+	}
+	
+	private SLF4JPrintStreamConfiguratorClass() {
+		throw new UnsupportedOperationException("Not instantiable");
 	}
 }
