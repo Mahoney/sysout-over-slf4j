@@ -95,8 +95,6 @@ public final class SysOutOverSLF4J {
 	/**
 	 * Stops using SLF4J for calls to System.out and System.err in the current context.
 	 * Has no effect on any other contexts that may be using sysout-over-slf4j.<br/>
-	 * It is important to call this prior to unloading a context as otherwise there will be a
-	 * classloader leak leading to PermGen OutOfMemory errors.<br/>
 	 * Can be called any number of times, and is synchronized on System.class.
 	 */
 	public static void stopSendingSystemOutAndErrToSLF4J() {
@@ -109,7 +107,7 @@ public final class SysOutOverSLF4J {
 	 * If System.out and System.err have been redirected to SLF4J, restores the original PrintStreams
 	 * allowing direct access to the console again.<br/>
 	 * This will stop all contexts in the JVM from using sysout-over-slf4j. It is not necessary to call
-	 * @link{SysOutOverSLF4J#stopSendingSystemOutAndErrToSLF4J()} as well as this method.
+	 * {@link SysOutOverSLF4J#stopSendingSystemOutAndErrToSLF4J} as well as this method.
 	 * Can be called any number of times, and is synchronized on System.class.
 	 */
 	public static void restoreOriginalSystemOutputs() {
