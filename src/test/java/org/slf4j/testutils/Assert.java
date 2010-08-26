@@ -1,6 +1,7 @@
 package org.slf4j.testutils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
@@ -12,6 +13,7 @@ import org.slf4j.Marker;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.IThrowableProxy;
 
 public class Assert {
 
@@ -51,11 +53,38 @@ public class Assert {
 	}
 
 	public static void assertExpectedLoggingEvent(
+			ILoggingEvent loggingEvent, String message, Level level, String className) {
+		assertExpectedLoggingEvent(loggingEvent, message, level, null, className, null);
+	}
+	
+	public static void assertExpectedLoggingEvent(
 			ILoggingEvent loggingEvent, String message, Level level, Marker marker, String className) {
+		assertExpectedLoggingEvent(loggingEvent, message, level, marker, className, null);
+	}
+	
+	public static void assertExpectedLoggingEvent(
+			ILoggingEvent loggingEvent, String message, Level level, String className, Throwable throwable) {
+		assertExpectedLoggingEvent(loggingEvent, message, level, null, className, throwable);
+	}
+	
+	public static void assertExpectedLoggingEvent(
+			ILoggingEvent loggingEvent, String message, Level level, Marker marker, String className, Throwable throwable) {
 		assertEquals(message, loggingEvent.getMessage());
 		assertEquals(level, loggingEvent.getLevel());
 		assertEquals(className, loggingEvent.getLoggerName());
 		assertEquals(marker, loggingEvent.getMarker());
+		IThrowableProxy throwableProxy = loggingEvent.getThrowableProxy();
+		assertThrowableProxyEquals(throwable, throwableProxy);
+	}
+
+	private static void assertThrowableProxyEquals(Throwable throwable, IThrowableProxy throwableProxy) {
+		if (throwable != null) {
+			assertEquals(throwable.getClass().getName(), throwableProxy.getClassName());
+			assertEquals(throwable.getMessage(), throwableProxy.getMessage());
+			assertThrowableProxyEquals(throwable.getCause(), throwableProxy.getCause());
+		} else {
+			assertNull(throwableProxy);
+		}
 	}
 	
 	public static void assertNotInstantiable(final Class<?> classThatShouldNotBeInstantiable) throws Throwable {

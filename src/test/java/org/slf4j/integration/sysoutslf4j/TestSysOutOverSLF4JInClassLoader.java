@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.LoggerFactory;
+import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
 import org.slf4j.sysoutslf4j.common.SystemOutput;
 import org.slf4j.testutils.Assert;
 import org.slf4j.testutils.CrossClassLoaderTestUtils;
@@ -24,7 +25,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 
-public class TestSysOutOverSLF4JInClassLoader extends SysOutOverSlf4jIntegrationTestCase {
+public class TestSysOutOverSLF4JInClassLoader extends SysOutOverSLF4JTestCase {
 
 	private final ClassLoader app1ClassLoader = SimpleClassloader.make();
 	

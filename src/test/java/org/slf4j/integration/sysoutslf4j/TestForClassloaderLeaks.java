@@ -6,10 +6,11 @@ import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
 import org.junit.Test;
+import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
 import org.slf4j.testutils.LoggingUtils;
 import org.slf4j.testutils.SimpleClassloader;
 
-public class TestForClassloaderLeaks extends SysOutOverSlf4jIntegrationTestCase {
+public class TestForClassloaderLeaks extends SysOutOverSLF4JTestCase {
 	private static final int NUMBER_OF_CLASSLOADERS = 3;
 	
 	@Test
