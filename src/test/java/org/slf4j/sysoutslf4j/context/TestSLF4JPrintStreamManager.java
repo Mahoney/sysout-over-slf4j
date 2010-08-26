@@ -29,7 +29,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ReflectionUtils.class, SLF4JPrintStreamManager.class, SLF4JPrintStreamProxy.class, SLF4JPrintStreamConfiguratorClass.class })
+@PrepareForTest({ ReflectionUtils.class, SLF4JPrintStreamManager.class, SLF4JPrintStreamConfiguratorClass.class })
 public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
 
     private SLF4JPrintStreamManager slf4JPrintStreamManagerInstance;
@@ -42,7 +42,6 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
         exceptionHandlingStrategyFactoryMock = createMock(ExceptionHandlingStrategyFactory.class);
         slf4JPrintStreamManagerInstance = new SLF4JPrintStreamManager();
         mockStatic(ReflectionUtils.class);
-        mockStatic(SLF4JPrintStreamProxy.class);
         mockStatic(SLF4JPrintStreamConfiguratorClass.class);
         log.setLevel(Level.TRACE);
     }
@@ -89,14 +88,14 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     
     private void expectLoggerAppenderToBeDeregistered(SystemOutput systemOutput) {
     	SLF4JPrintStream slf4jPrintStreamMock = createMock(SLF4JPrintStream.class);
-		expect(SLF4JPrintStreamProxy.wrap(systemOutput.get())).andReturn(slf4jPrintStreamMock);
+		expect(ReflectionUtils.wrap(systemOutput.get(), SLF4JPrintStream.class)).andReturn(slf4jPrintStreamMock);
 		slf4jPrintStreamMock.deregisterLoggerAppender();
     }
     
     @Test
     public void stopSendingSystemOutAndErrToSLF4JLogsWarningIfSystemOutputsAreNotSLF4JPrintStreams() {
-    	expect(SLF4JPrintStreamProxy.wrap(System.out)).andStubThrow(new IllegalArgumentException());
-    	expect(SLF4JPrintStreamProxy.wrap(System.err)).andStubThrow(new IllegalArgumentException());
+    	expect(ReflectionUtils.wrap(System.out, SLF4JPrintStream.class)).andStubThrow(new IllegalArgumentException());
+    	expect(ReflectionUtils.wrap(System.err, SLF4JPrintStream.class)).andStubThrow(new IllegalArgumentException());
     	
     	replayAll();
     	
@@ -140,7 +139,7 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
 
 	private void expectLoggerAppenderToBeRegistered(SystemOutput systemOutput, LogLevel logLevel) throws Exception {
 		SLF4JPrintStream slf4jPrintStreamMock = createMock(SLF4JPrintStream.class);
-		expect(SLF4JPrintStreamProxy.wrap(systemOutput.get())).andReturn(slf4jPrintStreamMock);
+		expect(ReflectionUtils.wrap(systemOutput.get(), SLF4JPrintStream.class)).andReturn(slf4jPrintStreamMock);
         PrintStream originalPrintStreamMock = createMock(PrintStream.class);
         expect(slf4jPrintStreamMock.getOriginalPrintStream()).andReturn(originalPrintStreamMock);
         ExceptionHandlingStrategy exceptionHandlingStrategyMock = createMock(ExceptionHandlingStrategy.class);

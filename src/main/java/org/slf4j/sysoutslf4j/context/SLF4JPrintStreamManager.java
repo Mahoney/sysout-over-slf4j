@@ -36,8 +36,8 @@ class SLF4JPrintStreamManager {
 
 	private void sendSystemOutAndErrToSLF4JForThisContext(final LogLevel outLevel, final LogLevel errLevel, 
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
-		registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JPrintStreamProxy.wrap(SystemOutput.OUT.get()), outLevel);
-		registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JPrintStreamProxy.wrap(SystemOutput.ERR.get()), errLevel);
+		registerNewLoggerAppender(exceptionHandlingStrategyFactory, ReflectionUtils.wrap(SystemOutput.OUT.get(), SLF4JPrintStream.class), outLevel);
+		registerNewLoggerAppender(exceptionHandlingStrategyFactory, ReflectionUtils.wrap(SystemOutput.ERR.get(), SLF4JPrintStream.class), errLevel);
 	}
 
 	private void registerNewLoggerAppender(
@@ -56,7 +56,7 @@ class SLF4JPrintStreamManager {
 	void stopSendingSystemOutAndErrToSLF4J() {
 		try {
 			for (SystemOutput systemOutput : SystemOutput.values()) {
-				final SLF4JPrintStream slf4jPrintStream = SLF4JPrintStreamProxy.wrap(systemOutput.get());
+				final SLF4JPrintStream slf4jPrintStream = ReflectionUtils.wrap(systemOutput.get(), SLF4JPrintStream.class);
 				slf4jPrintStream.deregisterLoggerAppender();
 			}
 		} catch (IllegalArgumentException iae) {

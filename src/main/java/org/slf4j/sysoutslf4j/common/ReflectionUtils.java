@@ -1,6 +1,7 @@
 package org.slf4j.sysoutslf4j.common;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
@@ -53,5 +54,16 @@ public final class ReflectionUtils {
 	
 	private ReflectionUtils() {
 		throw new UnsupportedOperationException("Not instantiable");
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <E> E wrap(final Object targetPrintStream, final Class<E> interfaceClass) {
+		final E result;
+		if (interfaceClass.isAssignableFrom(targetPrintStream.getClass())) {
+			result = (E) targetPrintStream;
+		} else {
+			result = (E) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{interfaceClass}, new ProxyingInvocationHandler(targetPrintStream));
+		}
+		return result;
 	}
 }

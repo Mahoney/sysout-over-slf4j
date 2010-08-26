@@ -10,6 +10,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 import java.io.PrintStream;
 
 import org.junit.Test;
+import org.slf4j.sysoutslf4j.common.ReflectionUtils;
 import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
 
 public class TestSLF4JPrintStreamProxy {
@@ -17,7 +18,7 @@ public class TestSLF4JPrintStreamProxy {
 	@Test
 	public void wrapReturnsUnwrappedSLF4JPrintStreamIfInSameClassLoader() {
 		SLF4JPrintStream expected = createMock(SLF4JPrintStream.class);
-		assertSame(expected, SLF4JPrintStreamProxy.wrap(expected));
+		assertSame(expected, ReflectionUtils.wrap(expected, SLF4JPrintStream.class));
 	}
 	
 	@Test
@@ -30,7 +31,7 @@ public class TestSLF4JPrintStreamProxy {
 		slf4jPrintStream.deregisterLoggerAppender();
 		replayAll();
 		
-		SLF4JPrintStream wrappedSlf4jPrintStream = SLF4JPrintStreamProxy.wrap(slf4jPrintStream);
+		SLF4JPrintStream wrappedSlf4jPrintStream = ReflectionUtils.wrap(slf4jPrintStream, SLF4JPrintStream.class);
 		assertEquals(originalPrintStream, wrappedSlf4jPrintStream.getOriginalPrintStream());
 		wrappedSlf4jPrintStream.registerLoggerAppender(loggerAppender);
 		wrappedSlf4jPrintStream.deregisterLoggerAppender();
