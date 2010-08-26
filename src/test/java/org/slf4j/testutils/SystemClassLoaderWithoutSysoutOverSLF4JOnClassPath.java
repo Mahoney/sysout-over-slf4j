@@ -24,7 +24,7 @@ public class SystemClassLoaderWithoutSysoutOverSLF4JOnClassPath extends URLClass
     		try {
     			return findClassFromClassLoader(name, urlClassLoader);
     		} catch (Exception e) {
-    			throw new ClassNotFoundException(name);
+    			throw new ClassNotFoundException(name, e);
     		}
     	}
     	return findClassFromClassLoader(name, realSystemClassLoader);
@@ -33,6 +33,9 @@ public class SystemClassLoaderWithoutSysoutOverSLF4JOnClassPath extends URLClass
 	private Class<?> findClassFromClassLoader(String name, ClassLoader classLoader) throws ClassFormatError {
 		String fileName = name.replace('.', '/') + ".class";
 		InputStream classAsStream = classLoader.getResourceAsStream(fileName);
+		if (classAsStream == null) {
+			throw new NullPointerException("failed to find " + name + " in class loader " + classLoader);
+		}
 		try {
 			byte[] classAsByteArray = IOUtils.toByteArray(classAsStream);
 			return defineClass(name, classAsByteArray, 0, classAsByteArray.length);

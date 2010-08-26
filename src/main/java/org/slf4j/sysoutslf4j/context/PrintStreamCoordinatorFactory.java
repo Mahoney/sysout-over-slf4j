@@ -4,36 +4,44 @@ import static org.slf4j.sysoutslf4j.context.ClassLoaderUtils.getJarURL;
 import static org.slf4j.sysoutslf4j.context.ClassLoaderUtils.loadClass;
 
 import java.net.URL;
+import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.sysoutslf4j.common.ExceptionUtils;
+import org.slf4j.sysoutslf4j.common.PrintStreamCoordinator;
 import org.slf4j.sysoutslf4j.common.ReflectionUtils;
 import org.slf4j.sysoutslf4j.system.PrintStreamCoordinatorImpl;
 
-class SLF4JPrintStreamConfiguratorClass {
+class PrintStreamCoordinatorFactory {
 	
 	private static final String LINE_END = System.getProperty("line.separator");
 	private static final Logger LOG = LoggerFactory.getLogger(SysOutOverSLF4J.class);
 
-	static Object getSlf4jPrintStreamConfiguratorClass() {
-		Class<?> slf4jPrintStreamConfiguratorClass = getConfiguratorClassFromSLF4JPrintStreamClassLoader();
-		if (slf4jPrintStreamConfiguratorClass == null) {
-			slf4jPrintStreamConfiguratorClass = getConfiguratorClassFromSystemClassLoader();
+	static PrintStreamCoordinator createPrintStreamCoordinator() {
+		Class<?> candidateCoordinatorClass = getConfiguratorClassFromSLF4JPrintStreamClassLoader();
+		if (candidateCoordinatorClass == null) {
+			candidateCoordinatorClass = getConfiguratorClassFromSystemClassLoader();
 		}
-		if (slf4jPrintStreamConfiguratorClass == null) {
-			slf4jPrintStreamConfiguratorClass = addConfiguratorClassToSystemClassLoaderAndGet();
+		if (candidateCoordinatorClass == null) {
+			candidateCoordinatorClass = addConfiguratorClassToSystemClassLoaderAndGet();
 		}
-		if (slf4jPrintStreamConfiguratorClass == null) {
-			slf4jPrintStreamConfiguratorClass = getConfiguratorClassFromCurrentClassLoader();
+		if (candidateCoordinatorClass == null) {
+			candidateCoordinatorClass = getConfiguratorClassFromCurrentClassLoader();
 		}
-		try {
-			return slf4jPrintStreamConfiguratorClass.newInstance();
-		} catch (Exception e) {
-			throw ExceptionUtils.asRuntimeException(e);
-		}
+		return makeCoordinator(candidateCoordinatorClass);
 	}
-	
+
+	private static PrintStreamCoordinator makeCoordinator(final Class<?> coordinatorClass) {
+		return ExceptionUtils.doUnchecked(new Callable<PrintStreamCoordinator>() {
+			@Override
+			public PrintStreamCoordinator call() throws Exception {
+				Object coordinator = coordinatorClass.newInstance();
+				return ReflectionUtils.wrap(coordinator, PrintStreamCoordinator.class);
+			}
+		});
+	}
+
 	private static Class<?> getConfiguratorClassFromSLF4JPrintStreamClassLoader() {
 		final Class<?> configuratorClass;
 		if (SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams()) {
@@ -58,7 +66,7 @@ class SLF4JPrintStreamConfiguratorClass {
 	private static Class<?> addConfiguratorClassToSystemClassLoaderAndGet() {
 		Class<?> configuratorClass = null;
 		try {
-			final URL jarUrl = getJarURL(PrintStreamCoordinatorImpl.class);
+			final URL jarUrl = getJarURL(PrintStreamCoordinator.class);
 			ReflectionUtils.invokeMethod("addURL", ClassLoader.getSystemClassLoader(), URL.class, jarUrl);
 			configuratorClass = ClassLoader.getSystemClassLoader().loadClass(PrintStreamCoordinatorImpl.class.getName());
 		} catch (Exception exception) {
@@ -82,7 +90,7 @@ class SLF4JPrintStreamConfiguratorClass {
 		return PrintStreamCoordinatorImpl.class;
 	}
 	
-	private SLF4JPrintStreamConfiguratorClass() {
+	private PrintStreamCoordinatorFactory() {
 		throw new UnsupportedOperationException("Not instantiable");
 	}
 }

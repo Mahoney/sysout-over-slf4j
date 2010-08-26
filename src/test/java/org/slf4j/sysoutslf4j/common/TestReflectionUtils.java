@@ -8,7 +8,6 @@ import static org.junit.Assert.assertSame;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
 import static org.slf4j.testutils.ThrowableEquals.eqExceptionCause;
 import static org.slf4j.testutils.Assert.assertNotInstantiable;
 import static org.slf4j.testutils.Assert.shouldThrow;
@@ -60,8 +59,6 @@ public class TestReflectionUtils extends SysOutOverSLF4JTestCase {
 				return null;
 			}
 		});
-		
-		verifyAll();
 	}
 	
 	@Test
@@ -82,5 +79,43 @@ public class TestReflectionUtils extends SysOutOverSLF4JTestCase {
 	@Test
 	public void notInstantiable() throws Throwable {
 		assertNotInstantiable(ReflectionUtils.class);
+	}
+	
+	@Test
+	public void wrapReturnsUnwrappedSLF4JPrintStreamIfInSameClassLoader() {
+		Iterable<?> expected = createMock(Iterable.class);
+		assertSame(expected, ReflectionUtils.wrap(expected, Iterable.class));
+	}
+	
+	@Test
+	public void wrapReturnsWrappedSLF4JPrintStreamIfInDifferentClassLoader() throws Exception {
+		ExampleInterfaceWithSameMethods instanceToProxy = createMock(ExampleInterfaceWithSameMethods.class);
+		Object result = new Object();
+		expect(instanceToProxy.get("anarg")).andStubReturn(result);
+		replayAll();
+		
+		ExampleInterface wrappedInstance = ReflectionUtils.wrap(instanceToProxy, ExampleInterface.class);
+		assertEquals(result, wrappedInstance.get("anarg"));
+	}
+	
+	private static interface ExampleInterface {
+		Object get(String argument);
+	}
+	
+	private static interface ExampleInterfaceWithSameMethods {
+		Object get(String argument);
+	}
+	
+	@Test
+	public void wrapThrowsIllegalArgumentExceptionIfCalledWithObjectThatDoesNotHaveMethodsMatchingInterfaceSignature() throws Throwable {
+		final Object target = new Object();
+		IllegalArgumentException exception = shouldThrow(IllegalArgumentException.class, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				ReflectionUtils.wrap(target, ExampleInterface.class);
+				return null;
+			}
+		});
+		assertEquals("Target " + target + " does not have methods to match all method signatures on class " + ExampleInterface.class, exception.getMessage());
 	}
 }

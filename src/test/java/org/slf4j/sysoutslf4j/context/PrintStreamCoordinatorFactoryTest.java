@@ -10,6 +10,7 @@ import static org.powermock.api.easymock.PowerMock.replay;
 import static org.slf4j.testutils.Assert.assertExpectedLoggingEvent;
 import static org.slf4j.testutils.Assert.assertNotInstantiable;
 
+import java.lang.reflect.Proxy;
 import java.net.URL;
 
 import org.junit.Before;
@@ -19,6 +20,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.LoggerFactory;
 import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
+import org.slf4j.sysoutslf4j.common.PrintStreamCoordinator;
+import org.slf4j.sysoutslf4j.common.ProxyingInvocationHandler;
 import org.slf4j.sysoutslf4j.common.ReflectionUtils;
 import org.slf4j.sysoutslf4j.system.PrintStreamCoordinatorImpl;
 import org.slf4j.testutils.SystemClassLoaderWithoutSysoutOverSLF4JOnClassPath;
@@ -28,8 +31,8 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({SLF4JPrintStreamConfiguratorClass.class, ClassLoaderUtils.class})
-public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCase {
+@PrepareForTest({PrintStreamCoordinatorFactory.class, ClassLoaderUtils.class})
+public class PrintStreamCoordinatorFactoryTest extends SysOutOverSLF4JTestCase {
 
 	private Logger log = (Logger) LoggerFactory.getLogger(SysOutOverSLF4J.class);
 	private static final String LINE_END = System.getProperty("line.separator");
@@ -52,15 +55,17 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 		Class<?> configuratorClass = ClassLoaderUtils.loadClass(contextClassLoader, PrintStreamCoordinatorImpl.class);
 		ReflectionUtils.invokeMethod("replaceSystemOutputsWithSLF4JPrintStreams", configuratorClass.newInstance());
 		
-		// Check the configurator class returned was loaded by our context class loader
-		Object configurator = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
-		assertSame(contextClassLoader, configurator.getClass().getClassLoader());
+		// Check the coordinator class returned was loaded by our context class loader
+		PrintStreamCoordinator proxyCoordinator = PrintStreamCoordinatorFactory.createPrintStreamCoordinator();
+		ProxyingInvocationHandler invocationHandler = (ProxyingInvocationHandler) Proxy.getInvocationHandler(proxyCoordinator);
+		assertSame(contextClassLoader, invocationHandler.getTarget().getClass().getClassLoader());
 	}
 	
 	@Test
 	public void getSlf4jPrintStreamConfiguratorClassReturnsClassFromSystemClassLoaderWhenOnClassPath() {
-		Object configurator = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
-		assertSame(ClassLoader.getSystemClassLoader(), configurator.getClass().getClassLoader());
+		PrintStreamCoordinator proxyCoordinator = PrintStreamCoordinatorFactory.createPrintStreamCoordinator();
+		ProxyingInvocationHandler invocationHandler = (ProxyingInvocationHandler) Proxy.getInvocationHandler(proxyCoordinator);
+		assertSame(ClassLoader.getSystemClassLoader(), invocationHandler.getTarget().getClass().getClassLoader());
 	}
 	
 	@Test
@@ -70,8 +75,9 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 		expect(ClassLoader.getSystemClassLoader()).andStubReturn(systemClassLoader);
 		replay(ClassLoader.class);
 		
-		Object configurator = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
-		assertSame(systemClassLoader, configurator.getClass().getClassLoader());
+		PrintStreamCoordinator proxyCoordinator = PrintStreamCoordinatorFactory.createPrintStreamCoordinator();
+		ProxyingInvocationHandler invocationHandler = (ProxyingInvocationHandler) Proxy.getInvocationHandler(proxyCoordinator);
+		assertSame(systemClassLoader, invocationHandler.getTarget().getClass().getClassLoader());
 		
 		assertEquals(1, appender.list.size());
 		assertExpectedLoggingEvent(appender.list.get(0),
@@ -88,12 +94,12 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 		
 		mockStatic(ClassLoaderUtils.class);
 		NullPointerException cause = new NullPointerException();
-		expect(ClassLoaderUtils.getJarURL(PrintStreamCoordinatorImpl.class)).andThrow(cause);
+		expect(ClassLoaderUtils.getJarURL(PrintStreamCoordinator.class)).andThrow(cause);
 		
 		replay(ClassLoader.class, ClassLoaderUtils.class);
 		
-		Object configurator = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
-		assertSame(PrintStreamCoordinatorImpl.class, configurator.getClass());
+		PrintStreamCoordinator coordinator = PrintStreamCoordinatorFactory.createPrintStreamCoordinator();
+		assertSame(PrintStreamCoordinatorImpl.class, coordinator.getClass());
 		
 		assertEquals(2, appender.list.size());
 		assertExpectedLoggingEvent(appender.list.get(0),
@@ -120,7 +126,7 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 	@Test
 	public void getSlf4jPrintStreamConfiguratorClassReturnsLocallyLoadedClassWhenUnableToAddToSystemClassPath() {
 		SystemClassLoaderWithoutSysoutOverSLF4JOnClassPath systemClassLoader = createPartialMock(SystemClassLoaderWithoutSysoutOverSLF4JOnClassPath.class, "addURL");
-		URL jarUrl = ClassLoaderUtils.getJarURL(PrintStreamCoordinatorImpl.class);
+		URL jarUrl = ClassLoaderUtils.getJarURL(PrintStreamCoordinator.class);
 		systemClassLoader.addURL(jarUrl);
 		SecurityException cause = new SecurityException();
 		expectLastCall().andThrow(cause);
@@ -130,8 +136,8 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 		
 		replay(ClassLoader.class, systemClassLoader);
 		
-		Object configurator = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
-		assertSame(PrintStreamCoordinatorImpl.class, configurator.getClass());
+		PrintStreamCoordinator coordinator = PrintStreamCoordinatorFactory.createPrintStreamCoordinator();
+		assertSame(PrintStreamCoordinatorImpl.class, coordinator.getClass());
 		
 		assertExpectedLoggingEvent(appender.list.get(0),
 				"failed to load [" + PrintStreamCoordinatorImpl.class + "] from system class loader " +
@@ -145,6 +151,6 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 	
 	@Test
 	public void notInstantiable() throws Throwable {
-		assertNotInstantiable(SLF4JPrintStreamConfiguratorClass.class);
+		assertNotInstantiable(PrintStreamCoordinatorFactory.class);
 	}
 }

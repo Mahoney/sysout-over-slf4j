@@ -29,7 +29,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ReflectionUtils.class, SLF4JPrintStreamManager.class, SLF4JPrintStreamConfiguratorClass.class })
+@PrepareForTest({ ReflectionUtils.class, SLF4JPrintStreamManager.class, PrintStreamCoordinatorFactory.class })
 public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
 
     private SLF4JPrintStreamManager slf4JPrintStreamManagerInstance;
@@ -42,7 +42,7 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
         exceptionHandlingStrategyFactoryMock = createMock(ExceptionHandlingStrategyFactory.class);
         slf4JPrintStreamManagerInstance = new SLF4JPrintStreamManager();
         mockStatic(ReflectionUtils.class);
-        mockStatic(SLF4JPrintStreamConfiguratorClass.class);
+        mockStatic(PrintStreamCoordinatorFactory.class);
         log.setLevel(Level.TRACE);
     }
 
@@ -62,7 +62,7 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     
     @Test
     public void sendSystemOutAndErrToSLF4JDoesNotMakeSystemOutputsSLF4JPrintStreamsWhenTheyAreAlready() throws Exception {
-    	(new PrintStreamCoordinatorImpl()).replaceSystemOutputsWithSLF4JPrintStreams();
+    	new PrintStreamCoordinatorImpl().replaceSystemOutputsWithSLF4JPrintStreams();
         expectLoggerAppendersToBeRegistered(LogLevel.INFO, LogLevel.ERROR);
         replayAll();
 
@@ -75,10 +75,10 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     
     @Test
     public void stopSendingSystemOutAndErrToSLF4JDeregistersLoggerAppenders() {
+    	new PrintStreamCoordinatorImpl().replaceSystemOutputsWithSLF4JPrintStreams();
     	
     	expectLoggerAppenderToBeDeregistered(SystemOutput.OUT);
     	expectLoggerAppenderToBeDeregistered(SystemOutput.ERR);
-    	
     	replayAll();
     	
     	slf4JPrintStreamManagerInstance.stopSendingSystemOutAndErrToSLF4J();
@@ -94,10 +94,6 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     
     @Test
     public void stopSendingSystemOutAndErrToSLF4JLogsWarningIfSystemOutputsAreNotSLF4JPrintStreams() {
-    	expect(ReflectionUtils.wrap(System.out, SLF4JPrintStream.class)).andStubThrow(new IllegalArgumentException());
-    	expect(ReflectionUtils.wrap(System.err, SLF4JPrintStream.class)).andStubThrow(new IllegalArgumentException());
-    	
-    	replayAll();
     	
     	slf4JPrintStreamManagerInstance.stopSendingSystemOutAndErrToSLF4J();
     	
@@ -110,10 +106,9 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     public void restoreOriginalSystemOutputsIfNecessaryRestoresOriginalPrintStreams() {
     	new PrintStreamCoordinatorImpl().replaceSystemOutputsWithSLF4JPrintStreams();
     	
-    	PrintStreamCoordinator configurator = new PrintStreamCoordinatorImpl();
-		expect(SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass()).andReturn(configurator);
-        expect(ReflectionUtils.invokeMethod(
-        		"restoreOriginalSystemOutputs", configurator)).andReturn(null);
+    	PrintStreamCoordinator configurator = createMock(PrintStreamCoordinator.class);
+		expect(PrintStreamCoordinatorFactory.createPrintStreamCoordinator()).andReturn(configurator);
+        configurator.restoreOriginalSystemOutputs();
         replayAll();
 
         slf4JPrintStreamManagerInstance.restoreOriginalSystemOutputsIfNecessary();
@@ -150,16 +145,8 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
 	}
 
 	private void expectSystemOutputsToBeReplacedWithSLF4JPrintStreams() throws Exception {
-		PrintStreamCoordinator configurator = new PrintStreamCoordinatorImpl();
-		expect(SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass()).andReturn(configurator);
-        expect(ReflectionUtils.invokeMethod(
-        		"replaceSystemOutputsWithSLF4JPrintStreams", configurator)).andReturn(null);
+		PrintStreamCoordinator configurator = createMock(PrintStreamCoordinator.class);
+		expect(PrintStreamCoordinatorFactory.createPrintStreamCoordinator()).andReturn(configurator);
+        configurator.replaceSystemOutputsWithSLF4JPrintStreams();
 	}
-
-//	private void expectConfiguratorClassToBeLoadedFromNewClassLoader() {
-//        ClassLoader classLoaderMock = createMock(ClassLoader.class);
-//        expect(ClassLoaderUtils.makeNewClassLoaderForJar(SLF4JPrintStreamConfigurator.class)).andReturn(classLoaderMock);
-//        ClassLoaderUtils.loadClass(classLoaderMock, SLF4JPrintStreamConfigurator.class);
-//        expectLastCall().andReturn(SLF4JPrintStreamConfigurator.class);
-//	}
 }

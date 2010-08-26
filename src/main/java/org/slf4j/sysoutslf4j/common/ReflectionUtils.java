@@ -57,12 +57,12 @@ public final class ReflectionUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E> E wrap(final Object targetPrintStream, final Class<E> interfaceClass) {
+	public static <E> E wrap(final Object target, final Class<E> interfaceClass) {
 		final E result;
-		if (interfaceClass.isAssignableFrom(targetPrintStream.getClass())) {
-			result = (E) targetPrintStream;
+		if (interfaceClass.isAssignableFrom(target.getClass())) {
+			result = (E) target;
 		} else {
-			result = (E) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{interfaceClass}, new ProxyingInvocationHandler(targetPrintStream));
+			result = (E) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{interfaceClass}, new ProxyingInvocationHandler(target, interfaceClass));
 		}
 		return result;
 	}

@@ -1,5 +1,7 @@
 package org.slf4j.sysoutslf4j.context;
 
+import static org.slf4j.sysoutslf4j.context.PrintStreamCoordinatorFactory.createPrintStreamCoordinator;
+
 import java.io.PrintStream;
 
 import org.slf4j.Logger;
@@ -25,19 +27,15 @@ class SLF4JPrintStreamManager {
 		if (SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams()) {
 			LOG.debug("System.out and System.err are already SLF4JPrintStreams");
 		} else {
-			makeSystemOutputsSLF4JPrintStreams();
+			createPrintStreamCoordinator().replaceSystemOutputsWithSLF4JPrintStreams();
 			LOG.info("Replaced standard System.out and System.err PrintStreams with SLF4JPrintStreams");
 		}
 	}
 
-	private void makeSystemOutputsSLF4JPrintStreams() {
-		ReflectionUtils.invokeMethod("replaceSystemOutputsWithSLF4JPrintStreams", SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass());
-	}
-
 	private void sendSystemOutAndErrToSLF4JForThisContext(final LogLevel outLevel, final LogLevel errLevel, 
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
-		registerNewLoggerAppender(exceptionHandlingStrategyFactory, ReflectionUtils.wrap(SystemOutput.OUT.get(), SLF4JPrintStream.class), outLevel);
-		registerNewLoggerAppender(exceptionHandlingStrategyFactory, ReflectionUtils.wrap(SystemOutput.ERR.get(), SLF4JPrintStream.class), errLevel);
+		registerNewLoggerAppender(exceptionHandlingStrategyFactory, wrap(SystemOutput.OUT.get()), outLevel);
+		registerNewLoggerAppender(exceptionHandlingStrategyFactory, wrap(SystemOutput.ERR.get()), errLevel);
 	}
 
 	private void registerNewLoggerAppender(
@@ -54,27 +52,26 @@ class SLF4JPrintStreamManager {
 	}
 
 	void stopSendingSystemOutAndErrToSLF4J() {
-		try {
+		if (SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams()) {
 			for (SystemOutput systemOutput : SystemOutput.values()) {
-				final SLF4JPrintStream slf4jPrintStream = ReflectionUtils.wrap(systemOutput.get(), SLF4JPrintStream.class);
+				final SLF4JPrintStream slf4jPrintStream = wrap(systemOutput.get());
 				slf4jPrintStream.deregisterLoggerAppender();
 			}
-		} catch (IllegalArgumentException iae) {
+		} else {
 			LOG.warn("Cannot stop sending System.out and System.err to SLF4J - they are not being sent there at the moment");
 		}
 	}
 
+	private SLF4JPrintStream wrap(PrintStream target) {
+		return ReflectionUtils.wrap(target, SLF4JPrintStream.class);
+	}
+
 	void restoreOriginalSystemOutputsIfNecessary() {
 		if (SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams()) {
-			restoreOriginalSystemOutputs();
+			createPrintStreamCoordinator().restoreOriginalSystemOutputs();
 			LOG.info("Restored original System.out and System.err");
 		} else {
 			LOG.warn("System.out and System.err are not SLF4JPrintStreams - cannot restore");
 		}
 	}
-
-	private void restoreOriginalSystemOutputs() {
-		ReflectionUtils.invokeMethod("restoreOriginalSystemOutputs", SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass());
-	}
-
 }
