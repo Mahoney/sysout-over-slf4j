@@ -12,12 +12,13 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
+import org.slf4j.sysoutslf4j.common.PrintStreamCoordinator;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ SLF4JPrintStreamConfigurator.class, SLF4JPrintStreamImpl.class })
 public class TestSLF4JPrintStreamConfigurator extends SysOutOverSLF4JTestCase {
 	
-	private SLF4JPrintStreamConfigurator configurator = new SLF4JPrintStreamConfigurator();
+	private PrintStreamCoordinator configurator = new SLF4JPrintStreamConfigurator();
 	
 	@Test
 	public void replaceSystemOutputsWithSLF4JPrintStreams() throws Exception {

@@ -2,11 +2,13 @@ package org.slf4j.sysoutslf4j.system;
 
 import java.io.PrintStream;
 
+import org.slf4j.sysoutslf4j.common.PrintStreamCoordinator;
 import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
 import org.slf4j.sysoutslf4j.common.SystemOutput;
 
-public final class SLF4JPrintStreamConfigurator {
+public final class SLF4JPrintStreamConfigurator implements PrintStreamCoordinator {
 	
+	@Override
 	public void replaceSystemOutputsWithSLF4JPrintStreams() {
 		for (SystemOutput systemOutput : SystemOutput.values()) {
 			replaceSystemOutputWithSLF4JPrintStream(systemOutput);
@@ -24,6 +26,7 @@ public final class SLF4JPrintStreamConfigurator {
 		return new SLF4JPrintStreamImpl(originalPrintStream, delegate);
 	}
 
+	@Override
 	public void restoreOriginalSystemOutputs() {
 		for (SystemOutput systemOutput : SystemOutput.values()) {
 			restoreSystemOutput(systemOutput);

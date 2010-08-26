@@ -17,6 +17,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.LoggerFactory;
 import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
+import org.slf4j.sysoutslf4j.common.PrintStreamCoordinator;
 import org.slf4j.sysoutslf4j.common.ReflectionUtils;
 import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
 import org.slf4j.sysoutslf4j.common.SystemOutput;
@@ -110,7 +111,7 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     public void restoreOriginalSystemOutputsIfNecessaryRestoresOriginalPrintStreams() {
     	new SLF4JPrintStreamConfigurator().replaceSystemOutputsWithSLF4JPrintStreams();
     	
-    	SLF4JPrintStreamConfigurator configurator = new SLF4JPrintStreamConfigurator();
+    	PrintStreamCoordinator configurator = new SLF4JPrintStreamConfigurator();
 		expect(SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass()).andReturn(configurator);
         expect(ReflectionUtils.invokeMethod(
         		"restoreOriginalSystemOutputs", configurator)).andReturn(null);
@@ -150,7 +151,7 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
 	}
 
 	private void expectSystemOutputsToBeReplacedWithSLF4JPrintStreams() throws Exception {
-		SLF4JPrintStreamConfigurator configurator = new SLF4JPrintStreamConfigurator();
+		PrintStreamCoordinator configurator = new SLF4JPrintStreamConfigurator();
 		expect(SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass()).andReturn(configurator);
         expect(ReflectionUtils.invokeMethod(
         		"replaceSystemOutputsWithSLF4JPrintStreams", configurator)).andReturn(null);
