@@ -6,7 +6,7 @@ import org.slf4j.sysoutslf4j.common.PrintStreamCoordinator;
 import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
 import org.slf4j.sysoutslf4j.common.SystemOutput;
 
-public final class SLF4JPrintStreamConfigurator implements PrintStreamCoordinator {
+public final class PrintStreamCoordinatorImpl implements PrintStreamCoordinator {
 	
 	@Override
 	public void replaceSystemOutputsWithSLF4JPrintStreams() {

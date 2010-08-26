@@ -6,10 +6,8 @@ import static org.junit.Assert.assertSame;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
-import static org.slf4j.testutils.Assert.shouldThrow;
 
 import java.io.PrintStream;
-import java.util.concurrent.Callable;
 
 import org.junit.Test;
 import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
@@ -43,17 +41,5 @@ public class TestSLF4JPrintStreamProxy {
 		PrintStream getOriginalPrintStream();
 		void registerLoggerAppender(Object loggerAppender);
 		void deregisterLoggerAppender();
-	}
-	
-	@Test
-	public void wrapThrowsNestedNoSuchMethodExceptionIfInstantiatedWithWrongType() throws Throwable {
-		IllegalArgumentException iae = shouldThrow(IllegalArgumentException.class, new Callable<Void>() {
-			public Void call() throws Exception {
-				SLF4JPrintStreamProxy.wrap(new Object());
-				return null;
-			}
-		});
-		assertSame(NoSuchMethodException.class, iae.getCause().getClass());
-		assertEquals("Must only be instantiated with an SLF4JPrintStream instance, got a class java.lang.Object", iae.getMessage());
 	}
 }

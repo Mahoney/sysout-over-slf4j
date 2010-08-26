@@ -23,7 +23,7 @@ import org.slf4j.sysoutslf4j.common.SLF4JPrintStream;
 import org.slf4j.sysoutslf4j.common.SystemOutput;
 import org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import org.slf4j.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
-import org.slf4j.sysoutslf4j.system.SLF4JPrintStreamConfigurator;
+import org.slf4j.sysoutslf4j.system.PrintStreamCoordinatorImpl;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -63,7 +63,7 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     
     @Test
     public void sendSystemOutAndErrToSLF4JDoesNotMakeSystemOutputsSLF4JPrintStreamsWhenTheyAreAlready() throws Exception {
-    	(new SLF4JPrintStreamConfigurator()).replaceSystemOutputsWithSLF4JPrintStreams();
+    	(new PrintStreamCoordinatorImpl()).replaceSystemOutputsWithSLF4JPrintStreams();
         expectLoggerAppendersToBeRegistered(LogLevel.INFO, LogLevel.ERROR);
         replayAll();
 
@@ -109,9 +109,9 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     
     @Test
     public void restoreOriginalSystemOutputsIfNecessaryRestoresOriginalPrintStreams() {
-    	new SLF4JPrintStreamConfigurator().replaceSystemOutputsWithSLF4JPrintStreams();
+    	new PrintStreamCoordinatorImpl().replaceSystemOutputsWithSLF4JPrintStreams();
     	
-    	PrintStreamCoordinator configurator = new SLF4JPrintStreamConfigurator();
+    	PrintStreamCoordinator configurator = new PrintStreamCoordinatorImpl();
 		expect(SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass()).andReturn(configurator);
         expect(ReflectionUtils.invokeMethod(
         		"restoreOriginalSystemOutputs", configurator)).andReturn(null);
@@ -151,7 +151,7 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
 	}
 
 	private void expectSystemOutputsToBeReplacedWithSLF4JPrintStreams() throws Exception {
-		PrintStreamCoordinator configurator = new SLF4JPrintStreamConfigurator();
+		PrintStreamCoordinator configurator = new PrintStreamCoordinatorImpl();
 		expect(SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass()).andReturn(configurator);
         expect(ReflectionUtils.invokeMethod(
         		"replaceSystemOutputsWithSLF4JPrintStreams", configurator)).andReturn(null);

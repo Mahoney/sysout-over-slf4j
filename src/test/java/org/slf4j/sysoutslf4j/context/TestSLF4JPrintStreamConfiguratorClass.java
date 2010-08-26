@@ -20,7 +20,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.LoggerFactory;
 import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
 import org.slf4j.sysoutslf4j.common.ReflectionUtils;
-import org.slf4j.sysoutslf4j.system.SLF4JPrintStreamConfigurator;
+import org.slf4j.sysoutslf4j.system.PrintStreamCoordinatorImpl;
 import org.slf4j.testutils.SystemClassLoaderWithoutSysoutOverSLF4JOnClassPath;
 import org.slf4j.testutils.SimpleClassloader;
 
@@ -49,7 +49,7 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 		replay(ClassLoader.class);
 		
 		// Force the new PrintStream to be loaded by our context class loader
-		Class<?> configuratorClass = ClassLoaderUtils.loadClass(contextClassLoader, SLF4JPrintStreamConfigurator.class);
+		Class<?> configuratorClass = ClassLoaderUtils.loadClass(contextClassLoader, PrintStreamCoordinatorImpl.class);
 		ReflectionUtils.invokeMethod("replaceSystemOutputsWithSLF4JPrintStreams", configuratorClass.newInstance());
 		
 		// Check the configurator class returned was loaded by our context class loader
@@ -75,8 +75,8 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 		
 		assertEquals(1, appender.list.size());
 		assertExpectedLoggingEvent(appender.list.get(0),
-				"failed to load org.slf4j.sysoutslf4j.system.SLF4JPrintStreamConfigurator from system class loader " +
-				"due to java.lang.ClassNotFoundException: org.slf4j.sysoutslf4j.system.SLF4JPrintStreamConfigurator",
+				"failed to load [" + PrintStreamCoordinatorImpl.class + "] from system class loader " +
+				"due to java.lang.ClassNotFoundException: " + PrintStreamCoordinatorImpl.class.getName(),
 				Level.DEBUG, SysOutOverSLF4J.class.getName());
 	}
 	
@@ -88,17 +88,17 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 		
 		mockStatic(ClassLoaderUtils.class);
 		NullPointerException cause = new NullPointerException();
-		expect(ClassLoaderUtils.getJarURL(SLF4JPrintStreamConfigurator.class)).andThrow(cause);
+		expect(ClassLoaderUtils.getJarURL(PrintStreamCoordinatorImpl.class)).andThrow(cause);
 		
 		replay(ClassLoader.class, ClassLoaderUtils.class);
 		
 		Object configurator = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
-		assertSame(SLF4JPrintStreamConfigurator.class, configurator.getClass());
+		assertSame(PrintStreamCoordinatorImpl.class, configurator.getClass());
 		
 		assertEquals(2, appender.list.size());
 		assertExpectedLoggingEvent(appender.list.get(0),
-				"failed to load org.slf4j.sysoutslf4j.system.SLF4JPrintStreamConfigurator from system class loader " +
-				"due to java.lang.ClassNotFoundException: org.slf4j.sysoutslf4j.system.SLF4JPrintStreamConfigurator",
+				"failed to load [" + PrintStreamCoordinatorImpl.class + "] from system class loader " +
+				"due to java.lang.ClassNotFoundException: " + PrintStreamCoordinatorImpl.class.getName(),
 				Level.DEBUG, SysOutOverSLF4J.class.getName());
 		
 		assertExpectedLoggingEvent(appender.list.get(1),
@@ -108,7 +108,7 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 
 	private String expectedLeakWarning() {
 		return "Unable to force sysout-over-slf4j jar url into system class loader and " +
-		"then load class [class org.slf4j.sysoutslf4j.system.SLF4JPrintStreamConfigurator] from the system class loader." + LINE_END +
+		"then load class [" + PrintStreamCoordinatorImpl.class + "] from the system class loader." + LINE_END +
 		"Unfortunately it is not possible to set up Sysout over SLF4J on this system without introducing " +
 		"a class loader memory leak." + LINE_END +
 		"If you never need to discard the current class loader [" + Thread.currentThread().getContextClassLoader() + "] " +
@@ -120,7 +120,7 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 	@Test
 	public void getSlf4jPrintStreamConfiguratorClassReturnsLocallyLoadedClassWhenUnableToAddToSystemClassPath() {
 		SystemClassLoaderWithoutSysoutOverSLF4JOnClassPath systemClassLoader = createPartialMock(SystemClassLoaderWithoutSysoutOverSLF4JOnClassPath.class, "addURL");
-		URL jarUrl = ClassLoaderUtils.getJarURL(SLF4JPrintStreamConfigurator.class);
+		URL jarUrl = ClassLoaderUtils.getJarURL(PrintStreamCoordinatorImpl.class);
 		systemClassLoader.addURL(jarUrl);
 		SecurityException cause = new SecurityException();
 		expectLastCall().andThrow(cause);
@@ -131,11 +131,11 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 		replay(ClassLoader.class, systemClassLoader);
 		
 		Object configurator = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
-		assertSame(SLF4JPrintStreamConfigurator.class, configurator.getClass());
+		assertSame(PrintStreamCoordinatorImpl.class, configurator.getClass());
 		
 		assertExpectedLoggingEvent(appender.list.get(0),
-				"failed to load org.slf4j.sysoutslf4j.system.SLF4JPrintStreamConfigurator from system class loader " +
-				"due to java.lang.ClassNotFoundException: org.slf4j.sysoutslf4j.system.SLF4JPrintStreamConfigurator",
+				"failed to load [" + PrintStreamCoordinatorImpl.class + "] from system class loader " +
+				"due to java.lang.ClassNotFoundException: " + PrintStreamCoordinatorImpl.class.getName(),
 				Level.DEBUG, SysOutOverSLF4J.class.getName());
 		
 		assertExpectedLoggingEvent(appender.list.get(1),

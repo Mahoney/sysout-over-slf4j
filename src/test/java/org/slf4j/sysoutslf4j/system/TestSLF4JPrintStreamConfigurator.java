@@ -15,10 +15,10 @@ import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
 import org.slf4j.sysoutslf4j.common.PrintStreamCoordinator;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ SLF4JPrintStreamConfigurator.class, SLF4JPrintStreamImpl.class })
+@PrepareForTest({ PrintStreamCoordinatorImpl.class, SLF4JPrintStreamImpl.class })
 public class TestSLF4JPrintStreamConfigurator extends SysOutOverSLF4JTestCase {
 	
-	private PrintStreamCoordinator configurator = new SLF4JPrintStreamConfigurator();
+	private PrintStreamCoordinator configurator = new PrintStreamCoordinatorImpl();
 	
 	@Test
 	public void replaceSystemOutputsWithSLF4JPrintStreams() throws Exception {
