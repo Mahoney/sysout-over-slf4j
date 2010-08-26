@@ -108,10 +108,12 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     
     @Test
     public void restoreOriginalSystemOutputsIfNecessaryRestoresOriginalPrintStreams() {
-    	SLF4JPrintStreamConfigurator.replaceSystemOutputsWithSLF4JPrintStreams();
-		expect(SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass()).andReturn((Class) SLF4JPrintStreamConfigurator.class);
-        expect(ReflectionUtils.invokeStaticMethod(
-        		"restoreOriginalSystemOutputs", SLF4JPrintStreamConfigurator.class)).andReturn(null);
+    	new SLF4JPrintStreamConfigurator().replaceSystemOutputsWithSLF4JPrintStreams();
+    	
+    	SLF4JPrintStreamConfigurator configurator = new SLF4JPrintStreamConfigurator();
+		expect(SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass()).andReturn(configurator);
+        expect(ReflectionUtils.invokeMethod(
+        		"restoreOriginalSystemOutputs", configurator)).andReturn(null);
         replayAll();
 
         slf4JPrintStreamManagerInstance.restoreOriginalSystemOutputsIfNecessary();
@@ -148,9 +150,10 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
 	}
 
 	private void expectSystemOutputsToBeReplacedWithSLF4JPrintStreams() throws Exception {
-		expect(SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass()).andReturn((Class) SLF4JPrintStreamConfigurator.class);
-        expect(ReflectionUtils.invokeStaticMethod(
-        		"replaceSystemOutputsWithSLF4JPrintStreams", SLF4JPrintStreamConfigurator.class)).andReturn(null);
+		SLF4JPrintStreamConfigurator configurator = new SLF4JPrintStreamConfigurator();
+		expect(SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass()).andReturn(configurator);
+        expect(ReflectionUtils.invokeMethod(
+        		"replaceSystemOutputsWithSLF4JPrintStreams", configurator)).andReturn(null);
 	}
 
 //	private void expectConfiguratorClassToBeLoadedFromNewClassLoader() {

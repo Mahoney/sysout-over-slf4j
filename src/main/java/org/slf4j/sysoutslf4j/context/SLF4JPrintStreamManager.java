@@ -31,7 +31,7 @@ class SLF4JPrintStreamManager {
 	}
 
 	private void makeSystemOutputsSLF4JPrintStreams() {
-		ReflectionUtils.invokeStaticMethod("replaceSystemOutputsWithSLF4JPrintStreams", SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass());
+		ReflectionUtils.invokeMethod("replaceSystemOutputsWithSLF4JPrintStreams", SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass());
 	}
 
 	private void sendSystemOutAndErrToSLF4JForThisContext(final LogLevel outLevel, final LogLevel errLevel, 
@@ -74,7 +74,7 @@ class SLF4JPrintStreamManager {
 	}
 
 	private void restoreOriginalSystemOutputs() {
-		ReflectionUtils.invokeStaticMethod("restoreOriginalSystemOutputs", SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass());
+		ReflectionUtils.invokeMethod("restoreOriginalSystemOutputs", SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass());
 	}
 
 }

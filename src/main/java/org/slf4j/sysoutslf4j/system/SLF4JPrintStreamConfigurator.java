@@ -7,7 +7,7 @@ import org.slf4j.sysoutslf4j.common.SystemOutput;
 
 public final class SLF4JPrintStreamConfigurator {
 	
-	public static void replaceSystemOutputsWithSLF4JPrintStreams() {
+	public void replaceSystemOutputsWithSLF4JPrintStreams() {
 		for (SystemOutput systemOutput : SystemOutput.values()) {
 			replaceSystemOutputWithSLF4JPrintStream(systemOutput);
 		}
@@ -24,7 +24,7 @@ public final class SLF4JPrintStreamConfigurator {
 		return new SLF4JPrintStreamImpl(originalPrintStream, delegate);
 	}
 
-	public static void restoreOriginalSystemOutputs() {
+	public void restoreOriginalSystemOutputs() {
 		for (SystemOutput systemOutput : SystemOutput.values()) {
 			restoreSystemOutput(systemOutput);
 		}

@@ -50,17 +50,17 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 		
 		// Force the new PrintStream to be loaded by our context class loader
 		Class<?> configuratorClass = ClassLoaderUtils.loadClass(contextClassLoader, SLF4JPrintStreamConfigurator.class);
-		ReflectionUtils.invokeStaticMethod("replaceSystemOutputsWithSLF4JPrintStreams", configuratorClass);
+		ReflectionUtils.invokeMethod("replaceSystemOutputsWithSLF4JPrintStreams", configuratorClass.newInstance());
 		
 		// Check the configurator class returned was loaded by our context class loader
-		configuratorClass = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
-		assertSame(contextClassLoader, configuratorClass.getClassLoader());
+		Object configurator = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
+		assertSame(contextClassLoader, configurator.getClass().getClassLoader());
 	}
 	
 	@Test
 	public void getSlf4jPrintStreamConfiguratorClassReturnsClassFromSystemClassLoaderWhenOnClassPath() {
-		Class<?> configuratorClass = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
-		assertSame(ClassLoader.getSystemClassLoader(), configuratorClass.getClassLoader());
+		Object configurator = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
+		assertSame(ClassLoader.getSystemClassLoader(), configurator.getClass().getClassLoader());
 	}
 	
 	@Test
@@ -70,11 +70,8 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 		expect(ClassLoader.getSystemClassLoader()).andStubReturn(systemClassLoader);
 		replay(ClassLoader.class);
 		
-		Class<?> configuratorClass = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
-		System.out.println(configuratorClass);
-		ClassLoader classLoader = configuratorClass.getClassLoader();
-		System.out.println(classLoader);
-		assertSame(systemClassLoader, classLoader);
+		Object configurator = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
+		assertSame(systemClassLoader, configurator.getClass().getClassLoader());
 		
 		assertEquals(1, appender.list.size());
 		assertExpectedLoggingEvent(appender.list.get(0),
@@ -95,8 +92,8 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 		
 		replay(ClassLoader.class, ClassLoaderUtils.class);
 		
-		Class<?> configuratorClass = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
-		assertSame(SLF4JPrintStreamConfigurator.class, configuratorClass);
+		Object configurator = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
+		assertSame(SLF4JPrintStreamConfigurator.class, configurator.getClass());
 		
 		assertEquals(2, appender.list.size());
 		assertExpectedLoggingEvent(appender.list.get(0),
@@ -133,8 +130,8 @@ public class TestSLF4JPrintStreamConfiguratorClass extends SysOutOverSLF4JTestCa
 		
 		replay(ClassLoader.class, systemClassLoader);
 		
-		Class<?> configuratorClass = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
-		assertSame(SLF4JPrintStreamConfigurator.class, configuratorClass);
+		Object configurator = SLF4JPrintStreamConfiguratorClass.getSlf4jPrintStreamConfiguratorClass();
+		assertSame(SLF4JPrintStreamConfigurator.class, configurator.getClass());
 		
 		assertExpectedLoggingEvent(appender.list.get(0),
 				"failed to load org.slf4j.sysoutslf4j.system.SLF4JPrintStreamConfigurator from system class loader " +

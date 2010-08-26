@@ -7,6 +7,7 @@ import java.net.URL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.sysoutslf4j.common.ExceptionUtils;
 import org.slf4j.sysoutslf4j.common.ReflectionUtils;
 import org.slf4j.sysoutslf4j.system.SLF4JPrintStreamConfigurator;
 
@@ -15,7 +16,7 @@ class SLF4JPrintStreamConfiguratorClass {
 	private static final String LINE_END = System.getProperty("line.separator");
 	private static final Logger LOG = LoggerFactory.getLogger(SysOutOverSLF4J.class);
 
-	static Class<?> getSlf4jPrintStreamConfiguratorClass() {
+	static Object getSlf4jPrintStreamConfiguratorClass() {
 		Class<?> slf4jPrintStreamConfiguratorClass = getConfiguratorClassFromSLF4JPrintStreamClassLoader();
 		if (slf4jPrintStreamConfiguratorClass == null) {
 			slf4jPrintStreamConfiguratorClass = getConfiguratorClassFromSystemClassLoader();
@@ -26,7 +27,11 @@ class SLF4JPrintStreamConfiguratorClass {
 		if (slf4jPrintStreamConfiguratorClass == null) {
 			slf4jPrintStreamConfiguratorClass = getConfiguratorClassFromCurrentClassLoader();
 		}
-		return slf4jPrintStreamConfiguratorClass;
+		try {
+			return slf4jPrintStreamConfiguratorClass.newInstance();
+		} catch (Exception e) {
+			throw ExceptionUtils.asRuntimeException(e);
+		}
 	}
 	
 	private static Class<?> getConfiguratorClassFromSLF4JPrintStreamClassLoader() {

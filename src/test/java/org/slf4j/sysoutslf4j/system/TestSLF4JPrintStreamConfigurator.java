@@ -17,21 +17,23 @@ import org.slf4j.sysoutslf4j.SysOutOverSLF4JTestCase;
 @PrepareForTest({ SLF4JPrintStreamConfigurator.class, SLF4JPrintStreamImpl.class })
 public class TestSLF4JPrintStreamConfigurator extends SysOutOverSLF4JTestCase {
 	
+	private SLF4JPrintStreamConfigurator configurator = new SLF4JPrintStreamConfigurator();
+	
 	@Test
 	public void replaceSystemOutputsWithSLF4JPrintStreams() throws Exception {
 		SLF4JPrintStreamImpl outSlf4jPrintStreamImpl = expectSLF4JPrintStreamToBeBuilt(System.out);
 		SLF4JPrintStreamImpl errSlf4jPrintStreamImpl = expectSLF4JPrintStreamToBeBuilt(System.err);
 		replayAll();
 		
-		SLF4JPrintStreamConfigurator.replaceSystemOutputsWithSLF4JPrintStreams();
+		configurator.replaceSystemOutputsWithSLF4JPrintStreams();
 		assertEquals(outSlf4jPrintStreamImpl, System.out);
 		assertEquals(errSlf4jPrintStreamImpl, System.err);
 	}
 	
 	@Test
 	public void restoreOriginalSystemOutputs() throws Exception {
-		SLF4JPrintStreamConfigurator.replaceSystemOutputsWithSLF4JPrintStreams();
-		SLF4JPrintStreamConfigurator.restoreOriginalSystemOutputs();
+		configurator.replaceSystemOutputsWithSLF4JPrintStreams();
+		configurator.restoreOriginalSystemOutputs();
 		assertEquals(SYS_OUT, System.out);
 		assertEquals(SYS_ERR, System.err);
 	}
