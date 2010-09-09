@@ -38,12 +38,14 @@ public final class ExceptionUtils {
 			throw (Error) throwable;
 		} else if (throwable instanceof RuntimeException) {
 			result = (RuntimeException) throwable;
+		} else if (throwable instanceof InterruptedException || throwable instanceof InterruptedIOException) {
+			throw new IllegalArgumentException(
+					"An interrupted exception needs to be handled to end the thread, or the interrupted status needs to be " +
+					"restored, or the exception needs to be propagated explicitly - it should not be used as an argument to " +
+					"this method", throwable);
 		} else if (throwable instanceof InvocationTargetException) {
 			result = asRuntimeException(throwable.getCause());
 		} else {
-			if (throwable instanceof InterruptedException || throwable instanceof InterruptedIOException) {
-				Thread.currentThread().interrupt();
-			}
 			result = new WrappedCheckedException(throwable);
 		}
 		return result;

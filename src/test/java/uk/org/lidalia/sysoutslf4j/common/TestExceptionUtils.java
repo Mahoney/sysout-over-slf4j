@@ -88,21 +88,39 @@ public class TestExceptionUtils extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
-	public void asRuntimeExceptionResetsInterruptedStatusAndReturnsPassedInInterruptedExceptionAsCauseOfWrappedCheckedException() {
-		InterruptedException expectedException = new InterruptedException();
-		RuntimeException actualException = ExceptionUtils.asRuntimeException(expectedException);
-		assertTrue(actualException instanceof WrappedCheckedException);
-		assertTrue(Thread.interrupted());
+	public void asRuntimeExceptionThrowsIllegalArgumentExceptionWhenInterruptedExceptionPassedIn() throws Throwable {
+		final InterruptedException expectedException = new InterruptedException();
+		IllegalArgumentException actualException = shouldThrow(IllegalArgumentException.class, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				ExceptionUtils.asRuntimeException(expectedException);
+				return null;
+			}
+		});
+		
+		assertTrue(actualException instanceof IllegalArgumentException);
 		assertSame(expectedException, actualException.getCause());
+		assertEquals("An interrupted exception needs to be handled to end the thread, or the interrupted status needs to be " +
+					"restored, or the exception needs to be propagated explicitly - it should not be used as an argument to " +
+					"this method", actualException.getMessage());
 	}
 	
 	@Test
-	public void asRuntimeExceptionResetsInterruptedStatusAndReturnsPassedInInterruptedIOExceptionAsCauseOfWrappedCheckedException() {
-		InterruptedIOException expectedException = new InterruptedIOException();
-		RuntimeException actualException = ExceptionUtils.asRuntimeException(expectedException);
-		assertTrue(actualException instanceof WrappedCheckedException);
-		assertTrue(Thread.interrupted());
+	public void asRuntimeExceptionThrowsIllegalArgumentExceptionWhenInterruptedIOExceptionPassedIn() throws Throwable {
+		final InterruptedIOException expectedException = new InterruptedIOException();
+		final IllegalArgumentException actualException = shouldThrow(IllegalArgumentException.class, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				ExceptionUtils.asRuntimeException(expectedException);
+				return null;
+			}
+		});
+		
+		assertTrue(actualException instanceof IllegalArgumentException);
 		assertSame(expectedException, actualException.getCause());
+		assertEquals("An interrupted exception needs to be handled to end the thread, or the interrupted status needs to be " +
+					"restored, or the exception needs to be propagated explicitly - it should not be used as an argument to " +
+					"this method", actualException.getMessage());
 	}
 	
 	@Test

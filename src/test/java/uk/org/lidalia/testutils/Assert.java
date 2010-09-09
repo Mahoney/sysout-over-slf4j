@@ -27,7 +27,6 @@ package uk.org.lidalia.testutils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.util.concurrent.Callable;
@@ -41,37 +40,34 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 
 public class Assert {
 
+	public static <T extends Throwable> void shouldThrow(final T expectedThrowable, Callable<Void> workThatShouldThrowThrowable) throws Throwable {
+		T actualThrowable = shouldThrow(getClass(expectedThrowable), workThatShouldThrowThrowable);
+		assertSame(expectedThrowable, actualThrowable);
+	}
+
 	@SuppressWarnings("unchecked")
-	public static <E extends Throwable> E shouldThrow(Class<E> throwableType, Callable<Void> callable) throws Throwable {
+	public static <T extends Throwable> T shouldThrow(Class<T> expectedThrowableType, Callable<Void> workThatShouldThrowThrowable) throws Throwable {
 		try {
-			callable.call();
-			fail("No exception thrown");
-			return null;
-		} catch (Throwable t) {
-			if (instanceOf(t, throwableType)) {
-				return (E) t;
+			workThatShouldThrowThrowable.call();
+		} catch (Throwable actualThrowableThrown) {
+			if (instanceOf(actualThrowableThrown, expectedThrowableType)) {
+				return (T) actualThrowableThrown;
+			} else {
+				throw actualThrowableThrown;
 			}
-			throw t;
 		}
+		throw new AssertionError("No exception thrown");
 	}
-	
-	public static void shouldThrow(Throwable expected, Callable<?> callable) throws Throwable {
-		try {
-			callable.call();
-			fail("No exception thrown");
-		} catch (Throwable actual) {
-			if (instanceOf(actual, expected.getClass())) {
-				assertSame(expected, actual);
-				return;
-			}
-			throw actual;
-		}
+
+	@SuppressWarnings("unchecked")
+	private static <T> Class<? extends T> getClass(final T object) {
+		return (Class<? extends T>) object.getClass();
 	}
-	
+
 	public static boolean instanceOf(Object o, Class<?> c) {
 		return c.isAssignableFrom(o.getClass());
 	}
-	
+
 	private Assert() {
 		throw new UnsupportedOperationException("Not instantiable");
 	}
@@ -80,17 +76,17 @@ public class Assert {
 			ILoggingEvent loggingEvent, String message, Level level, String className) {
 		assertExpectedLoggingEvent(loggingEvent, message, level, null, className, null);
 	}
-	
+
 	public static void assertExpectedLoggingEvent(
 			ILoggingEvent loggingEvent, String message, Level level, Marker marker, String className) {
 		assertExpectedLoggingEvent(loggingEvent, message, level, marker, className, null);
 	}
-	
+
 	public static void assertExpectedLoggingEvent(
 			ILoggingEvent loggingEvent, String message, Level level, String className, Throwable throwable) {
 		assertExpectedLoggingEvent(loggingEvent, message, level, null, className, throwable);
 	}
-	
+
 	public static void assertExpectedLoggingEvent(
 			ILoggingEvent loggingEvent, String message, Level level, Marker marker, String className, Throwable throwable) {
 		assertEquals(message, loggingEvent.getMessage());
@@ -110,10 +106,10 @@ public class Assert {
 			assertNull(throwableProxy);
 		}
 	}
-	
+
 	public static void assertNotInstantiable(final Class<?> classThatShouldNotBeInstantiable) throws Throwable {
 		assertOnlyHasNoArgsConstructor(classThatShouldNotBeInstantiable);
-		
+
 		UnsupportedOperationException oue = shouldThrow(UnsupportedOperationException.class, new Callable<Void>() {
 			public Void call() throws Exception {
 				Whitebox.invokeConstructor(classThatShouldNotBeInstantiable);
