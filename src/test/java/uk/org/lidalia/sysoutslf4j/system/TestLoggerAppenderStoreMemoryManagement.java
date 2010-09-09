@@ -88,6 +88,6 @@ public class TestLoggerAppenderStoreMemoryManagement extends SysOutOverSLF4JTest
 	}
 
 	private void assertClassLoaderHasBeenGarbageCollected() {
-		assertNull(refToClassLoader.get());
+		assertNull("classloader has not been garbage collected", refToClassLoader.get());
 	}
 }
