@@ -49,11 +49,11 @@ public final class ExceptionUtils {
 		return result;
 	}
 
-	public static <E> E doUnchecked(Callable<E> work) {
+	public static <E> E doUnchecked(final Callable<E> work) {
 		try {
 			return work.call();
-		} catch (Throwable t) {
-			throw asRuntimeException(t);
+		} catch (Exception e) {
+			throw asRuntimeException(e);
 		}
 	}
 

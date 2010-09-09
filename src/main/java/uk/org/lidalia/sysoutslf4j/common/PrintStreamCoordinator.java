@@ -26,8 +26,8 @@ package uk.org.lidalia.sysoutslf4j.common;
 
 public interface PrintStreamCoordinator {
 
-	public abstract void replaceSystemOutputsWithSLF4JPrintStreams();
+	void replaceSystemOutputsWithSLF4JPrintStreams();
 
-	public abstract void restoreOriginalSystemOutputs();
+	void restoreOriginalSystemOutputs();
 
 }

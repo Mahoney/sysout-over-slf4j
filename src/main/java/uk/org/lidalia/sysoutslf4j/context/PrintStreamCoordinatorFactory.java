@@ -38,7 +38,7 @@ import uk.org.lidalia.sysoutslf4j.common.PrintStreamCoordinator;
 import uk.org.lidalia.sysoutslf4j.common.ReflectionUtils;
 import uk.org.lidalia.sysoutslf4j.system.PrintStreamCoordinatorImpl;
 
-class PrintStreamCoordinatorFactory {
+final class PrintStreamCoordinatorFactory {
 	
 	private static final String LINE_END = System.getProperty("line.separator");
 	private static final Logger LOG = LoggerFactory.getLogger(SysOutOverSLF4J.class);
@@ -60,8 +60,8 @@ class PrintStreamCoordinatorFactory {
 	private static PrintStreamCoordinator makeCoordinator(final Class<?> coordinatorClass) {
 		return ExceptionUtils.doUnchecked(new Callable<PrintStreamCoordinator>() {
 			@Override
-			public PrintStreamCoordinator call() throws Exception {
-				Object coordinator = coordinatorClass.newInstance();
+			public PrintStreamCoordinator call() throws InstantiationException, IllegalAccessException {
+				final Object coordinator = coordinatorClass.newInstance();
 				return ReflectionUtils.wrap(coordinator, PrintStreamCoordinator.class);
 			}
 		});
@@ -70,7 +70,7 @@ class PrintStreamCoordinatorFactory {
 	private static Class<?> getConfiguratorClassFromSLF4JPrintStreamClassLoader() {
 		final Class<?> configuratorClass;
 		if (SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams()) {
-			final ClassLoader classLoader = System.out.getClass().getClassLoader();
+			final ClassLoader classLoader = System.out.getClass().getClassLoader(); // NOPMD deliberately using this classloader
 			configuratorClass = loadClass(classLoader, PrintStreamCoordinatorImpl.class);
 		} else {
 			configuratorClass = null;

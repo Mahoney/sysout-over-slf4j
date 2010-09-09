@@ -87,7 +87,7 @@ class SLF4JPrintStreamManager {
 		}
 	}
 
-	private SLF4JPrintStream wrap(PrintStream target) {
+	private SLF4JPrintStream wrap(final PrintStream target) {
 		return ReflectionUtils.wrap(target, SLF4JPrintStream.class);
 	}
 

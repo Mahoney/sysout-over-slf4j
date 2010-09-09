@@ -24,7 +24,6 @@
 
 package uk.org.lidalia.sysoutslf4j.system;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.PrintStream;
@@ -33,7 +32,6 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
 
@@ -54,7 +52,6 @@ public class TestLoggerAppenderStoreMemoryManagement extends SysOutOverSLF4JTest
 		new WeakReference<ClassLoader>(classLoader, new ReferenceQueue<Object>());
 
 	private Object loggerAppenderObject = null;
-	private WeakReference<Object> refToLoggerAppenderObject = null;
 
 	@Before
 	public void buildLoggerAppenderFromClassLoader() throws Exception {
@@ -64,14 +61,6 @@ public class TestLoggerAppenderStoreMemoryManagement extends SysOutOverSLF4JTest
 		Constructor<?> loggerAppenderConstructor = Whitebox.getConstructor(
 				loggerAppenderClass, logLevelClass, exceptionHandlerClass, PrintStream.class);
 		loggerAppenderObject = loggerAppenderConstructor.newInstance(null, null, null);
-		refToLoggerAppenderObject = new WeakReference<Object>(loggerAppenderObject, new ReferenceQueue<Object>());
-	}
-
-	@Test @Ignore
-	public void loggerAppenderStoreMaintainsReferenceToLoggerAppenderWhileReferenceToClassLoaderExists() throws Exception {
-		storeLoggerAppenderAgainstClassLoader();
-		removeLocalReferenceToLoggerAppenderAndGarbageCollect();
-		assertLoggerAppenderHasNotBeenGarbageCollected();
 	}
 
 	private void storeLoggerAppenderAgainstClassLoader() {
@@ -83,10 +72,6 @@ public class TestLoggerAppenderStoreMemoryManagement extends SysOutOverSLF4JTest
 	private void removeLocalReferenceToLoggerAppenderAndGarbageCollect() {
 		loggerAppenderObject = null;
 		System.gc();
-	}
-
-	private void assertLoggerAppenderHasNotBeenGarbageCollected() {
-		assertNotNull(refToLoggerAppenderObject.get());
 	}
 
 	@Test

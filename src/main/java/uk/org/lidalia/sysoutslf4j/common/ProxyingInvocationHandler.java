@@ -34,21 +34,23 @@ public class ProxyingInvocationHandler implements InvocationHandler {
 	private final Object target;
 	private final Map<Method, Method> methods = new HashMap<Method, Method>();
 	
-	ProxyingInvocationHandler(Object target, Class<?> interfaceClass) {
+	ProxyingInvocationHandler(final Object target, final Class<?> interfaceClass) {
 		this.target = target;
 		for (Method method : interfaceClass.getMethods()) {
 			try {
-				Method methodOnTarget = target.getClass().getMethod(method.getName(), method.getParameterTypes());
+				final Method methodOnTarget = target.getClass().getMethod(method.getName(), method.getParameterTypes());
 				methods.put(method, methodOnTarget);
 			} catch (NoSuchMethodException e) {
-				throw new IllegalArgumentException("Target " + target + " does not have methods to match all method signatures on class " + interfaceClass);
+				throw new IllegalArgumentException(
+						"Target " + target + " does not have methods to match all method signatures on class " + interfaceClass,
+						e);
 			}
 		}
 	}
 
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		Method methodOnTarget = methods.get(method);
+	public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+		final Method methodOnTarget = methods.get(method);
 		return methodOnTarget.invoke(target, args);
 	}
 	
