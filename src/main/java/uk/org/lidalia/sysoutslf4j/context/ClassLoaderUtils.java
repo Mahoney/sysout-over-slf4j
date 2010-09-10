@@ -32,7 +32,7 @@ import uk.org.lidalia.sysoutslf4j.common.WrappedCheckedException;
 final class ClassLoaderUtils {
 	
 	static URL getJarURL(final Class<?> classInJar) {
-		final String relativeClassFilePath = getRelativeFilePathOfClass(classInJar); // NOPMD
+		final String relativeClassFilePath = getRelativeFilePathOfClass(classInJar);
 		
 		try {
 			final URL classURL = getResource(relativeClassFilePath);

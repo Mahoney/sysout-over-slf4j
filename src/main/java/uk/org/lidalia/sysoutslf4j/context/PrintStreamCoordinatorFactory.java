@@ -105,8 +105,9 @@ final class PrintStreamCoordinatorFactory {
 				"then load class [" + PrintStreamCoordinatorImpl.class + "] from the system class loader." + LINE_END +
 				"Unfortunately it is not possible to set up Sysout over SLF4J on this system without introducing " +
 				"a class loader memory leak." + LINE_END +
-				"If you never need to discard the current class loader [" + Thread.currentThread().getContextClassLoader() + "] " +
-				"this will not be a problem and you can suppress this warning." + LINE_END +
+				"If you never need to discard the current class loader " +
+				"[" + Thread.currentThread().getContextClassLoader() + "] this will not be a problem and you can suppress this " +
+				"warning." + LINE_END +
 				"If you wish to avoid a class loader memory leak you can place sysout-over-slf4j.jar on the system classpath " +
 				"IN ADDITION TO (*not* instead of) the local context's classpath", exception);
 	}

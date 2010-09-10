@@ -57,7 +57,7 @@ final class CallOrigin {
 	}
 
 	private static boolean outsideThisLibrary(final String className, final String libraryPackageName) {
-		return !className.equals(Thread.class.getName()) && !className.startsWith(libraryPackageName); //NOPMD
+		return !className.equals(Thread.class.getName()) && !className.startsWith(libraryPackageName); // NOPMD not using thread
 	}
 
 	private static String getOuterClassName(final String className) {

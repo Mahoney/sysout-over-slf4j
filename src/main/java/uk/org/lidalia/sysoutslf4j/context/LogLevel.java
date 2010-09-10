@@ -90,14 +90,14 @@ public enum LogLevel {
 	};
 	
 	/**
-	 * Calls logger.&lt;level&gt;(message)
+	 * Calls logger.&lt;level&gt;(message).
 	 * @param logger
 	 * @param message
 	 */
 	public abstract void log(Logger logger, String message);
 	
 	/**
-	 * Calls logger.&lt;level&gt;(marker, message)
+	 * Calls logger.&lt;level&gt;(marker, message).
 	 * @param logger
 	 * @param message
 	 */

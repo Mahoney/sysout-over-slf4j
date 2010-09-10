@@ -29,11 +29,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Locale;
 
-import org.slf4j.Logger;
-
 import uk.org.lidalia.sysoutslf4j.common.LoggerAppender;
 import uk.org.lidalia.sysoutslf4j.common.SLF4JPrintStream;
-import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 /**
  * 
@@ -44,7 +41,7 @@ import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
  *         {@link System#err} {@link PrintStream}s. They intercept all calls to
  *         System.out and System.err and log them at info (for System.out) or
  *         error (for System.err) level on a logger named after the class which
- *         made the call, via an SLF4J {@link Logger}.
+ *         made the call, via an SLF4J {@link org.slf4j.Logger}.
  *         </p>
  * 
  *         <p>
@@ -59,7 +56,7 @@ import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
  * 
  *         <p>
  *         Instances should only be created and assigned by the
- *         {@link SysOutOverSLF4J} helper class.
+ *         {@link uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J} helper class.
  *         </p>
  * 
  *         <p>
@@ -96,7 +93,7 @@ import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
  *         SLF4J, though a performance hit will occur.
  *         </p>
  */
-public final class SLF4JPrintStreamImpl extends PrintStream implements SLF4JPrintStream { // NOPMD - too many methods
+public final class SLF4JPrintStreamImpl extends PrintStream implements SLF4JPrintStream { // NOPMD superclass has too many methods
 
 	private final PrintStream originalPrintStream;
 	private final SLF4JPrintStreamDelegate delegate;

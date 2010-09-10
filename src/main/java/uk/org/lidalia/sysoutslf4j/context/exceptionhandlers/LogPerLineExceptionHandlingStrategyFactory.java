@@ -64,7 +64,7 @@ public final class LogPerLineExceptionHandlingStrategyFactory implements Excepti
 		}
 
 		/**
-		 * This method is not used since nothing is buffered
+		 * This method is not used since nothing is buffered.
 		 */
 		public void notifyNotStackTrace() {
 			// Do nothing

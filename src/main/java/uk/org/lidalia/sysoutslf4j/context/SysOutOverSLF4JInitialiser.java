@@ -32,11 +32,11 @@ class SysOutOverSLF4JInitialiser {
 	private static final Logger LOG = LoggerFactory.getLogger(SysOutOverSLF4JInitialiser.class);
 	
 	private static final String UNKNOWN_LOGGING_SYSTEM_MESSAGE =
-		"Your logging framework {} is not known - if it needs access to the standard println "
-		+ "methods on the console you will need to register it by calling registerLoggingSystemPackage";
+		"Your logging framework {} is not known - if it needs access to the standard println " +
+		"methods on the console you will need to register it by calling registerLoggingSystemPackage";
 	private static final String LOGGING_SYSTEM_DOES_NOT_NEED_PRINTLN_MESSAGE =
-		"Your logging framework {} should not need access to the standard println methods on "
-		+ "the console, so you should not need to register a logging system package.";
+		"Your logging framework {} should not need access to the standard println methods on " +
+		"the console, so you should not need to register a logging system package.";
 
 	private static final String[] LOGGING_SYSTEMS_THAT_DO_NOT_ACCESS_CONSOLE =
 		{ "ch.qos.logback.", "org.slf4j.impl.Log4jLoggerAdapter", "org.slf4j.impl.JDK14LoggerAdapter", "org.apache.log4j." };

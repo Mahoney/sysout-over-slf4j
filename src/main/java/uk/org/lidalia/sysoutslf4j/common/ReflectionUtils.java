@@ -86,7 +86,8 @@ public final class ReflectionUtils {
 		if (interfaceClass.isAssignableFrom(target.getClass())) {
 			result = (E) target;
 		} else {
-			result = (E) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{interfaceClass}, new ProxyingInvocationHandler(target, interfaceClass));
+			result = (E) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{interfaceClass},
+					new ProxyingInvocationHandler(target, interfaceClass));
 		}
 		return result;
 	}

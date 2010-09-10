@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 public interface ExceptionHandlingStrategy {
 
 	/**
-	 * Called for each line of the stack trace as sent to the System.out/err PrintStream
+	 * Called for each line of the stack trace as sent to the System.out/err PrintStream.
 	 *
 	 * @param line The stacktrace line
 	 * @param log The {@link org.slf4j.Logger} with a name matching the fully qualified name of the
@@ -48,7 +48,7 @@ public interface ExceptionHandlingStrategy {
 
 	/**
 	 * Called whenever any other calls are intercepted by sysout-over-slf4j
-	 * - may be a useful trigger for flushing a buffer
+	 * - may be a useful trigger for flushing a buffer.
 	 */
 	void notifyNotStackTrace();
 }
