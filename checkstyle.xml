@@ -49,7 +49,10 @@ Slightly modified version of Sun Checks that better matches the default code for
       <property name="tokens" value="BNOT,DEC,DOT,INC,LNOT,UNARY_MINUS,UNARY_PLUS"/>
     </module>
     <module name="NoWhitespaceBefore"/>
-    <module name="OperatorWrap"/>
+    <module name="OperatorWrap">
+    	<property name="tokens" value="PLUS"/>
+    	<property name="option" value="eol"/>
+    </module>
     <module name="ParenPad"/>
     <module name="TypecastParenPad"/>
     <module name="WhitespaceAfter"/>
@@ -99,7 +102,6 @@ Slightly modified version of Sun Checks that better matches the default code for
     <module name="UpperEll"/>
     <module name="MissingOverride">
       <property name="severity" value="error"/>
-      <property name="javaFiveCompatibility" value="true"/>
     </module>
     <module name="PackageAnnotation"/>
     <module name="ImportOrder">
