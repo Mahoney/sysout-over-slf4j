@@ -9,8 +9,20 @@
     <name>System Out and Err redirected to SLF4J</name>
 
     <url>http://projects.lidalia.org.uk/sysout-over-slf4j/</url>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <description>Library to send raw System.out and System.err output to SLF4J for proper logging control</description>
+    
+    <issueManagement>
+    	<system>Git Issues</system>
+    	<url>http://github.com/Mahoney/sysout-over-slf4j/issues</url>
+    </issueManagement>
+    
+    <developers>
+    	<developer>
+    		<name>Robert Elliot</name>
+    		<email>rob@lidalia.org.uk</email>
+    	</developer>
+    </developers>
 
 	<licenses>
 		<license>
@@ -29,7 +41,7 @@
 	<scm>
 		<connection>scm:git:git@github.com:Mahoney/sysout-over-slf4j.git</connection>
 		<developerConnection>scm:git:git@github.com:Mahoney/sysout-over-slf4j.git</developerConnection>
-		<url>git@github.com:Mahoney/sysout-over-slf4j.git</url>
+		<url>http://github.com/Mahoney/sysout-over-slf4j</url>
 	</scm>
 
 	<build>
@@ -56,6 +68,30 @@
 						</property>
 					</systemPropertyVariables-->
 				</configuration>
+			</plugin>
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-source-plugin</artifactId>
+			  <executions>
+			    <execution>
+			      <id>attach-sources</id>
+			      <goals>
+			        <goal>jar</goal>
+			      </goals>
+			    </execution>
+			  </executions>
+			</plugin>
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-javadoc-plugin</artifactId>
+			  <executions>
+			    <execution>
+			      <id>attach-javadocs</id>
+			      <goals>
+			        <goal>jar</goal>
+			      </goals>
+			    </execution>
+			  </executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -158,8 +194,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>[1.0,2.0)</version>
-			<scope>compile</scope>
+			<version>1.6.0</version>
 		</dependency>
 
 		<!-- PROVIDED -->
