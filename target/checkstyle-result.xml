@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="5.0">
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/common/ExceptionUtils.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/common/LoggerAppender.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/common/PrintStreamCoordinator.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/common/ProxyingInvocationHandler.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/common/ReflectionUtils.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/common/SLF4JPrintStream.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/common/StringUtils.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/common/SystemOutput.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/common/WrappedCheckedException.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/ClassLoaderUtils.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/exceptionhandlers/ExceptionHandlingStrategy.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/exceptionhandlers/ExceptionHandlingStrategyFactory.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/exceptionhandlers/LogPerLineExceptionHandlingStrategyFactory.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/LoggerAppenderImpl.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/LoggingSystemRegister.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/LogLevel.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/PrintStreamCoordinatorFactory.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/ReferenceHolder.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/SLF4JPrintStreamManager.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/SysOutOverSLF4J.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/SysOutOverSLF4JInitialiser.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/SysOutOverSLF4JServletContextListener.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/system/CallOrigin.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/system/LoggerAppenderProxy.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/system/LoggerAppenderStore.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/system/PrintStreamCoordinatorImpl.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/system/SLF4JPrintStreamDelegate.java">
+</file>
+<file name="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/system/SLF4JPrintStreamImpl.java">
+</file>
+</checkstyle>

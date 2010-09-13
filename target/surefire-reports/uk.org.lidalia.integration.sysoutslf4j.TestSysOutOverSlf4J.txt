@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: uk.org.lidalia.integration.sysoutslf4j.TestSysOutOverSlf4J
+-------------------------------------------------------------------------------
+Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.042 sec

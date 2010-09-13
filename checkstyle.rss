@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rss version="0.91">
+  <channel>
+    <title>System Out and Err redirected to SLF4J - Checkstyle report</title>
+    <link>http://projects.lidalia.org.uk/sysout-over-slf4j/</link>
+    <description>System Out and Err redirected to SLF4J - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2010</copyright>
+    <item>
+      <title>File: 28,
+             Errors: 0,
+             Warnings: 0,
+             Infos: 0
+      </title>
+            <link>http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html</link>
+      <description>
+        <p>Click <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4JInitialiser.java">uk/org/lidalia/sysoutslf4j/context/SysOutOverSLF4JInitialiser.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.common.ExceptionUtils.java">uk/org/lidalia/sysoutslf4j/common/ExceptionUtils.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.system.LoggerAppenderProxy.java">uk/org/lidalia/sysoutslf4j/system/LoggerAppenderProxy.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.common.LoggerAppender.java">uk/org/lidalia/sysoutslf4j/common/LoggerAppender.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamDelegate.java">uk/org/lidalia/sysoutslf4j/system/SLF4JPrintStreamDelegate.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.context.ClassLoaderUtils.java">uk/org/lidalia/sysoutslf4j/context/ClassLoaderUtils.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.context.PrintStreamCoordinatorFactory.java">uk/org/lidalia/sysoutslf4j/context/PrintStreamCoordinatorFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4JServletContextListener.java">uk/org/lidalia/sysoutslf4j/context/SysOutOverSLF4JServletContextListener.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.common.SLF4JPrintStream.java">uk/org/lidalia/sysoutslf4j/common/SLF4JPrintStream.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory.java">uk/org/lidalia/sysoutslf4j/context/exceptionhandlers/ExceptionHandlingStrategyFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.common.SystemOutput.java">uk/org/lidalia/sysoutslf4j/common/SystemOutput.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J.java">uk/org/lidalia/sysoutslf4j/context/SysOutOverSLF4J.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory.java">uk/org/lidalia/sysoutslf4j/context/exceptionhandlers/LogPerLineExceptionHandlingStrategyFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.common.StringUtils.java">uk/org/lidalia/sysoutslf4j/common/StringUtils.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamImpl.java">uk/org/lidalia/sysoutslf4j/system/SLF4JPrintStreamImpl.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.system.PrintStreamCoordinatorImpl.java">uk/org/lidalia/sysoutslf4j/system/PrintStreamCoordinatorImpl.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.context.ReferenceHolder.java">uk/org/lidalia/sysoutslf4j/context/ReferenceHolder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.context.LoggingSystemRegister.java">uk/org/lidalia/sysoutslf4j/context/LoggingSystemRegister.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.context.SLF4JPrintStreamManager.java">uk/org/lidalia/sysoutslf4j/context/SLF4JPrintStreamManager.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.context.LoggerAppenderImpl.java">uk/org/lidalia/sysoutslf4j/context/LoggerAppenderImpl.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy.java">uk/org/lidalia/sysoutslf4j/context/exceptionhandlers/ExceptionHandlingStrategy.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.common.ReflectionUtils.java">uk/org/lidalia/sysoutslf4j/common/ReflectionUtils.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.context.LogLevel.java">uk/org/lidalia/sysoutslf4j/context/LogLevel.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.common.ProxyingInvocationHandler.java">uk/org/lidalia/sysoutslf4j/common/ProxyingInvocationHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.system.CallOrigin.java">uk/org/lidalia/sysoutslf4j/system/CallOrigin.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.common.WrappedCheckedException.java">uk/org/lidalia/sysoutslf4j/common/WrappedCheckedException.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.common.PrintStreamCoordinator.java">uk/org/lidalia/sysoutslf4j/common/PrintStreamCoordinator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/sysout-over-slf4j//checkstyle.html#uk.org.lidalia.sysoutslf4j.system.LoggerAppenderStore.java">uk/org/lidalia/sysoutslf4j/system/LoggerAppenderStore.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+
