@@ -1,0 +1,333 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>System Out and Err redirected to SLF4J - Frequently Asked Questions</title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+                                                    
+<script type="text/javascript">var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-15938495-2']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();</script>
+                    </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            System Out and Err redirected to SLF4J
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2010-09-14
+                      </div>
+            <div class="xright">      
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                   <h5>Overview</h5>
+            <ul>
+              
+    <li class="none">
+                    <a href="index.html">Introduction</a>
+          </li>
+              
+    <li class="none">
+                    <a href="quickstart.html">Quick start</a>
+          </li>
+              
+    <li class="none">
+              <strong>FAQ</strong>
+        </li>
+              
+    <li class="none">
+                    <a href="http://github.com/Mahoney/sysout-over-slf4j/downloads" class="externalLink">Download</a>
+          </li>
+          </ul>
+              <h5>Project Documentation</h5>
+            <ul>
+              
+                
+              
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+              
+        <li class="collapsed">
+                    <a href="project-info.html">Project Information</a>
+                </li>
+              
+                
+              
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+              
+        <li class="collapsed">
+                    <a href="project-reports.html">Project Reports</a>
+                </li>
+          </ul>
+                                           <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <div class="section"><h2><a name="top">Frequently Asked Questions</a></h2>
+<p><b>General</b></p>
+<ol type="1"><li><a href="#stackOverflowError">
+        Help - I'm getting a StackOverFlowError every time I log or println!
+      </a></li>
+<li><a href="#logLevels">
+    		What if I want System.out calls to log as debug rather than info?
+    		Or System.err calls to log as warn rather than error?
+    	</a></li>
+<li><a href="#stackTraces">
+    		Why does sysout-over-slf4j log a separate log statement for every element in the stack in a stacktrace?
+    	</a></li>
+<li><a href="#recursion">
+        Don't most logging systems print to the console? Won't that mean infinite recursion?
+      </a></li>
+<li><a href="#performance">
+      	What are the performance implications of using sysout-over-slf4j?
+      </a></li>
+<li><a href="#workings">
+    		How does it work?
+    	</a></li>
+</ol>
+</div>
+<div class="section"><h2>General</h2>
+<dl><dt><a name="stackOverflowError">
+        Help - I'm getting a StackOverFlowError every time I log or println!
+      </a></dt>
+<dd>
+        <p>You are probably using an SLF4J implementation that tries to write to the console using one of the print(ln) methods
+        on PrintStream.  These are in turn redirected back to your SLF4J implementation by sysout-over-slf4j, resulting in an
+        infinite loop.  To prevent this, add the following call early in the lifecycle of your application:</p>
+
+        <div class="source"><pre>SysOutOverSLF4J.registerLoggingSystem(&quot;package.of.slf4j.implementation&quot;);</pre>
+</div>
+
+
+        <p>sysout-over-slf4j will then recognise all attempts to write to system out or err from your logging system and will
+        delegate them to the original system out or err PrintStream.</p>
+        
+        <p>Note that you should ONLY register a logging system if you need to - many logging systems (including Logback, Log4J and
+        JULI) use the write methods on PrintStream, which always delegate directly to the original PrintStream, and so do not have
+        this problem.</p>
+      <hr />
+</dd>
+<dt><a name="logLevels">
+    		What if I want System.out calls to log as debug rather than info?
+    		Or System.err calls to log as warn rather than error?
+    	</a></dt>
+<dd>
+    		<p>You can customise the levels at which sysout-over-slf4j logs when initially configuring it at application startup.
+    		Simply call:</p>
+    		<div class="source"><pre>SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(LogLevel.DEBUG, LogLevel.WARN);</pre>
+</div>
+
+    		<p>instead of the no argument version.  The first argument represents the level of calls to System.out, and the
+    		second argument represents the level of calls to System.err.</p>
+    	<hr />
+</dd>
+<dt><a name="stackTraces">
+    		Why does sysout-over-slf4j log a separate log statement for every element in the stack in a stacktrace?
+    	</a></dt>
+<dd>
+    		<p>When Throwable.printStackTrace() is called it iterates over the frames in the Throwable's stack trace and
+    		prints each to the System.err as a separate method call.  This leaves no reliable means of reconstituting the
+    		original Throwable, or recognising the last frame of the stack trace.  Whilst logging each frame seperately is
+    		clearly sub-optimal, it is at present the only known way of reliably retaining all the information from a
+    		printStackTrace call and maintaining its ordering.</p>
+    		<p>In recognition that this is unsatisfactory sysout-over-slf4j allows you to substitute in your own exception
+    		handling mechanism by implementing ExceptionHandlingStrategyFactory and passing an instance of your implementation
+    		in when configuring sysout-over-slf4j at startup:</p>
+<div class="source"><pre>ExceptionHandlingStrategyFactory factory = new CustomExceptionHandlingStrategyFactory();
+SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(factory);</pre>
+</div>
+
+    	<hr />
+</dd>
+<dt><a name="recursion">
+        Don't most logging systems print to the console? Won't that mean infinite recursion?
+      </a></dt>
+<dd>
+        <p>As mentioned above, the most common SLF4J implementations use the write methods on PrintStream, which always delegate
+        directly to the original PrintStream, and so are not affected by use of sysout-over-slf4j.</p>
+      <hr />
+</dd>
+<dt><a name="performance">
+      	What are the performance implications of using sysout-over-slf4j?
+      </a></dt>
+<dd>
+      	<p>The overhead for Log4J, JULI and Logback when printing to the
+        console should be minimal, because SLF4J simply proxies calls to
+        the write methods through to the original PrintStreams without
+        doing any work.</p>
+        
+        <p>The overhead for some other SLF4J implementation that does not usethe PrintStream write methods, and so needs to be 
+        registered, will be greater; on every attempt by it to print to the console its fully qualified classname has to be
+        matched against registered package names in order to determine whether it should be permitted direct access.</p>
+  
+		<p>Finally, the overhead of actual System.out and System.err calls will be much greater, due to the expense of generating
+		the thread's stacktrace and examining it to determine the origin of the call. It would be much better
+		if all logging were done via SLF4J directly and this module were not necessary.</p>
+      <hr />
+</dd>
+<dt><a name="workings">
+    		How does it work?
+    	</a></dt>
+<dd>
+  <p>The System.out and System.err PrintStreams are replaced with
+  new SLF4JPrintStreams. Each time a call to System.out.println (or
+  similar) is made, the current thread's stacktrace is examined to
+  determine which class made the call.  An SLF4J Logger named after
+  that class's fully qualified name is retrieved and the message
+  logged at the configured level on that logger (by default info for
+  System.out calls and error for System.err calls).</p>
+  
+  <p>Calls to Throwable.printStackTrace() are likewise logged at
+  the configured level for each System output. By default there
+  will be a message logged for every line of the stack trace; this
+  is an unfortunate side effect of not being able to
+  retrieve the original exception that is being printed reliably.</p>
+  
+  <p>A servlet container may contain multiple web applications.
+  If it has child first class loading and these applications
+  package SLF4J in the web-app/lib directory then there will be
+  multiple SLF4J instances running in the JVM. However, there
+  is only one System.out and one System.err for the whole JVM.
+  In order to ensure that the correct SLF4J instance is used
+  for the correct web application, inside the new PrintStreams
+  SLF4J instances are mapped against the context
+  class loader to ensure that the same SLF4J instance used in
+  "normal" logging is also used when calling System.out.println.</p>
+  
+  <p>In order to prevent classloader leaks when contexts
+  are reloaded the new PrintStreams are created by a special
+  classloader so that they do not themselves maintain a reference
+  to the context classloader. The PrintStreams only maintain a weak
+  reference to the classloaders and their SLF4J instances, so that
+  no classloader leak occurs if the classloader is discarded.</p>
+    	</dd>
+</dl>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2010
+    
+          
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>
