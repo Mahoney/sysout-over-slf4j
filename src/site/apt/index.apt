@@ -20,18 +20,7 @@ System Out and Err Redirected to SLF4J
   should be considered a stop-gap for your own code until you can alter
   it to use SLF4J directly, or a work-around for poorly behaving third
   party modules.
-  
-*What needs to be done to make it work?
 
-  sysout-over-slf4j.jar should be included on the classpath at the
-  same level as slf4j-api.jar and your chosen slf4j implementation.
-  
-  A static method call sendSystemOutAndErrToSLF4J() should be made
-  on the org.slf4j.sysoutslf4j.context.SysOutOverSLF4J class early in
-  the life of the application to start redirecting calls to SLF4J, or
-  the included org.slf4j.sysoutslf4j.context.SysOutOverSLF4JServletContextListener
-  may be configured in a servlet application.
-  
 *How does it work?
 
   The System.out and System.err PrintStreams are replaced with
@@ -78,13 +67,16 @@ System Out and Err Redirected to SLF4J
   They can be registered with sysout-over-slf4j via static methods
   on the SysOutOverSLF4J class to permit them to access the console.
   
-*What about the overhead?
+*What's the overhead?
   
   The overhead for Log4J, JULI and Logback when printing to the
-  console should be minimal, for the reasons outlined above.
+  console should be minimal, because SLF4J simply proxies calls to
+  the write methods through to the original PrintStreams without
+  doing any work.
   
-  The overhead for any other SLF4J implementation that needed to be
-  registered will be greater; on every attempt by it to print
+  The overhead for some other SLF4J implementation that does not use
+  the PrintStream write methods, and so needs to be
+  registered, will be greater; on every attempt by it to print
   to the console its fully qualified classname has to be matched
   against registered package names in order to determine whether
   it should be permitted direct access.

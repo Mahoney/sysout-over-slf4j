@@ -1,0 +1,29 @@
+Quick Start
+
+*Add sysout-over-slf4j to the classpath
+  Download the sysout-over-slf4j-x.x.x.jar on the {{{http://github.com/Mahoney/sysout-over-slf4j/downloads}Downloads page}}.
+  
+  Alternatively, add the following to your maven pom dependency:
+----------------------------------------
+<dependency>
+	<groupId>uk.org.lidalia</groupId>
+	<artifactId>sysout-over-slf4j</artifactId>
+	<version>1.0.1-SNAPSHOT</version>
+</dependency>
+----------------------------------------
+
+*In a Standalone Application
+
+  Make the following call as early as possible in the startup of your application:
+----------------------------------------
+SysOutOverSLF4J.sendSystemOutAndErrToSLF4J()
+----------------------------------------
+
+*In a Servlet Container
+
+  Add the following to your web.xml:
+----------------------------------------
+<listener>
+  <listener-class>uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4JServletContextListener</listener-class>
+</listener>
+----------------------------------------
