@@ -13,7 +13,7 @@
     <description>Library to send raw System.out and System.err output to SLF4J for proper logging control</description>
     
     <issueManagement>
-    	<system>Git Issues</system>
+    	<system>GitHub Issues</system>
     	<url>http://github.com/Mahoney/sysout-over-slf4j/issues</url>
     </issueManagement>
     
@@ -43,6 +43,15 @@
 		<developerConnection>scm:git:git@github.com:Mahoney/sysout-over-slf4j.git</developerConnection>
 		<url>http://github.com/Mahoney/sysout-over-slf4j</url>
 	</scm>
+	
+	<mailingLists>
+		<mailingList>
+			<name>slf4j-user list</name>
+			<subscribe>http://www.qos.ch/mailman/listinfo/slf4j-user</subscribe>
+			<unsubscribe>http://www.qos.ch/mailman/options/slf4j-user</unsubscribe>
+			<archive>http://www.nabble.com/Slf4J---user-f13203.html</archive>
+		</mailingList>
+	</mailingLists>
 
 	<build>
 		<plugins>
