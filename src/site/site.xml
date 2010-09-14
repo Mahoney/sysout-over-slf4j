@@ -22,6 +22,8 @@
     </head>
     <menu name="Overview">
       <item name="Introduction" href="index.html" />
+      <item name="Quick start" href="quickstart.html" />
+      <item name="FAQ" href="faq.html" />
       <item name="Download" href="http://github.com/Mahoney/sysout-over-slf4j/downloads" />
     </menu>
     <menu ref="reports"/>
