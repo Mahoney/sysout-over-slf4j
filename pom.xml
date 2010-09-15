@@ -46,10 +46,26 @@
 	
 	<mailingLists>
 		<mailingList>
+			<name>slf4j-announcements list</name>
+			<subscribe>http://www.qos.ch/mailman/listinfo/announce</subscribe>
+			<unsubscribe>http://www.qos.ch/mailman/options/announce</unsubscribe>
+			<archive>http://www.qos.ch/pipermail/announce/</archive>
+			<otherArchives>
+				<otherArchive>http://marc.theaimsgroup.com/?l=slf4j-announce</otherArchive>
+			</otherArchives>
+		</mailingList>
+		<mailingList>
 			<name>slf4j-user list</name>
 			<subscribe>http://www.qos.ch/mailman/listinfo/slf4j-user</subscribe>
 			<unsubscribe>http://www.qos.ch/mailman/options/slf4j-user</unsubscribe>
-			<archive>http://www.nabble.com/Slf4J---user-f13203.html</archive>
+			<post>slf4j-user@qos.ch</post>
+			<archive>http://www.qos.ch/pipermail/slf4j-user/</archive>
+			<otherArchives>
+				<otherArchive>http://news.gmane.org/gmane.comp.java.slf4j.user</otherArchive>
+				<otherArchive>http://marc.theaimsgroup.com/?l=slf4j-user</otherArchive>
+				<otherArchive>http://www.nabble.com/Slf4J---user-f13203.html</otherArchive>
+				<otherArchive>http://www.mail-archive.com/user%40slf4j.org/</otherArchive>
+			</otherArchives>
 		</mailingList>
 	</mailingLists>
 
