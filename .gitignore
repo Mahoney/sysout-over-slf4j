@@ -13,3 +13,4 @@ integration/felix-cache//.settings
 bin
 .DS_Store
 /reports
+release.properties
