@@ -47,6 +47,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.common.ExceptionUtils;
 import uk.org.lidalia.sysoutslf4j.common.ReflectionUtils;
+import uk.org.lidalia.testutils.SubClass;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ExceptionUtils.class)
@@ -91,6 +92,12 @@ public class TestReflectionUtils extends SysOutOverSLF4JTestCase {
 	@Test
 	public void invokeMethodWithArgCallsMethod() {
 		assertEquals("world", ReflectionUtils.invokeMethod("substring", "helloworld", int.class, 5));
+	}
+	
+	@Test
+	public void invokeProtectedMethodOnSuperclass() {
+		SubClass subClass = new SubClass();
+		assertEquals("invoked", ReflectionUtils.invokeMethod("protectedMethod", subClass));
 	}
 	
 	@Test
