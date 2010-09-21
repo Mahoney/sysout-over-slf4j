@@ -81,13 +81,14 @@ public final class ReflectionUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E> E wrap(final Object target, final Class<E> interfaceClass) {
-		final E result;
+	public static <TypeInThisClassLoader> TypeInThisClassLoader wrap(
+			final Object target, final Class<TypeInThisClassLoader> interfaceClass) {
+		final TypeInThisClassLoader result;
 		if (interfaceClass.isAssignableFrom(target.getClass())) {
-			result = (E) target;
+			result = (TypeInThisClassLoader) target;
 		} else {
-			result = (E) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{interfaceClass},
-					new ProxyingInvocationHandler(target, interfaceClass));
+			result = (TypeInThisClassLoader) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
+					new Class[]{interfaceClass}, new ProxyingInvocationHandler(target, interfaceClass));
 		}
 		return result;
 	}

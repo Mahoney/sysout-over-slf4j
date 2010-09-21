@@ -40,18 +40,18 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 
 public class Assert {
 
-	public static <T extends Throwable> void shouldThrow(final T expectedThrowable, Callable<Void> workThatShouldThrowThrowable) throws Throwable {
-		T actualThrowable = shouldThrow(getClass(expectedThrowable), workThatShouldThrowThrowable);
+	public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, Callable<Void> workThatShouldThrowThrowable) throws Throwable {
+		ThrowableType actualThrowable = shouldThrow(getClass(expectedThrowable), workThatShouldThrowThrowable);
 		assertSame(expectedThrowable, actualThrowable);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T extends Throwable> T shouldThrow(Class<T> expectedThrowableType, Callable<Void> workThatShouldThrowThrowable) throws Throwable {
+	public static <ThrowableType extends Throwable> ThrowableType shouldThrow(Class<ThrowableType> expectedThrowableType, Callable<Void> workThatShouldThrowThrowable) throws Throwable {
 		try {
 			workThatShouldThrowThrowable.call();
 		} catch (Throwable actualThrowableThrown) {
 			if (instanceOf(actualThrowableThrown, expectedThrowableType)) {
-				return (T) actualThrowableThrown;
+				return (ThrowableType) actualThrowableThrown;
 			} else {
 				throw actualThrowableThrown;
 			}
@@ -60,8 +60,8 @@ public class Assert {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> Class<? extends T> getClass(final T object) {
-		return (Class<? extends T>) object.getClass();
+	private static <CompileTimeType> Class<? extends CompileTimeType> getClass(final CompileTimeType object) {
+		return (Class<? extends CompileTimeType>) object.getClass();
 	}
 
 	public static boolean instanceOf(Object o, Class<?> c) {

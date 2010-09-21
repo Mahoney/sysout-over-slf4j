@@ -51,7 +51,7 @@ public final class ExceptionUtils {
 		return result;
 	}
 
-	public static <E> E doUnchecked(final Callable<E> work) {
+	public static <ResultType> ResultType doUnchecked(final Callable<ResultType> work) {
 		try {
 			return work.call();
 		} catch (Exception e) {
