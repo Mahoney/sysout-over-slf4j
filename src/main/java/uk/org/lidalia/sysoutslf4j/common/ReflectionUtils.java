@@ -56,7 +56,11 @@ public final class ReflectionUtils {
 		try {
 			return classWithMethod.getDeclaredMethod(methodName, argTypes);
 		} catch (NoSuchMethodException noSuchMethodException) {
-			throw new WrappedCheckedException(noSuchMethodException);
+			if (classWithMethod.getSuperclass() == null) {
+				throw new WrappedCheckedException(noSuchMethodException);
+			} else {
+				return getMethod(methodName, classWithMethod.getSuperclass(), argTypes);
+			}
 		}
 	}
 
