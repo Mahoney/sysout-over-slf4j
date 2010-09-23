@@ -54,12 +54,20 @@ public final class ReflectionUtils {
 
 	private static Method getMethod(final String methodName, final Class<?> classWithMethod, final Class<?>... argTypes) {
 		try {
+			return getMethod(methodName, classWithMethod, argTypes, null);
+		} catch (NoSuchMethodException noSuchMethodException) {
+			throw new WrappedCheckedException(noSuchMethodException);
+		}
+	}
+
+	private static Method getMethod(final String methodName, final Class<?> classWithMethod, final Class<?>[] argTypes, NoSuchMethodException originalNoSuchMethodException) throws NoSuchMethodException {
+		try {
 			return classWithMethod.getDeclaredMethod(methodName, argTypes);
 		} catch (NoSuchMethodException noSuchMethodException) {
-			if (classWithMethod.getSuperclass() == null) {
-				throw new WrappedCheckedException(noSuchMethodException);
+			if (classWithMethod.getSuperclass() != null) {
+				return getMethod(methodName, classWithMethod.getSuperclass(), argTypes, noSuchMethodException);
 			} else {
-				return getMethod(methodName, classWithMethod.getSuperclass(), argTypes);
+				throw originalNoSuchMethodException;
 			}
 		}
 	}

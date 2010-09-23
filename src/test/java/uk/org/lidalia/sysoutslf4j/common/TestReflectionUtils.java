@@ -24,30 +24,25 @@
 
 package uk.org.lidalia.sysoutslf4j.common;
 
-import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static uk.org.lidalia.testutils.Assert.assertNotInstantiable;
 import static uk.org.lidalia.testutils.Assert.shouldThrow;
-import static uk.org.lidalia.testutils.ThrowableEquals.eqExceptionCause;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.powermock.api.support.ClassLoaderUtil;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.common.ExceptionUtils;
 import uk.org.lidalia.sysoutslf4j.common.ReflectionUtils;
-import uk.org.lidalia.testutils.SubClass;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ExceptionUtils.class)
@@ -62,11 +57,12 @@ public class TestReflectionUtils extends SysOutOverSLF4JTestCase {
 	public void invokeMethodThrowsNoSuchMethodExceptionNestedInIllegalStateExceptionWhenNoSuchMethod() throws Throwable {
 		final RuntimeException runtimeException = shouldThrow(RuntimeException.class, new Callable<Void>() {
 			public Void call() throws Exception {
-				ReflectionUtils.invokeMethod("methodThatDoesntExist", new Object());
+				ReflectionUtils.invokeMethod("methodThatDoesntExist", new String());
 				return null;
 			}
 		});
 		assertSame(NoSuchMethodException.class, runtimeException.getCause().getClass());
+		assertEquals("java.lang.String.methodThatDoesntExist()", runtimeException.getCause().getMessage());
 	}
 	
 	@Test
@@ -74,13 +70,9 @@ public class TestReflectionUtils extends SysOutOverSLF4JTestCase {
 		
 		final CharSequence target = createMock(CharSequence.class);
 		RuntimeException expectedException = new RuntimeException();
-		expect(target.length()).andThrow(expectedException);
-		
-		mockStatic(ExceptionUtils.class);
-		expect(ExceptionUtils.asRuntimeException(
-				and(isA(InvocationTargetException.class), eqExceptionCause(expectedException)))).andReturn(expectedException);
+		expect(target.length()).andThrow(expectedException);		
 		replayAll();
-		
+
 		shouldThrow(expectedException, new Callable<Void>() {
 			public Void call() throws Exception {
 				ReflectionUtils.invokeMethod("length", target);
@@ -151,5 +143,15 @@ public class TestReflectionUtils extends SysOutOverSLF4JTestCase {
 			}
 		});
 		assertEquals("Target " + target + " does not have methods to match all method signatures on class " + ExampleInterface.class, exception.getMessage());
+	}
+	
+	private static class ClassWithProtectedMethod {
+		@SuppressWarnings("unused")
+		protected String protectedMethod() {
+			return "invoked";
+		}
+	}
+	private static class SubClass extends ClassWithProtectedMethod {
+		
 	}
 }
