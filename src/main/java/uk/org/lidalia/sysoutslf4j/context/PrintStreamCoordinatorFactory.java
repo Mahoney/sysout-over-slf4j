@@ -24,10 +24,8 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
-import static uk.org.lidalia.sysoutslf4j.context.ClassLoaderUtils.getJarURL;
 import static uk.org.lidalia.sysoutslf4j.context.ClassLoaderUtils.loadClass;
 
-import java.net.URL;
 import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
@@ -49,11 +47,9 @@ final class PrintStreamCoordinatorFactory {
 			candidateCoordinatorClass = getConfiguratorClassFromSystemClassLoader();
 		}
 		if (candidateCoordinatorClass == null) {
-			candidateCoordinatorClass = addConfiguratorClassToSystemClassLoaderAndGet();
-		}
-		if (candidateCoordinatorClass == null) {
 			candidateCoordinatorClass = getConfiguratorClassFromCurrentClassLoader();
 		}
+		checkCoordinator(candidateCoordinatorClass);
 		return makeCoordinator(candidateCoordinatorClass);
 	}
 
@@ -87,29 +83,19 @@ final class PrintStreamCoordinatorFactory {
 		}
 		return configuratorClass;
 	}
-
-	private static Class<?> addConfiguratorClassToSystemClassLoaderAndGet() {
-		Class<?> configuratorClass = null;
-		try {
-			final URL jarUrl = getJarURL(PrintStreamCoordinator.class);
-			ReflectionUtils.invokeMethod("addURL", ClassLoader.getSystemClassLoader(), URL.class, jarUrl);
-			configuratorClass = ClassLoader.getSystemClassLoader().loadClass(PrintStreamCoordinatorImpl.class.getName());
-		} catch (Exception exception) {
-			reportFailureToAvoidClassLoaderLeak(exception);
+	
+	private static void checkCoordinator(Class<?> candidateCoordinatorClass) {
+		if (candidateCoordinatorClass.getClassLoader() == Thread.currentThread().getContextClassLoader()) {
+			reportFailureToAvoidClassLoaderLeak();
 		}
-		return configuratorClass;
 	}
 
-	private static void reportFailureToAvoidClassLoaderLeak(final Exception exception) {
-		LOG.warn("Unable to force sysout-over-slf4j jar url into system class loader and " +
-				"then load class [" + PrintStreamCoordinatorImpl.class + "] from the system class loader." + LINE_END +
-				"Unfortunately it is not possible to set up Sysout over SLF4J on this system without introducing " +
+	private static void reportFailureToAvoidClassLoaderLeak() {
+		LOG.warn("Unfortunately it is not possible to set up Sysout over SLF4J on this system without introducing " +
 				"a class loader memory leak." + LINE_END +
 				"If you never need to discard the current class loader " +
 				"[" + Thread.currentThread().getContextClassLoader() + "] this will not be a problem and you can suppress this " +
-				"warning." + LINE_END +
-				"If you wish to avoid a class loader memory leak you can place sysout-over-slf4j.jar on the system classpath " +
-				"IN ADDITION TO (*not* instead of) the local context's classpath", exception);
+				"warning.");
 	}
 
 	private static Class<PrintStreamCoordinatorImpl> getConfiguratorClassFromCurrentClassLoader() {
