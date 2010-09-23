@@ -27,15 +27,12 @@ package uk.org.lidalia.sysoutslf4j.context;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.powermock.api.easymock.PowerMock.createPartialMock;
-import static org.powermock.api.easymock.PowerMock.expectLastCall;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replay;
 import static uk.org.lidalia.testutils.Assert.assertExpectedLoggingEvent;
 import static uk.org.lidalia.testutils.Assert.assertNotInstantiable;
 
 import java.lang.reflect.Proxy;
-import java.net.URL;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -97,84 +94,43 @@ public class PrintStreamCoordinatorFactoryTest extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
-	public void getSlf4jPrintStreamConfiguratorClassAddsClassToSystemClassLoaderAndReturnsItWhenNotOnClassPath() {
+	public void getSlf4jPrintStreamConfiguratorClassReturnsLocallyLoadedClassAndWarnsWhenNotOnSystemClasspath() {
 		ClassLoader systemClassLoader = new SystemClassLoaderWithoutSysoutOverSLF4JOnClassPath();
 		mockStatic(ClassLoader.class);
 		expect(ClassLoader.getSystemClassLoader()).andStubReturn(systemClassLoader);
-		replay(ClassLoader.class);
-		
-		PrintStreamCoordinator proxyCoordinator = PrintStreamCoordinatorFactory.createPrintStreamCoordinator();
-		ProxyingInvocationHandler invocationHandler = (ProxyingInvocationHandler) Proxy.getInvocationHandler(proxyCoordinator);
-		assertSame(systemClassLoader, invocationHandler.getTarget().getClass().getClassLoader());
-		
-		assertEquals(1, appender.list.size());
-		assertExpectedLoggingEvent(appender.list.get(0),
-				"failed to load [" + PrintStreamCoordinatorImpl.class + "] from system class loader " +
-				"due to java.lang.ClassNotFoundException: " + PrintStreamCoordinatorImpl.class.getName(),
-				Level.DEBUG, SysOutOverSLF4J.class.getName());
-	}
-	
-	@Test
-	public void getSlf4jPrintStreamConfiguratorClassReturnsLocallyLoadedClassWhenUnableToDeriveJarUrl() {
-		ClassLoader systemClassLoader = new SystemClassLoaderWithoutSysoutOverSLF4JOnClassPath();
-		mockStatic(ClassLoader.class);
-		expect(ClassLoader.getSystemClassLoader()).andStubReturn(systemClassLoader);
-		
-		mockStatic(ClassLoaderUtils.class);
-		NullPointerException cause = new NullPointerException();
-		expect(ClassLoaderUtils.getJarURL(PrintStreamCoordinator.class)).andThrow(cause);
-		
 		replay(ClassLoader.class, ClassLoaderUtils.class);
 		
 		PrintStreamCoordinator coordinator = PrintStreamCoordinatorFactory.createPrintStreamCoordinator();
 		assertSame(PrintStreamCoordinatorImpl.class, coordinator.getClass());
-		
 		assertEquals(2, appender.list.size());
 		assertExpectedLoggingEvent(appender.list.get(0),
 				"failed to load [" + PrintStreamCoordinatorImpl.class + "] from system class loader " +
 				"due to java.lang.ClassNotFoundException: " + PrintStreamCoordinatorImpl.class.getName(),
 				Level.DEBUG, SysOutOverSLF4J.class.getName());
-		
 		assertExpectedLoggingEvent(appender.list.get(1),
-				expectedLeakWarning(),
-				Level.WARN, SysOutOverSLF4J.class.getName(), cause);
-	}
-
-	private String expectedLeakWarning() {
-		return "Unable to force sysout-over-slf4j jar url into system class loader and " +
-		"then load class [" + PrintStreamCoordinatorImpl.class + "] from the system class loader." + LINE_END +
-		"Unfortunately it is not possible to set up Sysout over SLF4J on this system without introducing " +
-		"a class loader memory leak." + LINE_END +
-		"If you never need to discard the current class loader [" + Thread.currentThread().getContextClassLoader() + "] " +
-		"this will not be a problem and you can suppress this warning." + LINE_END +
-		"If you wish to avoid a class loader memory leak you can place sysout-over-slf4j.jar on the system classpath " +
-		"IN ADDITION TO (*not* instead of) the local context's classpath";
+				"Unfortunately it is not possible to set up Sysout over SLF4J on this system without introducing a class " +
+				"loader memory leak." + LINE_END +
+				"If you never need to discard the current class loader [" + 
+				Thread.currentThread().getContextClassLoader() +
+				"] this will not be a problem and you can suppress this warning.",
+				Level.WARN, SysOutOverSLF4J.class.getName());
 	}
 	
 	@Test
-	public void getSlf4jPrintStreamConfiguratorClassReturnsLocallyLoadedClassWhenUnableToAddToSystemClassPath() {
-		SystemClassLoaderWithoutSysoutOverSLF4JOnClassPath systemClassLoader = createPartialMock(SystemClassLoaderWithoutSysoutOverSLF4JOnClassPath.class, "addURL");
-		URL jarUrl = ClassLoaderUtils.getJarURL(PrintStreamCoordinator.class);
-		systemClassLoader.addURL(jarUrl);
-		SecurityException cause = new SecurityException();
-		expectLastCall().andThrow(cause);
-		
+	public void getSlf4jPrintStreamConfiguratorClassDoesNotWarnWhenLocallyLoadedClassIsNotLoadedByContextClassLoader() {
+		ClassLoader systemClassLoader = new SystemClassLoaderWithoutSysoutOverSLF4JOnClassPath();
 		mockStatic(ClassLoader.class);
 		expect(ClassLoader.getSystemClassLoader()).andStubReturn(systemClassLoader);
+		replay(ClassLoader.class, ClassLoaderUtils.class);
 		
-		replay(ClassLoader.class, systemClassLoader);
-		
+		Thread.currentThread().setContextClassLoader(new ClassLoader() {});
 		PrintStreamCoordinator coordinator = PrintStreamCoordinatorFactory.createPrintStreamCoordinator();
 		assertSame(PrintStreamCoordinatorImpl.class, coordinator.getClass());
-		
+		assertEquals(1, appender.list.size());
 		assertExpectedLoggingEvent(appender.list.get(0),
 				"failed to load [" + PrintStreamCoordinatorImpl.class + "] from system class loader " +
 				"due to java.lang.ClassNotFoundException: " + PrintStreamCoordinatorImpl.class.getName(),
 				Level.DEBUG, SysOutOverSLF4J.class.getName());
-		
-		assertExpectedLoggingEvent(appender.list.get(1),
-				expectedLeakWarning(),
-				Level.WARN, SysOutOverSLF4J.class.getName(), cause);
 	}
 	
 	@Test
