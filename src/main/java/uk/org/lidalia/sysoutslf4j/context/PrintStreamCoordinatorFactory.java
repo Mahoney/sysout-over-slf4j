@@ -25,6 +25,7 @@
 package uk.org.lidalia.sysoutslf4j.context;
 
 import static uk.org.lidalia.sysoutslf4j.context.ClassLoaderUtils.loadClass;
+import static java.lang.Thread.currentThread;
 
 import java.util.concurrent.Callable;
 
@@ -85,7 +86,7 @@ final class PrintStreamCoordinatorFactory {
 	}
 	
 	private static void checkCoordinator(Class<?> candidateCoordinatorClass) {
-		if (candidateCoordinatorClass.getClassLoader() == Thread.currentThread().getContextClassLoader()) {
+		if (candidateCoordinatorClass.getClassLoader() == currentThread().getContextClassLoader()) {
 			reportFailureToAvoidClassLoaderLeak();
 		}
 	}
@@ -93,9 +94,10 @@ final class PrintStreamCoordinatorFactory {
 	private static void reportFailureToAvoidClassLoaderLeak() {
 		LOG.warn("Unfortunately it is not possible to set up Sysout over SLF4J on this system without introducing " +
 				"a class loader memory leak." + LINE_END +
-				"If you never need to discard the current class loader " +
-				"[" + Thread.currentThread().getContextClassLoader() + "] this will not be a problem and you can suppress this " +
-				"warning.");
+				"If you never need to discard the current class loader [" + currentThread().getContextClassLoader() + "] " +
+				"this will not be a problem and you can suppress this warning." + LINE_END +
+				"In the worst case discarding the current class loader may cause all subsequent attempts to print to " +
+				"System.out or err to throw an exception.");
 	}
 
 	private static Class<PrintStreamCoordinatorImpl> getConfiguratorClassFromCurrentClassLoader() {

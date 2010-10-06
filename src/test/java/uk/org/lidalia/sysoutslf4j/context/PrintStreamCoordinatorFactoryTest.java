@@ -112,7 +112,9 @@ public class PrintStreamCoordinatorFactoryTest extends SysOutOverSLF4JTestCase {
 				"loader memory leak." + LINE_END +
 				"If you never need to discard the current class loader [" + 
 				Thread.currentThread().getContextClassLoader() +
-				"] this will not be a problem and you can suppress this warning.",
+				"] this will not be a problem and you can suppress this warning." + LINE_END +
+				"In the worst case discarding the current class loader may cause all subsequent attempts to print to " +
+				"System.out or err to throw an exception.",
 				Level.WARN, SysOutOverSLF4J.class.getName());
 	}
 	
