@@ -85,8 +85,10 @@ final class PrintStreamCoordinatorFactory {
 		return configuratorClass;
 	}
 	
-	private static void checkCoordinator(Class<?> candidateCoordinatorClass) {
-		if (candidateCoordinatorClass.getClassLoader() == currentThread().getContextClassLoader()) {
+	private static void checkCoordinator(final Class<?> candidateCoordinatorClass) {
+		final ClassLoader contextClassLoader = currentThread().getContextClassLoader();
+		final boolean usingSystemClassLoader = ClassLoader.getSystemClassLoader() == contextClassLoader;
+		if (!usingSystemClassLoader && candidateCoordinatorClass.getClassLoader() == contextClassLoader) {
 			reportFailureToAvoidClassLoaderLeak();
 		}
 	}

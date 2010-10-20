@@ -136,6 +136,17 @@ public class PrintStreamCoordinatorFactoryTest extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
+	public void getSlf4jPrintStreamConfiguratorClassDoesNotWarnWhenLocalClassLoaderIsSystemClassLoader() {
+		mockStatic(ClassLoader.class);
+		expect(ClassLoader.getSystemClassLoader()).andStubReturn(Thread.currentThread().getContextClassLoader());
+		replay(ClassLoader.class, ClassLoaderUtils.class);
+		
+		PrintStreamCoordinator coordinator = PrintStreamCoordinatorFactory.createPrintStreamCoordinator();
+		assertSame(PrintStreamCoordinatorImpl.class, coordinator.getClass());
+		assertEquals(0, appender.list.size());
+	}
+	
+	@Test
 	public void notInstantiable() throws Throwable {
 		assertNotInstantiable(PrintStreamCoordinatorFactory.class);
 	}

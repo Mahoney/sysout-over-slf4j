@@ -36,6 +36,46 @@ import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.common.StringUtils;
 
 public class TestStringUtils extends SysOutOverSLF4JTestCase {
+
+	@Test
+	public void substringBeforeReturnsStringBeforeSuppliedString() {
+		assertEquals("hello ", StringUtils.substringBefore("hello world from this world", "world"));
+	}
+	
+	@Test
+	public void substringBeforeReturnsEmptyStringIfInputStringEmpty() {
+		assertEquals("", StringUtils.substringBefore("", "ignored"));
+	}
+	
+	@Test
+	public void substringBeforeReturnsEmptyStringIfSeparatorEmpty() {
+		assertEquals("", StringUtils.substringBefore("hello", ""));
+	}
+	
+	@Test
+	public void substringBeforeReturnsInputStringIfSeparatorNotPresent() {
+		assertEquals("hello", StringUtils.substringBefore("hello", "blah"));
+	}
+	
+	@Test
+	public void substringBeforeThrowsNullPointerExceptionIfInputIsNull() throws Throwable {
+		shouldThrow(NullPointerException.class, new Callable<Void>() {
+			public Void call() throws Exception {
+				StringUtils.substringBefore(null, "irrelevant");
+				return null;
+			}
+		});
+	}
+	
+	@Test
+	public void substringBeforeThrowsNullPointerExceptionIfSeparatorIsNull() throws Throwable {
+		shouldThrow(NullPointerException.class, new Callable<Void>() {
+			public Void call() throws Exception {
+				StringUtils.substringBefore("irrelevant", null);
+				return null;
+			}
+		});
+	}
 	
 	@Test
 	public void stripEndStripsEnd() {

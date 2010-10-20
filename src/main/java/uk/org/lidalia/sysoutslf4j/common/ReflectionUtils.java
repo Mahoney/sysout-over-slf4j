@@ -36,6 +36,22 @@ public final class ReflectionUtils {
 		return invokeMethod(method, target);
 	}
 
+	public static Object invokeMethod(final String methodName, final Object target, final Class<?> argType, final Object arg) {
+		final Method method = getMethod(methodName, target.getClass(), argType);
+		return invokeMethod(method, target, arg);
+	}
+
+	public static Object invokeStaticMethod(final String methodName, final Class<?> targetClass) {
+		final Method method = getMethod(methodName, targetClass);
+		return invokeMethod(method, targetClass);
+	}
+
+	public static Object invokeStaticMethod(
+			final String methodName, final Class<?> targetClass, final Class<?> argType, final Object arg) {
+		final Method method = getMethod(methodName, targetClass, argType);
+		return invokeMethod(method, targetClass, arg);
+	}
+
 	private static Method getMethod(final String methodName, final Class<?> classWithMethod, final Class<?>... argTypes) {
 		try {
 			return getMethod(methodName, classWithMethod, argTypes, null);
@@ -44,16 +60,32 @@ public final class ReflectionUtils {
 		}
 	}
 
-	private static Method getMethod(final String methodName, final Class<?> classWithMethod, final Class<?>[] argTypes, NoSuchMethodException originalNoSuchMethodException) throws NoSuchMethodException {
+	private static Method getMethod(final String methodName, final Class<?> classWithMethod, final Class<?>[] argTypes,
+			final NoSuchMethodException originalNoSuchMethodException) throws NoSuchMethodException {
+		Method foundMethod;
 		try {
-			return classWithMethod.getDeclaredMethod(methodName, argTypes);
+			foundMethod = classWithMethod.getDeclaredMethod(methodName, argTypes);
 		} catch (NoSuchMethodException noSuchMethodException) {
-			if (classWithMethod.getSuperclass() != null) {
-				return getMethod(methodName, classWithMethod.getSuperclass(), argTypes, noSuchMethodException);
-			} else {
+			final Class<?> superclass = classWithMethod.getSuperclass();
+			if (superclass == null) {
 				throw originalNoSuchMethodException;
+			} else {
+				final NoSuchMethodException firstNoSuchMethodException = getDefault(
+						originalNoSuchMethodException, noSuchMethodException);
+				foundMethod = getMethod(methodName, superclass, argTypes, firstNoSuchMethodException);
 			}
 		}
+		return foundMethod;
+	}
+
+	private static <T> T getDefault(final T mightBeNull, final T useIfNull) {
+		final T result;
+		if (mightBeNull == null) {
+			result = useIfNull;
+		} else {
+			result = mightBeNull;
+		}
+		return result;
 	}
 
 	public static Object invokeMethod(final Method method, final Object target, final Object... args) {

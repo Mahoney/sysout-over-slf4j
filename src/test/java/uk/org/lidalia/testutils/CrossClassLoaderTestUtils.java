@@ -96,7 +96,7 @@ public class CrossClassLoaderTestUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static Object getLocalEnumInstance(Enum<?> enumInstance, Class destinationClass) {
+	private static Object getLocalEnumInstance(Enum<?> enumInstance, @SuppressWarnings("rawtypes") Class destinationClass) {
 		try {
 			return Enum.valueOf(destinationClass, enumInstance.name());
 		} catch (Exception e) {

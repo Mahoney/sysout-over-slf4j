@@ -56,12 +56,13 @@ public class TestReflectionUtils extends SysOutOverSLF4JTestCase {
 	public void invokeMethodThrowsNoSuchMethodExceptionNestedInIllegalStateExceptionWhenNoSuchMethod() throws Throwable {
 		final RuntimeException runtimeException = shouldThrow(RuntimeException.class, new Callable<Void>() {
 			public Void call() throws Exception {
-				ReflectionUtils.invokeMethod("methodThatDoesntExist", new String());
+				ReflectionUtils.invokeMethod("methodThatDoesntExist", new SubSubClass());
 				return null;
 			}
 		});
 		assertSame(NoSuchMethodException.class, runtimeException.getCause().getClass());
-		assertEquals("java.lang.String.methodThatDoesntExist()", runtimeException.getCause().getMessage());
+		assertEquals("uk.org.lidalia.sysoutslf4j.common.TestReflectionUtils$SubSubClass.methodThatDoesntExist()",
+				runtimeException.getCause().getMessage());
 	}
 	
 	@Test
@@ -81,9 +82,24 @@ public class TestReflectionUtils extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
-	public void invokeProtectedMethodOnSuperclass() {
+	public void invokeMethodWithArgCallsMethod() {
+		assertEquals("world", ReflectionUtils.invokeMethod("substring", "helloworld", int.class, 5));
+	}
+	
+	@Test
+	public void invokeProtectedMethodOnSuperclassWorks() {
 		SubClass subClass = new SubClass();
 		assertEquals("invoked", ReflectionUtils.invokeMethod("protectedMethod", subClass));
+	}
+	
+	@Test
+	public void invokeStaticMethodCallsMethod() {
+		assertEquals(System.getenv(), ReflectionUtils.invokeStaticMethod("getenv", System.class));
+	}
+	
+	@Test
+	public void invokeStaticMethodWithArgCallsMethod() {
+		assertEquals("5", ReflectionUtils.invokeStaticMethod("valueOf", String.class, int.class, 5));
 	}
 	
 	@Test
@@ -136,6 +152,9 @@ public class TestReflectionUtils extends SysOutOverSLF4JTestCase {
 		}
 	}
 	private static class SubClass extends ClassWithProtectedMethod {
+		
+	}
+	private static class SubSubClass extends SubClass {
 		
 	}
 }

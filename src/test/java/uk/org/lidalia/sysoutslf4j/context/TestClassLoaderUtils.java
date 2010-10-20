@@ -43,7 +43,7 @@ import uk.org.lidalia.sysoutslf4j.context.ClassLoaderUtils;
 public class TestClassLoaderUtils extends SysOutOverSLF4JTestCase {
 	
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void loadClassLoadsClassFromClassloader() throws Exception {
 		ClassLoader mockClassLoader = createMock(ClassLoader.class);
 		Class expected = Object.class;
