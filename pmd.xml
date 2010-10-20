@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.2.5" timestamp="2010-09-15T07:51:47.626">
+<pmd version="4.2.5" timestamp="2010-10-21T00:22:41.985">
 <suppressedviolation filename="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/PrintStreamCoordinatorFactory.java" suppressiontype="nopmd" msg="In J2EE, getClassLoader() might not work as expected.  Use Thread.currentThread().getContextClassLoader() instead." usermsg=" deliberately using this classloader
 "/>
 <suppressedviolation filename="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/system/CallOrigin.java" suppressiontype="nopmd" msg="To be compliant to J2EE, a webapp should not use any thread." usermsg=" not using thread

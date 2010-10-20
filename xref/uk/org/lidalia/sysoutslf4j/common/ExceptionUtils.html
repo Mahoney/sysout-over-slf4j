@@ -61,7 +61,7 @@
 <a class="jxr_linenumber" name="51" href="#51">51</a>  		<strong class="jxr_keyword">return</strong> result;
 <a class="jxr_linenumber" name="52" href="#52">52</a>  	}
 <a class="jxr_linenumber" name="53" href="#53">53</a>  
-<a class="jxr_linenumber" name="54" href="#54">54</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> &lt;E&gt; E doUnchecked(<strong class="jxr_keyword">final</strong> Callable&lt;E&gt; work) {
+<a class="jxr_linenumber" name="54" href="#54">54</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> &lt;ResultType&gt; ResultType doUnchecked(<strong class="jxr_keyword">final</strong> Callable&lt;ResultType&gt; work) {
 <a class="jxr_linenumber" name="55" href="#55">55</a>  		<strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="56" href="#56">56</a>  			<strong class="jxr_keyword">return</strong> work.call();
 <a class="jxr_linenumber" name="57" href="#57">57</a>  		} <strong class="jxr_keyword">catch</strong> (Exception e) {

@@ -50,18 +50,18 @@
 <a class="jxr_linenumber" name="40" href="#40">40</a>  
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../uk/org/lidalia/testutils/Assert.html">Assert</a> {
 <a class="jxr_linenumber" name="42" href="#42">42</a>  
-<a class="jxr_linenumber" name="43" href="#43">43</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> &lt;T <strong class="jxr_keyword">extends</strong> Throwable&gt; <strong class="jxr_keyword">void</strong> shouldThrow(<strong class="jxr_keyword">final</strong> T expectedThrowable, Callable&lt;Void&gt; workThatShouldThrowThrowable) <strong class="jxr_keyword">throws</strong> Throwable {
-<a class="jxr_linenumber" name="44" href="#44">44</a>  		T actualThrowable = shouldThrow(getClass(expectedThrowable), workThatShouldThrowThrowable);
+<a class="jxr_linenumber" name="43" href="#43">43</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> &lt;ThrowableType <strong class="jxr_keyword">extends</strong> Throwable&gt; <strong class="jxr_keyword">void</strong> shouldThrow(<strong class="jxr_keyword">final</strong> ThrowableType expectedThrowable, Callable&lt;Void&gt; workThatShouldThrowThrowable) <strong class="jxr_keyword">throws</strong> Throwable {
+<a class="jxr_linenumber" name="44" href="#44">44</a>  		ThrowableType actualThrowable = shouldThrow(getClass(expectedThrowable), workThatShouldThrowThrowable);
 <a class="jxr_linenumber" name="45" href="#45">45</a>  		assertSame(expectedThrowable, actualThrowable);
 <a class="jxr_linenumber" name="46" href="#46">46</a>  	}
 <a class="jxr_linenumber" name="47" href="#47">47</a>  
 <a class="jxr_linenumber" name="48" href="#48">48</a>  	@SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
-<a class="jxr_linenumber" name="49" href="#49">49</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> &lt;T <strong class="jxr_keyword">extends</strong> Throwable&gt; T shouldThrow(Class&lt;T&gt; expectedThrowableType, Callable&lt;Void&gt; workThatShouldThrowThrowable) <strong class="jxr_keyword">throws</strong> Throwable {
+<a class="jxr_linenumber" name="49" href="#49">49</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> &lt;ThrowableType <strong class="jxr_keyword">extends</strong> Throwable&gt; ThrowableType shouldThrow(Class&lt;ThrowableType&gt; expectedThrowableType, Callable&lt;Void&gt; workThatShouldThrowThrowable) <strong class="jxr_keyword">throws</strong> Throwable {
 <a class="jxr_linenumber" name="50" href="#50">50</a>  		<strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="51" href="#51">51</a>  			workThatShouldThrowThrowable.call();
 <a class="jxr_linenumber" name="52" href="#52">52</a>  		} <strong class="jxr_keyword">catch</strong> (Throwable actualThrowableThrown) {
 <a class="jxr_linenumber" name="53" href="#53">53</a>  			<strong class="jxr_keyword">if</strong> (instanceOf(actualThrowableThrown, expectedThrowableType)) {
-<a class="jxr_linenumber" name="54" href="#54">54</a>  				<strong class="jxr_keyword">return</strong> (T) actualThrowableThrown;
+<a class="jxr_linenumber" name="54" href="#54">54</a>  				<strong class="jxr_keyword">return</strong> (ThrowableType) actualThrowableThrown;
 <a class="jxr_linenumber" name="55" href="#55">55</a>  			} <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="56" href="#56">56</a>  				<strong class="jxr_keyword">throw</strong> actualThrowableThrown;
 <a class="jxr_linenumber" name="57" href="#57">57</a>  			}
@@ -70,8 +70,8 @@
 <a class="jxr_linenumber" name="60" href="#60">60</a>  	}
 <a class="jxr_linenumber" name="61" href="#61">61</a>  
 <a class="jxr_linenumber" name="62" href="#62">62</a>  	@SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
-<a class="jxr_linenumber" name="63" href="#63">63</a>  	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> &lt;T&gt; Class&lt;? <strong class="jxr_keyword">extends</strong> T&gt; getClass(<strong class="jxr_keyword">final</strong> T object) {
-<a class="jxr_linenumber" name="64" href="#64">64</a>  		<strong class="jxr_keyword">return</strong> (Class&lt;? <strong class="jxr_keyword">extends</strong> T&gt;) object.getClass();
+<a class="jxr_linenumber" name="63" href="#63">63</a>  	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> &lt;CompileTimeType&gt; Class&lt;? <strong class="jxr_keyword">extends</strong> CompileTimeType&gt; getClass(<strong class="jxr_keyword">final</strong> CompileTimeType object) {
+<a class="jxr_linenumber" name="64" href="#64">64</a>  		<strong class="jxr_keyword">return</strong> (Class&lt;? <strong class="jxr_keyword">extends</strong> CompileTimeType&gt;) object.getClass();
 <a class="jxr_linenumber" name="65" href="#65">65</a>  	}
 <a class="jxr_linenumber" name="66" href="#66">66</a>  
 <a class="jxr_linenumber" name="67" href="#67">67</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">boolean</strong> instanceOf(Object o, Class&lt;?&gt; c) {
