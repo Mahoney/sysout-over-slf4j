@@ -36,22 +36,6 @@ public final class ReflectionUtils {
 		return invokeMethod(method, target);
 	}
 
-	public static Object invokeMethod(final String methodName, final Object target, final Class<?> argType, final Object arg) {
-		final Method method = getMethod(methodName, target.getClass(), argType);
-		return invokeMethod(method, target, arg);
-	}
-
-	public static Object invokeStaticMethod(final String methodName, final Class<?> targetClass) {
-		final Method method = getMethod(methodName, targetClass);
-		return invokeMethod(method, targetClass);
-	}
-
-	public static Object invokeStaticMethod(
-			final String methodName, final Class<?> targetClass, final Class<?> argType, final Object arg) {
-		final Method method = getMethod(methodName, targetClass, argType);
-		return invokeMethod(method, targetClass, arg);
-	}
-
 	private static Method getMethod(final String methodName, final Class<?> classWithMethod, final Class<?>... argTypes) {
 		try {
 			return getMethod(methodName, classWithMethod, argTypes, null);

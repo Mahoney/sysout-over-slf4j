@@ -82,24 +82,9 @@ public class TestReflectionUtils extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
-	public void invokeMethodWithArgCallsMethod() {
-		assertEquals("world", ReflectionUtils.invokeMethod("substring", "helloworld", int.class, 5));
-	}
-	
-	@Test
 	public void invokeProtectedMethodOnSuperclassWorks() {
 		SubClass subClass = new SubClass();
 		assertEquals("invoked", ReflectionUtils.invokeMethod("protectedMethod", subClass));
-	}
-	
-	@Test
-	public void invokeStaticMethodCallsMethod() {
-		assertEquals(System.getenv(), ReflectionUtils.invokeStaticMethod("getenv", System.class));
-	}
-	
-	@Test
-	public void invokeStaticMethodWithArgCallsMethod() {
-		assertEquals("5", ReflectionUtils.invokeStaticMethod("valueOf", String.class, int.class, 5));
 	}
 	
 	@Test

@@ -22,7 +22,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.sysoutslf4j.common;
+package uk.org.lidalia.sysoutslf4j.system;
 
 import static org.junit.Assert.assertEquals;
 import static uk.org.lidalia.testutils.Assert.assertNotInstantiable;
@@ -33,50 +33,10 @@ import java.util.concurrent.Callable;
 import org.junit.Test;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.common.StringUtils;
+import uk.org.lidalia.sysoutslf4j.system.StringUtils;
 
 public class TestStringUtils extends SysOutOverSLF4JTestCase {
 
-	@Test
-	public void substringBeforeReturnsStringBeforeSuppliedString() {
-		assertEquals("hello ", StringUtils.substringBefore("hello world from this world", "world"));
-	}
-	
-	@Test
-	public void substringBeforeReturnsEmptyStringIfInputStringEmpty() {
-		assertEquals("", StringUtils.substringBefore("", "ignored"));
-	}
-	
-	@Test
-	public void substringBeforeReturnsEmptyStringIfSeparatorEmpty() {
-		assertEquals("", StringUtils.substringBefore("hello", ""));
-	}
-	
-	@Test
-	public void substringBeforeReturnsInputStringIfSeparatorNotPresent() {
-		assertEquals("hello", StringUtils.substringBefore("hello", "blah"));
-	}
-	
-	@Test
-	public void substringBeforeThrowsNullPointerExceptionIfInputIsNull() throws Throwable {
-		shouldThrow(NullPointerException.class, new Callable<Void>() {
-			public Void call() throws Exception {
-				StringUtils.substringBefore(null, "irrelevant");
-				return null;
-			}
-		});
-	}
-	
-	@Test
-	public void substringBeforeThrowsNullPointerExceptionIfSeparatorIsNull() throws Throwable {
-		shouldThrow(NullPointerException.class, new Callable<Void>() {
-			public Void call() throws Exception {
-				StringUtils.substringBefore("irrelevant", null);
-				return null;
-			}
-		});
-	}
-	
 	@Test
 	public void stripEndStripsEnd() {
 		assertEquals("hello wo", StringUtils.stripEnd("hello world", "elders"));

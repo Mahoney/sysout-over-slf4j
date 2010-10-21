@@ -22,11 +22,11 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.sysoutslf4j.common;
+package uk.org.lidalia.sysoutslf4j.system;
 
-public final class StringUtils {
+final class StringUtils {
 
-	public static String stripEnd(final String str, final String stripChars) {
+	static String stripEnd(final String str, final String stripChars) {
 		return stripEnd(str, str.length() - 1, stripChars);
 	}
 	
@@ -45,17 +45,6 @@ public final class StringUtils {
 		}
 		return result;
 	}
-	
-	public static String substringBefore(final String toBeSubstringed, final String separator) {
-		final String substring;
-        final int indexOfSeparator = toBeSubstringed.indexOf(separator);
-        if (indexOfSeparator == -1) {
-        	substring = toBeSubstringed;
-        } else {
-        	substring = toBeSubstringed.substring(0, indexOfSeparator);
-        }
-        return substring;
-    }
 	
 	private StringUtils() {
 		throw new UnsupportedOperationException("Not instantiable");
