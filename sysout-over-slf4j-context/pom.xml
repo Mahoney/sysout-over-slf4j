@@ -10,4 +10,28 @@
     </parent>
     <artifactId>sysout-over-slf4j-context</artifactId>
 	<packaging>jar</packaging>
+	<dependencies>
+		<!-- COMPILE -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.0</version>
+		</dependency>
+
+		<!-- PROVIDED -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.3</version>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.lidalia</groupId>
+			<artifactId>sysout-over-slf4j-system</artifactId>
+			<version>2.0.0-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		
+	</dependencies>
 </project>

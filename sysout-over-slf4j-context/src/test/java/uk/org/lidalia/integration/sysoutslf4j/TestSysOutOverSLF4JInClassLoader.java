@@ -39,8 +39,8 @@ import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.common.SystemOutput;
+import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.testutils.Assert;
-import uk.org.lidalia.testutils.CrossClassLoaderTestUtils;
 import uk.org.lidalia.testutils.LoggingUtils;
 import uk.org.lidalia.testutils.SimpleClassloader;
 
@@ -129,5 +129,19 @@ public class TestSysOutOverSLF4JInClassLoader extends SysOutOverSLF4JTestCase {
 		OutputStream sysOutMock = new ByteArrayOutputStream();
 		systemOutput.set(new PrintStream(sysOutMock));
 		return sysOutMock;
+	}
+	
+	protected void callSendSystemOutAndErrToSLF4JInClassLoader(ClassLoader classLoader) throws Exception {
+		Class<?> sysOutOverSLF4JClass = classLoader.loadClass(SysOutOverSLF4J.class.getName());
+		Thread.currentThread().setContextClassLoader(classLoader);
+		sysOutOverSLF4JClass.getMethod("sendSystemOutAndErrToSLF4J").invoke(sysOutOverSLF4JClass);
+		Thread.currentThread().setContextClassLoader(originalContextClassLoader);
+	}
+
+	protected void callStopSendingSystemOutAndErrToSLF4JInClassLoader(ClassLoader classLoader) throws Exception {
+		Class<?> sysOutOverSLF4JClass = classLoader.loadClass(SysOutOverSLF4J.class.getName());
+		Thread.currentThread().setContextClassLoader(classLoader);
+		sysOutOverSLF4JClass.getMethod("stopSendingSystemOutAndErrToSLF4J").invoke(sysOutOverSLF4JClass);
+		Thread.currentThread().setContextClassLoader(originalContextClassLoader);
 	}
 }

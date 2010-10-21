@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.sysoutslf4j.context.LoggingSystemRegister;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4JInitialiser;
-import uk.org.lidalia.testutils.ClassCreationUtils;
 import uk.org.lidalia.testutils.LoggingUtils;
 
 import ch.qos.logback.classic.Level;

@@ -50,7 +50,6 @@ import uk.org.lidalia.sysoutslf4j.context.PrintStreamCoordinatorFactory;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.sysoutslf4j.system.PrintStreamCoordinatorImpl;
 import uk.org.lidalia.testutils.SimpleClassloader;
-import uk.org.lidalia.testutils.SystemClassLoaderWithoutSysoutOverSLF4JOnClassPath;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
