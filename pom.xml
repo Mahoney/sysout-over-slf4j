@@ -5,12 +5,17 @@
 	
 	<groupId>uk.org.lidalia</groupId>
 	<artifactId>sysout-over-slf4j</artifactId>
-	<packaging>jar</packaging>
-    <name>System Out and Err redirected to SLF4J</name>
-
-    <url>http://projects.lidalia.org.uk/sysout-over-slf4j/</url>
     <version>2.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+    
+    <name>System Out and Err redirected to SLF4J</name>
+    <url>http://projects.lidalia.org.uk/sysout-over-slf4j/</url>
     <description>Library to send raw System.out and System.err output to SLF4J for proper logging control</description>
+    
+    <modules>
+    	<module>sysout-over-slf4j-context</module>
+    	<module>sysout-over-slf4j-system</module>
+    </modules>
     
     <issueManagement>
     	<system>GitHub Issues</system>
