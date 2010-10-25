@@ -31,7 +31,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import uk.org.lidalia.sysoutslf4j.common.LoggerAppender;
 
 class LoggerAppenderStore {
 

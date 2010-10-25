@@ -22,21 +22,17 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.sysoutslf4j.context;
+package uk.org.lidalia.testutils;
 
-import uk.org.lidalia.sysoutslf4j.common.WrappedCheckedException;
+public class WrappedCheckedException extends RuntimeException {
 
-final class ClassLoaderUtils {
+	private static final long serialVersionUID = 1;
 
-	static Class<?> loadClass(final ClassLoader classLoader, final Class<?> classToLoad) {
-		try {
-			return classLoader.loadClass(classToLoad.getName());
-		} catch (ClassNotFoundException cne) {
-			throw new WrappedCheckedException(cne);
-		}
+	public WrappedCheckedException(final String message, final Throwable cause) {
+		super(message, cause);
 	}
 
-	private ClassLoaderUtils() {
-		throw new UnsupportedOperationException("Not instantiable");
+	public WrappedCheckedException(final Throwable cause) {
+		super(cause);
 	}
 }

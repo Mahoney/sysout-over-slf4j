@@ -44,9 +44,9 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.common.SystemOutput;
 import uk.org.lidalia.sysoutslf4j.context.LogLevel;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
+import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 import uk.org.lidalia.testutils.Assert;
 
 import ch.qos.logback.classic.Level;

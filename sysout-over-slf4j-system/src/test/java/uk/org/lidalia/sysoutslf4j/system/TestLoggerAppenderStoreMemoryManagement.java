@@ -28,64 +28,47 @@ import static org.junit.Assert.assertNull;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.common.LoggerAppender;
-import uk.org.lidalia.sysoutslf4j.system.LoggerAppenderProxy;
 import uk.org.lidalia.sysoutslf4j.system.LoggerAppenderStore;
-import uk.org.lidalia.testutils.SimpleClassloader;
+import uk.org.lidalia.testutils.NoOpInvocationHandler;
 
 public class TestLoggerAppenderStoreMemoryManagement extends SysOutOverSLF4JTestCase {
 
 	private final LoggerAppenderStore storeUnderTest = new LoggerAppenderStore();
 
-	private SimpleClassloader classLoader = SimpleClassloader.make();
+	private ClassLoader classLoader = new ClassLoader(){};
 	private final WeakReference<ClassLoader> refToClassLoader =
 		new WeakReference<ClassLoader>(classLoader, new ReferenceQueue<Object>());
-
-	private Object loggerAppenderObject = null;
-
-	@Before
-	public void buildLoggerAppenderFromClassLoader() throws Exception {
-		Class<?> loggerAppenderClassFromClassLoader = classLoader.loadClass(LoggerAppender.class.getName());
-		loggerAppenderObject = Proxy.newProxyInstance(classLoader, new Class[] {loggerAppenderClassFromClassLoader}, new InvocationHandler() {
-			@Override
-			public Object invoke(Object proxy, Method method, Object[] args)
-					throws Throwable {
-				return null;
-			}
-		});
-	}
-
-	private void storeLoggerAppenderAgainstClassLoader() {
-		Thread.currentThread().setContextClassLoader(classLoader);
-		LoggerAppender loggerAppender = LoggerAppenderProxy.wrap(loggerAppenderObject);
-		storeUnderTest.put(loggerAppender);
-	}
-
-	private void removeLocalReferenceToLoggerAppenderAndGarbageCollect() {
-		loggerAppenderObject = null;
-		System.gc();
-	}
+	private LoggerAppender loggerAppender = (LoggerAppender) Proxy.newProxyInstance(
+			classLoader, new Class[] {LoggerAppender.class}, NoOpInvocationHandler.INSTANCE);
 
 	@Test
 	public void loggerAppenderStoreDoesNotCauseAClassLoaderLeak() throws Exception {
 		storeLoggerAppenderAgainstClassLoader();
-		removeAllKnownReferencesToClassLoader();
+		removeLocalReferenceToClassLoader();
 		removeLocalReferenceToLoggerAppenderAndGarbageCollect();
 		assertClassLoaderHasBeenGarbageCollected();
 	}
 
-	private void removeAllKnownReferencesToClassLoader() {
+	private void storeLoggerAppenderAgainstClassLoader() {
+		Thread.currentThread().setContextClassLoader(classLoader);
+		storeUnderTest.put(loggerAppender);
+	}
+
+	private void removeLocalReferenceToClassLoader() {
 		Thread.currentThread().setContextClassLoader(originalContextClassLoader);
 		classLoader = null;
 	}
+	
+	private void removeLocalReferenceToLoggerAppenderAndGarbageCollect() {
+		loggerAppender = null;
+		System.gc();
+	}
+
 
 	private void assertClassLoaderHasBeenGarbageCollected() {
 		assertNull("classloader has not been garbage collected", refToClassLoader.get());

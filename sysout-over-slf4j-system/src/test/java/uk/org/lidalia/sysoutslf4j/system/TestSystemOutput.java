@@ -22,7 +22,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.sysoutslf4j.common;
+package uk.org.lidalia.sysoutslf4j.system;
 
 import static org.junit.Assert.assertEquals;
 
@@ -32,7 +32,7 @@ import java.io.PrintStream;
 import org.junit.Test;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.common.SystemOutput;
+import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 
 public class TestSystemOutput extends SysOutOverSLF4JTestCase {
 

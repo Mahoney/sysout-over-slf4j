@@ -29,8 +29,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Locale;
 
-import uk.org.lidalia.sysoutslf4j.common.LoggerAppender;
-import uk.org.lidalia.sysoutslf4j.common.SLF4JPrintStream;
 
 /**
  * 
@@ -93,12 +91,12 @@ import uk.org.lidalia.sysoutslf4j.common.SLF4JPrintStream;
  *         SLF4J, though a performance hit will occur.
  *         </p>
  */
-public final class SLF4JPrintStreamImpl extends PrintStream implements SLF4JPrintStream { // NOPMD superclass has too many methods
+final class SLF4JPrintStream extends PrintStream { // NOPMD superclass has too many methods
 
 	private final PrintStream originalPrintStream;
 	private final SLF4JPrintStreamDelegate delegate;
 
-	SLF4JPrintStreamImpl(final PrintStream originalPrintStream, final SLF4JPrintStreamDelegate delegate) {
+	SLF4JPrintStream(final PrintStream originalPrintStream, final SLF4JPrintStreamDelegate delegate) {
 		// This ByteArrayOutputStream will be unused - we aren't going to touch
 		// the super class.
 		super(new ByteArrayOutputStream());
@@ -276,18 +274,14 @@ public final class SLF4JPrintStreamImpl extends PrintStream implements SLF4JPrin
 		originalPrintStream.write(bytes);
 	}
 
-	@Override
-	public void registerLoggerAppender(final Object loggerAppenderObject) {
-		final LoggerAppender loggerAppender = LoggerAppenderProxy.wrap(loggerAppenderObject);
+	public void registerLoggerAppender(final LoggerAppender loggerAppender) {
 		delegate.registerLoggerAppender(loggerAppender);
 	}
 
-	@Override
 	public void deregisterLoggerAppender() {
 		delegate.deregisterLoggerAppender();
 	}
 
-	@Override
 	public PrintStream getOriginalPrintStream() {
 		return originalPrintStream;
 	}

@@ -22,7 +22,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.sysoutslf4j.common;
+package uk.org.lidalia.testutils;
 
 import java.io.InterruptedIOException;
 import java.lang.reflect.InvocationTargetException;

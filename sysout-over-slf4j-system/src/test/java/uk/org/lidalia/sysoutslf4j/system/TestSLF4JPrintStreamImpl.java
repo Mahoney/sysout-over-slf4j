@@ -27,7 +27,6 @@ package uk.org.lidalia.sysoutslf4j.system;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertSame;
 import static org.powermock.api.easymock.PowerMock.createStrictMock;
-import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
@@ -38,22 +37,15 @@ import java.util.Locale;
 
 import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import uk.org.lidalia.sysoutslf4j.common.LoggerAppender;
-import uk.org.lidalia.sysoutslf4j.system.LoggerAppenderProxy;
 import uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamDelegate;
-import uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamImpl;
+import uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ LoggerAppenderProxy.class })
 public class TestSLF4JPrintStreamImpl {
 	
 	private SLF4JPrintStreamDelegate mockDelegate = createStrictMock(SLF4JPrintStreamDelegate.class);
 	private PrintStream mockOriginalPrintStream = createStrictMock(PrintStream.class);
-	private SLF4JPrintStreamImpl slf4jPrintStreamImpl = new SLF4JPrintStreamImpl(mockOriginalPrintStream, mockDelegate);
+	private SLF4JPrintStream slf4jPrintStreamImpl = new SLF4JPrintStream(mockOriginalPrintStream, mockDelegate);
 	
 	@After
 	public void verifyMocks() {
@@ -340,8 +332,6 @@ public class TestSLF4JPrintStreamImpl {
 	@Test
 	public void registerLoggerAppenderDelegatesToDelegate() {
 		LoggerAppender loggerAppender = createStrictMock(LoggerAppender.class);
-		mockStatic(LoggerAppenderProxy.class);
-		expect(LoggerAppenderProxy.wrap(loggerAppender)).andReturn(loggerAppender);
 		mockDelegate.registerLoggerAppender(loggerAppender);
 		replayAll();
 		slf4jPrintStreamImpl.registerLoggerAppender(loggerAppender);

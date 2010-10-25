@@ -32,7 +32,6 @@ import static org.powermock.api.easymock.PowerMock.createMock;
 import org.junit.Test;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.common.LoggerAppender;
 import uk.org.lidalia.sysoutslf4j.system.LoggerAppenderStore;
 
 public class TestLoggerAppenderStore extends SysOutOverSLF4JTestCase {

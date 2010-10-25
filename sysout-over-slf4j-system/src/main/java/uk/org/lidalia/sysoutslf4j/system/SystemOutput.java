@@ -22,27 +22,54 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.sysoutslf4j.common;
+package uk.org.lidalia.sysoutslf4j.system;
 
 import java.io.PrintStream;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public enum SystemOutput {
 
 	OUT("System.out") {
 		public PrintStream get() {
-			return System.out;
+			final Lock readLock = getLock().readLock();
+			readLock.lock();
+			try {
+				return System.out;
+			} finally {
+				readLock.unlock();	
+			}
 		}
 
 		public void set(final PrintStream newPrintStream) {
-			System.setOut(newPrintStream);
+			final Lock writeLock = getLock().writeLock();
+			writeLock.lock();
+			try {
+				System.setOut(newPrintStream);
+			} finally {
+				writeLock.unlock();	
+			}
 		}
 	}, ERR("System.err") {
 		public PrintStream get() {
-			return System.err;
+			final Lock readLock = getLock().readLock();
+			readLock.lock();
+			try {
+				return System.err;
+			} finally {
+				readLock.unlock();	
+			}
 		}
 
 		public void set(final PrintStream newPrintStream) {
-			System.setErr(newPrintStream);
+			final Lock writeLock = getLock().writeLock();
+			writeLock.lock();
+			try {
+				System.setErr(newPrintStream);
+			} finally {
+				writeLock.unlock();	
+			}
 		}
 	};
 
@@ -50,9 +77,14 @@ public enum SystemOutput {
 	public abstract void set(PrintStream newPrintStream);
 
 	private final String friendlyName;
+	private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
 	private SystemOutput(final String name) {
 		this.friendlyName = name;
+	}
+	
+	public ReadWriteLock getLock() {
+		return lock;
 	}
 
 	@Override

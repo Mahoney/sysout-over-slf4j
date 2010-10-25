@@ -34,9 +34,9 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.powermock.reflect.Whitebox;
 
-import uk.org.lidalia.sysoutslf4j.common.ExceptionUtils;
-import uk.org.lidalia.sysoutslf4j.common.ReflectionUtils;
+import uk.org.lidalia.testutils.ExceptionUtils;
 
 public class CrossClassLoaderTestUtils {
 
@@ -59,7 +59,7 @@ public class CrossClassLoaderTestUtils {
 		private Object doWork(Method method, Object[] args) throws Exception {
 			Method targetMethod = target.getClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
 			targetMethod.setAccessible(true);
-			Object result = ReflectionUtils.invokeMethod(targetMethod, target, args);
+			Object result = Whitebox.invokeMethod(targetMethod, target, args);
 			if (result == null) {
 				return null;
 			}
@@ -106,7 +106,7 @@ public class CrossClassLoaderTestUtils {
 	
 	@SuppressWarnings("unchecked")
 	private static <E> E createProxyInterface(Class<E> classToProxy, ReflectionInvocationHandler handler) {
-		return (E) Proxy.newProxyInstance(ReflectionUtils.class.getClassLoader(), new Class[] {classToProxy}, handler);
+		return (E) Proxy.newProxyInstance(CrossClassLoaderTestUtils.class.getClassLoader(), new Class[] {classToProxy}, handler);
 	}
 
 	@SuppressWarnings("unchecked")

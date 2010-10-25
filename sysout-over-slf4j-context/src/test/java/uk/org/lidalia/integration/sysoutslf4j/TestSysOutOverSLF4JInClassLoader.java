@@ -38,8 +38,8 @@ import org.powermock.reflect.Whitebox;
 import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.common.SystemOutput;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
+import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 import uk.org.lidalia.testutils.Assert;
 import uk.org.lidalia.testutils.LoggingUtils;
 import uk.org.lidalia.testutils.SimpleClassloader;

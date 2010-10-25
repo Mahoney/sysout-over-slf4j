@@ -22,7 +22,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.sysoutslf4j.common;
+package uk.org.lidalia.testutils;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
@@ -43,8 +43,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.common.ExceptionUtils;
-import uk.org.lidalia.sysoutslf4j.common.WrappedCheckedException;
+import uk.org.lidalia.testutils.ExceptionUtils;
+import uk.org.lidalia.testutils.WrappedCheckedException;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ExceptionUtils.class})

@@ -29,19 +29,19 @@ import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory;
-import uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamImpl;
+import uk.org.lidalia.sysoutslf4j.system.SLF4JSystemOutput;
 
 /**
  * Public interface to the sysout-over-slf4j module. Provides all methods necessary to manage wrapping the existing
  * {@link System#out} and {@link System#err} {@link java.io.PrintStream}s with
- * custom {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamImpl}s that redirect to a logging system
+ * custom {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream}s that redirect to a logging system
  * via SLF4J.
  *
  * Synchronizes on System.class to ensure proper synchronization even if this class is loaded
  * by multiple classloaders.
  *
  * @author Robert Elliot
- * @see uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamImpl
+ * @see uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream
  */
 public final class SysOutOverSLF4J {
 	
@@ -56,7 +56,7 @@ public final class SysOutOverSLF4J {
 
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
-	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamImpl} and registers
+	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream} and registers
 	 * SLF4J for the current context.<br/>
 	 * Can be called any number of times, and is synchronized on System.class.<br/>
 	 * Uses the {@link uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory}
@@ -69,7 +69,7 @@ public final class SysOutOverSLF4J {
 	
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
-	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamImpl} and registers
+	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream} and registers
 	 * SLF4J for the current context's classloader.<br/>
 	 * Can be called any number of times, and is synchronized on System.class.<br/>
 	 * Uses the LogPerLineExceptionHandlingStrategy for handling printlns coming from
@@ -86,7 +86,7 @@ public final class SysOutOverSLF4J {
 
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
-	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamImpl} and registers
+	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream} and registers
 	 * SLF4J for the current context's classloader.<br/>
 	 * Can be called any number of times, and is synchronized on System.class.
 	 * Logs at info level for System.out and at error level for System.err.
@@ -101,7 +101,7 @@ public final class SysOutOverSLF4J {
 	
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
-	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamImpl} and registers
+	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream} and registers
 	 * SLF4J for the current context's classloader.<br/>
 	 * Can be called any number of times, and is synchronized on System.class.<br/>
 	 * 
@@ -182,7 +182,7 @@ public final class SysOutOverSLF4J {
 	}
 
 	public static boolean systemOutputsAreSLF4JPrintStreams() {
-		return System.out.getClass().getName().equals(SLF4JPrintStreamImpl.class.getName());
+		return SLF4JSystemOutput.OUT.isSLF4JPrintStream();
 	}
 
 

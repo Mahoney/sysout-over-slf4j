@@ -27,7 +27,6 @@ package uk.org.lidalia.testutils;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.LoggerFactory;
 
-import uk.org.lidalia.sysoutslf4j.common.ExceptionUtils;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;

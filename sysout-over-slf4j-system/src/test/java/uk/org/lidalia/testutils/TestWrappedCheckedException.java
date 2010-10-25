@@ -22,7 +22,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.sysoutslf4j.common;
+package uk.org.lidalia.testutils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -32,7 +32,7 @@ import java.rmi.RemoteException;
 import org.junit.Test;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.common.WrappedCheckedException;
+import uk.org.lidalia.testutils.WrappedCheckedException;
 
 public class TestWrappedCheckedException extends SysOutOverSLF4JTestCase {
 

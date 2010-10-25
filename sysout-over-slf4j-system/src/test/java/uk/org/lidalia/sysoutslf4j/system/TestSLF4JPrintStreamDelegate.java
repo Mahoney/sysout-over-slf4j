@@ -40,7 +40,6 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import uk.org.lidalia.sysoutslf4j.common.LoggerAppender;
 import uk.org.lidalia.sysoutslf4j.system.CallOrigin;
 import uk.org.lidalia.sysoutslf4j.system.LoggerAppenderStore;
 import uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamDelegate;

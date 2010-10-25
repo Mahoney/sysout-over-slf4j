@@ -26,7 +26,6 @@ package uk.org.lidalia.sysoutslf4j.system;
 
 import java.io.PrintStream;
 
-import uk.org.lidalia.sysoutslf4j.common.LoggerAppender;
 
 class SLF4JPrintStreamDelegate {
 	
