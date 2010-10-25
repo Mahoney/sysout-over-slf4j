@@ -33,11 +33,9 @@ public enum SLF4JSystemOutput {
 	OUT(SystemOutput.OUT), ERR(SystemOutput.ERR);
 	
 	private final SystemOutput systemOutput;
-	private final PrintStream originalPrintStream;
 	
 	private SLF4JSystemOutput(final SystemOutput systemOutput) {
 		this.systemOutput = systemOutput;
-		this.originalPrintStream = systemOutput.get();
 	}
 	
 	public boolean isSLF4JPrintStream() {
@@ -45,11 +43,31 @@ public enum SLF4JSystemOutput {
 	}
 	
 	public void restoreOriginalPrintStream() {
-		systemOutput.set(originalPrintStream);
+		final Lock writeLock = systemOutput.getLock().writeLock();
+		writeLock.lock();
+		try {
+			if (isSLF4JPrintStream()) {
+				systemOutput.set(getSLF4JPrintStream().getOriginalPrintStream());
+			}
+		} finally {
+			writeLock.unlock();
+		}
 	}
 	
 	public PrintStream getOriginalPrintStream() {
-		return originalPrintStream;
+		final PrintStream result;
+		final Lock readLock = systemOutput.getLock().readLock();
+		readLock.lock();
+		try {
+			if (isSLF4JPrintStream()) {
+				result = getSLF4JPrintStream().getOriginalPrintStream();
+			} else {
+				result = systemOutput.get();
+			}
+			return result;
+		} finally {
+			readLock.unlock();
+		}
 	}
 	
 	private SLF4JPrintStream getSLF4JPrintStream() {
@@ -87,6 +105,7 @@ public enum SLF4JSystemOutput {
 	
 	private SLF4JPrintStream buildSLF4JPrintStream() {
 		final LoggerAppenderStore loggerAppenderStore = new LoggerAppenderStore();
+		final PrintStream originalPrintStream = systemOutput.get();
 		final SLF4JPrintStreamDelegate delegate = new SLF4JPrintStreamDelegate(originalPrintStream, loggerAppenderStore);
 		return new SLF4JPrintStream(originalPrintStream, delegate);
 	}
