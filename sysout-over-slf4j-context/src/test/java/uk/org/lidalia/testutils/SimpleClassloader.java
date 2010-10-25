@@ -40,6 +40,13 @@ public class SimpleClassloader extends ClassLoader {
     }
 
     protected Class<?> findClass(String name) {
+    	if (name.startsWith("uk.org.lidalia.sysoutslf4j.system")) {
+    		try {
+				return realClassLoader.loadClass(name);
+			} catch (ClassNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+    	}
     	String fileName = name.replace('.', '/') + ".class";
     	InputStream classAsStream = realClassLoader.getResourceAsStream(fileName);
 		try {

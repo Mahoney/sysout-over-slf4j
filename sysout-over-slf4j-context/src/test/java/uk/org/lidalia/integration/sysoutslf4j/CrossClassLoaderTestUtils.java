@@ -48,15 +48,18 @@ public class CrossClassLoaderTestUtils {
 			this.target = target;
 		}
 	
+		@Override
 		public Object invoke(Object self, Method method, Method proceed, Object[] args) throws Throwable {
 			return doWork(method, args);
 		}
 	
+		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			return doWork(method, args);
 		}
 		
 		private Object doWork(Method method, Object[] args) throws Exception {
+			args = args == null ? new Object[0] : args;
 			Method targetMethod = target.getClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
 			targetMethod.setAccessible(true);
 			Object result = Whitebox.invokeMethod(targetMethod, target, args);

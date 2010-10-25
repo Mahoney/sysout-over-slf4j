@@ -24,8 +24,6 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
-import java.io.PrintStream;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,18 +53,12 @@ class SLF4JPrintStreamManager {
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
 			final SLF4JSystemOutput slf4jSystemOutput, final LogLevel logLevel) {
 
-		final LoggerAppender loggerAppender = buildLoggerAppender(
-				exceptionHandlingStrategyFactory, slf4jSystemOutput.getOriginalPrintStream(), logLevel);
+		final ExceptionHandlingStrategy exceptionHandlingStrategy = 
+			exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(logLevel, slf4jSystemOutput.getOriginalPrintStream());
+		final LoggerAppender loggerAppender = new LoggerAppenderImpl(
+				logLevel, exceptionHandlingStrategy, slf4jSystemOutput.getOriginalPrintStream());
 		ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(loggerAppender);
 		slf4jSystemOutput.registerLoggerAppender(loggerAppender);
-	}
-
-	private LoggerAppender buildLoggerAppender(
-			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
-			final PrintStream originalPrintStream, final LogLevel logLevel) {
-		final ExceptionHandlingStrategy exceptionHandlingStrategy = 
-			exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(logLevel, originalPrintStream);
-		return new LoggerAppenderImpl(logLevel, exceptionHandlingStrategy, originalPrintStream);
 	}
 
 	void stopSendingSystemOutAndErrToSLF4J() {
