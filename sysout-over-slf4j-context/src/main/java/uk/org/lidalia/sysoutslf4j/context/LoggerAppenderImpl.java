@@ -47,12 +47,12 @@ public class LoggerAppenderImpl implements LoggerAppender {
 		this.originalPrintStream = originalPrintStream;
 	}
 
-	public synchronized void append(final String message) {
+	public void append(final String message) {
 		exceptionHandlingStrategy.notifyNotStackTrace();
 		buffer.append(message);
 	}
 
-	public synchronized void appendAndLog(final String message, final String className, final boolean isStackTrace) {
+	public void appendAndLog(final String message, final String className, final boolean isStackTrace) {
 		buffer.append(message);
 		final String logStatement = flushBuffer();
 		logOrPrint(logStatement, className, isStackTrace);
