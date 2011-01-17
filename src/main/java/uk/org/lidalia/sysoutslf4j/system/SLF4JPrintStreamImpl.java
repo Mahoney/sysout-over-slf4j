@@ -107,69 +107,69 @@ public final class SLF4JPrintStreamImpl extends PrintStream implements SLF4JPrin
 	}
 
 	@Override
-	public void println(final String string) {
+	public synchronized void println(final String string) {
 		delegate.delegatePrintln(string);
 	}
 
 	@Override
-	public void println(final Object object) {
+	public synchronized void println(final Object object) {
 		delegate.delegatePrintln(String.valueOf(object));
 	}
 
 	@Override
-	public void println() {
+	public synchronized void println() {
 		delegate.delegatePrintln("");
 	}
 
 	@Override
-	public void println(final boolean bool) {
+	public synchronized void println(final boolean bool) {
 		delegate.delegatePrintln(String.valueOf(bool));
 	}
 
 	@Override
-	public void println(final char character) {
+	public synchronized void println(final char character) {
 		delegate.delegatePrintln(String.valueOf(character));
 	}
 
 	@Override
-	public void println(final char[] charArray) {
+	public synchronized void println(final char[] charArray) {
 		delegate.delegatePrintln(String.valueOf(charArray));
 	}
 
 	@Override
-	public void println(final double doub) {
+	public synchronized void println(final double doub) {
 		delegate.delegatePrintln(String.valueOf(doub));
 	}
 
 	@Override
-	public void println(final float floa) {
+	public synchronized void println(final float floa) {
 		delegate.delegatePrintln(String.valueOf(floa));
 	}
 
 	@Override
-	public void println(final int integer) {
+	public synchronized void println(final int integer) {
 		delegate.delegatePrintln(String.valueOf(integer));
 	}
 
 	@Override
-	public void println(final long lon) {
+	public synchronized void println(final long lon) {
 		delegate.delegatePrintln(String.valueOf(lon));
 	}
 
 	@Override
-	public PrintStream append(final char character) {
+	public synchronized PrintStream append(final char character) {
 		delegate.delegatePrint(String.valueOf(character));
 		return this;
 	}
 
 	@Override
-	public PrintStream append(final CharSequence csq, final int start, final int end) {
+	public synchronized PrintStream append(final CharSequence csq, final int start, final int end) {
 		delegate.delegatePrint(csq.subSequence(start, end).toString());
 		return this;
 	}
 
 	@Override
-	public PrintStream append(final CharSequence csq) {
+	public synchronized PrintStream append(final CharSequence csq) {
 		delegate.delegatePrint(csq.toString());
 		return this;
 	}
@@ -195,72 +195,72 @@ public final class SLF4JPrintStreamImpl extends PrintStream implements SLF4JPrin
 	}
 
 	@Override
-	public PrintStream format(final Locale locale, final String format, final Object... args) {
+	public synchronized PrintStream format(final Locale locale, final String format, final Object... args) {
 		final String string = String.format(locale, format, args);
 		delegate.delegatePrint(string);
 		return this;
 	}
 
 	@Override
-	public PrintStream format(final String format, final Object... args) {
+	public synchronized PrintStream format(final String format, final Object... args) {
 		return format(Locale.getDefault(), format, args);
 	}
 
 	@Override
-	public void print(final boolean bool) {
+	public synchronized void print(final boolean bool) {
 		delegate.delegatePrint(String.valueOf(bool));
 	}
 
 	@Override
-	public void print(final char character) {
+	public synchronized void print(final char character) {
 		delegate.delegatePrint(String.valueOf(character));
 	}
 
 	@Override
-	public void print(final char[] charArray) {
+	public synchronized void print(final char[] charArray) {
 		delegate.delegatePrint(String.valueOf(charArray));
 	}
 
 	@Override
-	public void print(final double doubl) {
+	public synchronized void print(final double doubl) {
 		delegate.delegatePrint(String.valueOf(doubl));
 	}
 
 	@Override
-	public void print(final float floa) {
+	public synchronized void print(final float floa) {
 		delegate.delegatePrint(String.valueOf(floa));
 	}
 
 	@Override
-	public void print(final int integer) {
+	public synchronized void print(final int integer) {
 		delegate.delegatePrint(String.valueOf(integer));
 	}
 
 	@Override
-	public void print(final long lon) {
+	public synchronized void print(final long lon) {
 		delegate.delegatePrint(String.valueOf(lon));
 	}
 
 	@Override
-	public void print(final Object object) {
+	public synchronized void print(final Object object) {
 		delegate.delegatePrint(String.valueOf(object));
 	}
 
 	@Override
-	public void print(final String string) {
+	public synchronized void print(final String string) {
 		delegate.delegatePrint(String.valueOf(string));
 	}
 
 	@Override
-	public PrintStream printf(final Locale locale, final String format, final Object... args) {
+	public synchronized PrintStream printf(final Locale locale, final String format, final Object... args) {
 		return format(locale, format, args);
 	}
 
 	@Override
-	public PrintStream printf(final String format, final Object... args) {
+	public synchronized PrintStream printf(final String format, final Object... args) {
 		return format(format, args);
 	}
-	
+
 	@Override
 	public void write(final byte[] buf, final int off, final int len) {
 		originalPrintStream.write(buf, off, len);
