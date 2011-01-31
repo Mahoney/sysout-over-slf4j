@@ -1,9 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.2.5" timestamp="2010-10-21T00:22:41.985">
-<suppressedviolation filename="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/PrintStreamCoordinatorFactory.java" suppressiontype="nopmd" msg="In J2EE, getClassLoader() might not work as expected.  Use Thread.currentThread().getContextClassLoader() instead." usermsg=" deliberately using this classloader
+<pmd version="4.2.5" timestamp="2011-01-31T23:52:40.176">
+<file name="/Users/Robert/Workspaces/Lidalia Utilities/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/system/SLF4JPrintStreamImpl.java">
+<violation beginline="110" endline="112" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="115" endline="117" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="120" endline="122" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="125" endline="127" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="130" endline="132" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="135" endline="137" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="140" endline="142" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="145" endline="147" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="150" endline="152" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="155" endline="157" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="160" endline="163" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="166" endline="169" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="172" endline="175" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="198" endline="202" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="205" endline="207" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="210" endline="212" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="215" endline="217" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="220" endline="222" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="225" endline="227" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="230" endline="232" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="235" endline="237" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="240" endline="242" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="245" endline="247" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="250" endline="252" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="255" endline="257" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+<violation beginline="260" endline="262" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="uk.org.lidalia.sysoutslf4j.system" class="SLF4JPrintStreamImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+Use block level rather than method level synchronization
+</violation>
+</file>
+<suppressedviolation filename="/Users/Robert/Workspaces/Lidalia Utilities/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/context/PrintStreamCoordinatorFactory.java" suppressiontype="nopmd" msg="In J2EE, getClassLoader() might not work as expected.  Use Thread.currentThread().getContextClassLoader() instead." usermsg=" deliberately using this classloader
 "/>
-<suppressedviolation filename="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/system/CallOrigin.java" suppressiontype="nopmd" msg="To be compliant to J2EE, a webapp should not use any thread." usermsg=" not using thread
+<suppressedviolation filename="/Users/Robert/Workspaces/Lidalia Utilities/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/system/CallOrigin.java" suppressiontype="nopmd" msg="To be compliant to J2EE, a webapp should not use any thread." usermsg=" not using thread
 "/>
-<suppressedviolation filename="/Users/Robert/Workspaces/Test/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/system/SLF4JPrintStreamImpl.java" suppressiontype="nopmd" msg="This class has too many methods, consider refactoring it." usermsg=" superclass has too many methods
+<suppressedviolation filename="/Users/Robert/Workspaces/Lidalia Utilities/sysout-over-slf4j/src/main/java/uk/org/lidalia/sysoutslf4j/system/SLF4JPrintStreamImpl.java" suppressiontype="nopmd" msg="This class has too many methods, consider refactoring it." usermsg=" superclass has too many methods
 "/>
 </pmd>
