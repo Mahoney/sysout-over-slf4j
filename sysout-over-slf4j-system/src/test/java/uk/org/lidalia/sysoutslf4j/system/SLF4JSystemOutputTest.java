@@ -1,6 +1,5 @@
 package uk.org.lidalia.sysoutslf4j.system;
 
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.lang.reflect.Proxy;
 

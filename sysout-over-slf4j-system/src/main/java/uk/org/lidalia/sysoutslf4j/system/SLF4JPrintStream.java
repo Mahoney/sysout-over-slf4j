@@ -104,70 +104,70 @@ final class SLF4JPrintStream extends PrintStream { // NOPMD superclass has too m
 	}
 
 	@Override
-	public synchronized void println(final String string) {
-		delegate.delegatePrintln(string);
+	public void println(final String string) {
+		doPrintln(string);
 	}
 
 	@Override
-	public synchronized void println(final Object object) {
-		delegate.delegatePrintln(String.valueOf(object));
+	public void println(final Object object) {
+		doPrintln(String.valueOf(object));
 	}
 
 	@Override
-	public synchronized void println() {
-		delegate.delegatePrintln("");
+	public void println() {
+		doPrintln("");
 	}
 
 	@Override
-	public synchronized void println(final boolean bool) {
-		delegate.delegatePrintln(String.valueOf(bool));
+	public void println(final boolean bool) {
+		doPrintln(String.valueOf(bool));
 	}
 
 	@Override
-	public synchronized void println(final char character) {
-		delegate.delegatePrintln(String.valueOf(character));
+	public void println(final char character) {
+		doPrintln(String.valueOf(character));
 	}
 
 	@Override
-	public synchronized void println(final char[] charArray) {
-		delegate.delegatePrintln(String.valueOf(charArray));
+	public void println(final char[] charArray) {
+		doPrintln(String.valueOf(charArray));
 	}
 
 	@Override
-	public synchronized void println(final double doub) {
-		delegate.delegatePrintln(String.valueOf(doub));
+	public void println(final double doub) {
+		doPrintln(String.valueOf(doub));
 	}
 
 	@Override
-	public synchronized void println(final float floa) {
-		delegate.delegatePrintln(String.valueOf(floa));
+	public void println(final float floa) {
+		doPrintln(String.valueOf(floa));
 	}
 
 	@Override
-	public synchronized void println(final int integer) {
-		delegate.delegatePrintln(String.valueOf(integer));
+	public void println(final int integer) {
+		doPrintln(String.valueOf(integer));
 	}
 
 	@Override
-	public synchronized void println(final long lon) {
-		delegate.delegatePrintln(String.valueOf(lon));
+	public void println(final long lon) {
+		doPrintln(String.valueOf(lon));
 	}
 
 	@Override
-	public synchronized PrintStream append(final char character) {
-		delegate.delegatePrint(String.valueOf(character));
+	public PrintStream append(final char character) {
+		doPrint(String.valueOf(character));
 		return this;
 	}
 
 	@Override
-	public synchronized PrintStream append(final CharSequence csq, final int start, final int end) {
-		delegate.delegatePrint(csq.subSequence(start, end).toString());
+	public PrintStream append(final CharSequence csq, final int start, final int end) {
+		doPrint(csq.subSequence(start, end).toString());
 		return this;
 	}
 
 	@Override
-	public synchronized PrintStream append(final CharSequence csq) {
-		delegate.delegatePrint(csq.toString());
+	public PrintStream append(final CharSequence csq) {
+		doPrint(csq.toString());
 		return this;
 	}
 
@@ -178,7 +178,7 @@ final class SLF4JPrintStream extends PrintStream { // NOPMD superclass has too m
 
 	@Override
 	protected void setError() {
-		originalPrintStream.println("WARNING - calling setError on SLFJPrintStream does nothing");
+		originalPrintStream.checkError();
 	}
 
 	@Override
@@ -192,69 +192,69 @@ final class SLF4JPrintStream extends PrintStream { // NOPMD superclass has too m
 	}
 
 	@Override
-	public synchronized PrintStream format(final Locale locale, final String format, final Object... args) {
+	public PrintStream format(final Locale locale, final String format, final Object... args) {
 		final String string = String.format(locale, format, args);
-		delegate.delegatePrint(string);
+		doPrint(string);
 		return this;
 	}
 
 	@Override
-	public synchronized PrintStream format(final String format, final Object... args) {
+	public PrintStream format(final String format, final Object... args) {
 		return format(Locale.getDefault(), format, args);
 	}
 
 	@Override
-	public synchronized void print(final boolean bool) {
-		delegate.delegatePrint(String.valueOf(bool));
+	public void print(final boolean bool) {
+		doPrint(String.valueOf(bool));
 	}
 
 	@Override
-	public synchronized void print(final char character) {
-		delegate.delegatePrint(String.valueOf(character));
+	public void print(final char character) {
+		doPrint(String.valueOf(character));
 	}
 
 	@Override
-	public synchronized void print(final char[] charArray) {
-		delegate.delegatePrint(String.valueOf(charArray));
+	public void print(final char[] charArray) {
+		doPrint(String.valueOf(charArray));
 	}
 
 	@Override
-	public synchronized void print(final double doubl) {
-		delegate.delegatePrint(String.valueOf(doubl));
+	public void print(final double doubl) {
+		doPrint(String.valueOf(doubl));
 	}
 
 	@Override
-	public synchronized void print(final float floa) {
-		delegate.delegatePrint(String.valueOf(floa));
+	public void print(final float floa) {
+		doPrint(String.valueOf(floa));
 	}
 
 	@Override
-	public synchronized void print(final int integer) {
-		delegate.delegatePrint(String.valueOf(integer));
+	public void print(final int integer) {
+		doPrint(String.valueOf(integer));
 	}
 
 	@Override
-	public synchronized void print(final long lon) {
-		delegate.delegatePrint(String.valueOf(lon));
+	public void print(final long lon) {
+		doPrint(String.valueOf(lon));
 	}
 
 	@Override
-	public synchronized void print(final Object object) {
-		delegate.delegatePrint(String.valueOf(object));
+	public void print(final Object object) {
+		doPrint(String.valueOf(object));
 	}
 
 	@Override
-	public synchronized void print(final String string) {
-		delegate.delegatePrint(String.valueOf(string));
+	public void print(final String string) {
+		doPrint(String.valueOf(string));
 	}
 
 	@Override
-	public synchronized PrintStream printf(final Locale locale, final String format, final Object... args) {
+	public PrintStream printf(final Locale locale, final String format, final Object... args) {
 		return format(locale, format, args);
 	}
 
 	@Override
-	public synchronized PrintStream printf(final String format, final Object... args) {
+	public PrintStream printf(final String format, final Object... args) {
 		return format(format, args);
 	}
 
@@ -271,6 +271,14 @@ final class SLF4JPrintStream extends PrintStream { // NOPMD superclass has too m
 	@Override
 	public void write(final byte[] bytes) throws IOException {
 		originalPrintStream.write(bytes);
+	}
+	
+	private synchronized void doPrint(String string) {
+		delegate.delegatePrint(string);
+	}
+	
+	private synchronized void doPrintln(String string) {
+		delegate.delegatePrintln(string);
 	}
 
 	public void registerLoggerAppender(final LoggerAppender loggerAppender) {
