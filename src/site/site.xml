@@ -25,6 +25,7 @@
       <item name="Quick start" href="quickstart.html" />
       <item name="FAQ" href="faq.html" />
       <item name="Download" href="http://github.com/Mahoney/sysout-over-slf4j/downloads" />
+      <item name="Version History" href="versions.html" />
     </menu>
     <menu ref="reports"/>
   </body>

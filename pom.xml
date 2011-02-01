@@ -27,7 +27,7 @@
 	<licenses>
 		<license>
 			<name>MIT X11 License</name>
-			<url>http://github.com/Mahoney/sysout-over-slf4j/raw/master/LICENSE.txt</url>
+			<url>https://github.com/Mahoney/sysout-over-slf4j/raw/master/LICENSE.txt</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>

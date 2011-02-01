@@ -1,0 +1,19 @@
+Version History
+
+*1.0.2
+
+  Fixed a concurrency issue when multiple threads were writing to a system
+  printstream at the same time by maintaining the contract of the existing
+  System out and err printstreams and synchronizing on them when printing.
+  Also fixes the problem with lines in a single stack trace being interleaved
+  with other messages printed on the same print stream.   
+   
+*1.0.1
+
+  Fixed a bug where a NoSuchMethodException was thrown when used from a web
+  app. 
+
+*1.0.0
+
+  Initial release
+  

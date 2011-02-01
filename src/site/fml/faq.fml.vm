@@ -59,6 +59,19 @@
 SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(factory);</source>
     	</answer>
     </faq>
+    
+    <faq id="writingConsole">
+      <question>
+        Most System out or err calls are going through SLF4J, but I'm still seeing output getting directly to the console - why? 
+      </question>
+      <answer>
+        <p>You are probably seeing output from calls to the System.out.write methods. The most common SLF4J implementations
+        (Log4J, Logback and java.util.logging) use the write methods on the System output PrintStreams in their console appenders.
+        If sysout-over-slf4j redirected these calls to SLF4J an expensive examination of the stack would be needed to prevent infinite
+        recursion.  Since the vast majority of usage of System.out.println for logging does not use the write methods, leaving them
+        writing to the original print stream seemed the best compromised between performance and utility.</p>
+      </answer>
+    </faq>
 
     <faq id="recursion">
       <question>
@@ -66,7 +79,9 @@ SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(factory);</source>
       </question>
       <answer>
         <p>As mentioned above, the most common SLF4J implementations use the write methods on PrintStream, which always delegate
-        directly to the original PrintStream, and so are not affected by use of sysout-over-slf4j.</p>
+        directly to the original PrintStream, and so are not affected by use of sysout-over-slf4j.  If you use a logging system that
+        does not use the write methods on the original PrintStream you will need to register it, and should be aware that there will
+        be a significant performance impact whenever logging to the console.</p>
       </answer>
     </faq>
     <faq id="performance">
@@ -79,13 +94,26 @@ SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(factory);</source>
         the write methods through to the original PrintStreams without
         doing any work.</p>
         
-        <p>The overhead for some other SLF4J implementation that does not usethe PrintStream write methods, and so needs to be 
+        <p>The overhead for some other SLF4J implementation that does not use the PrintStream write methods, and so needs to be 
         registered, will be greater; on every attempt by it to print to the console its fully qualified classname has to be
         matched against registered package names in order to determine whether it should be permitted direct access.</p>
   
 		<p>Finally, the overhead of actual System.out and System.err calls will be much greater, due to the expense of generating
 		the thread's stacktrace and examining it to determine the origin of the call. It would be much better
 		if all logging were done via SLF4J directly and this module were not necessary.</p>
+      </answer>
+    </faq>
+    <faq id="reloading">
+      <question>
+      	I'm using Tomcat, and after I unloaded or reloaded the web application I used to redirect System out and err to SLF4J all calls to
+      	System.out.println fail with a java.lang.NoClassDefFoundError: uk/org/lidalia/sysoutslf4j/common/ReflectionUtils$1!  I'm also seeing
+      	lots of IllegalStateExceptions in the logs.  Why?
+      </question>
+      <answer>
+      	<p>This is a failing of ${project.artifactId} 1.0.x; it happens because System.out and System.err are static instances of a class 
+      	loaded in the local web app's classloader.  Tomcat works aggressively to prevent classloader leaks by discarding webapp
+      	classes when a webapp is unloaded.  A fix will be available in ${project.artifactId} 2.
+      	</p>
       </answer>
     </faq>
     
@@ -119,10 +147,7 @@ SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(factory);</source>
   class loader to ensure that the same SLF4J instance used in
   "normal" logging is also used when calling System.out.println.</p>
   
-  <p>In order to prevent classloader leaks when contexts
-  are reloaded the new PrintStreams are created by a special
-  classloader so that they do not themselves maintain a reference
-  to the context classloader. The PrintStreams only maintain a weak
+  <p>The PrintStreams only maintain a weak
   reference to the classloaders and their SLF4J instances, so that
   no classloader leak occurs if the classloader is discarded.</p>
     	</answer>
