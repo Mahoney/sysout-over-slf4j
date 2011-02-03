@@ -173,12 +173,12 @@ final class SLF4JPrintStream extends PrintStream { // NOPMD superclass has too m
 
 	@Override
 	public boolean checkError() {
-		return originalPrintStream.checkError();
+		return false;
 	}
 
 	@Override
 	protected void setError() {
-		originalPrintStream.checkError();
+		originalPrintStream.println("WARNING - calling setError on SLFJPrintStream does nothing");
 	}
 
 	@Override

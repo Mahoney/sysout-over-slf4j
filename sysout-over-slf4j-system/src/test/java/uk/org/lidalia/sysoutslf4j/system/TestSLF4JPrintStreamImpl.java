@@ -24,7 +24,7 @@
 
 package uk.org.lidalia.sysoutslf4j.system;
 
-import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.powermock.api.easymock.PowerMock.createStrictMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
@@ -77,10 +77,9 @@ public class TestSLF4JPrintStreamImpl {
 	}
 	
 	@Test
-	public void checkErrorDelegatesToOriginalPrintStream() {
-		expect(mockOriginalPrintStream.checkError()).andReturn(true);
+	public void checkErrorReturnsFalseWithoutCallingOriginalPrintStream() {
 		replayAll();
-		slf4jPrintStreamImpl.checkError();
+		assertFalse(slf4jPrintStreamImpl.checkError());
 	}
 	
 	@Test
