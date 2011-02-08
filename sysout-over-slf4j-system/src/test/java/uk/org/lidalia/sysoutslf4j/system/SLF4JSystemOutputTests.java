@@ -1,16 +1,24 @@
 package uk.org.lidalia.sysoutslf4j.system;
 
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(SLF4JPrintStream.class)
 public class SLF4JSystemOutputTests extends SysOutOverSLF4JTestCase {
 
 	@Test
@@ -94,5 +102,38 @@ public class SLF4JSystemOutputTests extends SysOutOverSLF4JTestCase {
 		PrintStream original = output.get();
 		output.set(new SLF4JPrintStream(output.get(), null));
 		assertSame(original, slf4jOutput.getOriginalPrintStream());
+	}
+
+	@Test
+	public void registerLoggerAppenderMakesSLF4JPrintStreamAndRegistersLoggeAppenderIfOutputIsNotSLF4JPrintStream() {
+		fail();
+	}
+
+	@Test
+	public void registerLoggerAppenderRegistersLoggerAppenderIfSystemOutIsSLF4JPrintStream() {
+		registerLoggerAppenderRegistersLoggerAppenderIfOutputIsSLF4JPrintStream(SystemOutput.OUT, SLF4JSystemOutput.OUT);
+	}
+
+	@Test
+	public void registerLoggerAppenderRegistersLoggerAppenderIfSystemErrIsSLF4JPrintStream() {
+		registerLoggerAppenderRegistersLoggerAppenderIfOutputIsSLF4JPrintStream(SystemOutput.ERR, SLF4JSystemOutput.ERR);
+	}
+
+	private void registerLoggerAppenderRegistersLoggerAppenderIfOutputIsSLF4JPrintStream(
+			SystemOutput output, SLF4JSystemOutput slf4jOutput) {
+		SLF4JPrintStream slf4jPrintStreamMock = createMock(SLF4JPrintStream.class);
+		LoggerAppender logAppenderMock = createMock(LoggerAppender.class);
+		slf4jPrintStreamMock.registerLoggerAppender(logAppenderMock);
+		output.set(slf4jPrintStreamMock);
+		replayAll();
+		
+		slf4jOutput.registerLoggerAppender(logAppenderMock);
+	}
+
+	@Test
+	public void deregisterLoggerAppenderDoesNothingIfOutputIsNotSLF4JPrintStream() {
+		SLF4JSystemOutput.OUT.deregisterLoggerAppender();
+		SLF4JSystemOutput.ERR.deregisterLoggerAppender();
+		// Nothing happens
 	}
 }
