@@ -41,7 +41,7 @@ import org.junit.Test;
 import uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamDelegate;
 import uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream;
 
-public class TestSLF4JPrintStreamImpl {
+public class TestSLF4JPrintStream {
 	
 	private SLF4JPrintStreamDelegate mockDelegate = createStrictMock(SLF4JPrintStreamDelegate.class);
 	private PrintStream mockOriginalPrintStream = createStrictMock(PrintStream.class);

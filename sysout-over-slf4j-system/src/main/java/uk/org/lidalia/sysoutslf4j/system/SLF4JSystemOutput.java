@@ -27,7 +27,6 @@ package uk.org.lidalia.sysoutslf4j.system;
 import java.io.PrintStream;
 import java.util.concurrent.locks.Lock;
 
-
 public enum SLF4JSystemOutput {
 
 	OUT(SystemOutput.OUT), ERR(SystemOutput.ERR);

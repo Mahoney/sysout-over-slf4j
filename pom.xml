@@ -40,7 +40,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<powermock.version>1.4</powermock.version>
-		<logback.version>0.9.24</logback.version>
+		<logback.version>0.9.28</logback.version>
 	</properties>
 	
 	<scm>
@@ -88,6 +88,11 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<forkMode>once</forkMode>
+					<includes>
+						<include>**/*Test.*</include>
+						<include>**/*Tests.*</include>
+						<include>**/Test*.*</include>
+					</includes>
 					<excludes>
 						<exclude>**/*$*.java</exclude>
 					</excludes>
