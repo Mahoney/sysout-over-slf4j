@@ -28,7 +28,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static uk.org.lidalia.testutils.Assert.assertNotInstantiable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -342,10 +341,5 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	public void isSLF4JPrintStreamReturnsTrueWhenSystemOutIsSLF4JPrintStream() {
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		assertTrue(SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams());
-	}
-
-	@Test
-	public void notInstantiable() throws Throwable {
-		assertNotInstantiable(SysOutOverSLF4J.class);
 	}
 }

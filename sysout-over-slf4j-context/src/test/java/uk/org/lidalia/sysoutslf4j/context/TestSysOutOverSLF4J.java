@@ -163,4 +163,9 @@ public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
 		replayAll();
 		assertTrue(SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams());
 	}
+
+	@Test
+	public void notInstantiable() throws Throwable {
+		assertNotInstantiable(SysOutOverSLF4J.class);
+	}
 }
