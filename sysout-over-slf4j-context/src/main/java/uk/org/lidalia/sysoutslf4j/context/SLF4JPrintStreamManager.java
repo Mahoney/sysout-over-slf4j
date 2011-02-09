@@ -43,12 +43,6 @@ class SLF4JPrintStreamManager {
 		LOG.info("Redirected System.out and System.err to SLF4J for this context");
 	}
 
-//		if (SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams()) {
-//			LOG.debug("System.out and System.err are already SLF4JPrintStreams");
-//		} else {
-//			LOG.info("Replaced standard System.out and System.err PrintStreams with SLF4JPrintStreams");
-//		}
-
 	private void registerNewLoggerAppender(
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
 			final SLF4JSystemOutput slf4jSystemOutput, final LogLevel logLevel) {
@@ -59,23 +53,5 @@ class SLF4JPrintStreamManager {
 				logLevel, exceptionHandlingStrategy, slf4jSystemOutput.getOriginalPrintStream());
 		ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(loggerAppender);
 		slf4jSystemOutput.registerLoggerAppender(loggerAppender);
-	}
-
-	void stopSendingSystemOutAndErrToSLF4J() {
-		for (SLF4JSystemOutput systemOutput : SLF4JSystemOutput.values()) {
-			systemOutput.deregisterLoggerAppender();
-		}
-//			LOG.warn("Cannot stop sending System.out and System.err to SLF4J - they are not being sent there at the moment");
-	}
-
-	void restoreOriginalSystemOutputsIfNecessary() {
-		for (SLF4JSystemOutput systemOutput : SLF4JSystemOutput.values()) {
-			systemOutput.restoreOriginalPrintStream();
-		}
-//		if (SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams()) {
-//			LOG.info("Restored original System.out and System.err");
-//		} else {
-//			LOG.warn("System.out and System.err are not SLF4JPrintStreams - cannot restore");
-//		}
 	}
 }

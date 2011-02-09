@@ -25,8 +25,10 @@
 package uk.org.lidalia.sysoutslf4j.context;
 
 import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 import static uk.org.lidalia.testutils.Assert.assertNotInstantiable;
@@ -46,19 +48,29 @@ import uk.org.lidalia.sysoutslf4j.context.SLF4JPrintStreamManager;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory;
+import uk.org.lidalia.sysoutslf4j.system.SLF4JSystemOutput;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ SysOutOverSLF4J.class })
+@PrepareForTest({ SysOutOverSLF4J.class, SLF4JSystemOutput.class })
 @SuppressStaticInitializationFor("uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J")
 public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
 
 	private LoggingSystemRegister loggingSystemRegisterMock = createMock(LoggingSystemRegister.class);
 	private SLF4JPrintStreamManager slf4jPrintStreamManager = createMock(SLF4JPrintStreamManager.class);
-	
+	private SLF4JSystemOutput outMock;
+    private SLF4JSystemOutput errMock;
+
 	@Before
 	public void setStaticMocks() {
 		Whitebox.setInternalState(SysOutOverSLF4J.class, loggingSystemRegisterMock);
 		Whitebox.setInternalState(SysOutOverSLF4J.class, slf4jPrintStreamManager);
+		outMock = createMock(SLF4JSystemOutput.class);
+        errMock = createMock(SLF4JSystemOutput.class);
+    	Whitebox.setInternalState(SLF4JSystemOutput.class, "OUT", outMock);
+    	Whitebox.setInternalState(SLF4JSystemOutput.class, "ERR", errMock);
+    	mockStatic(SLF4JSystemOutput.class);
+    	expect(SLF4JSystemOutput.values()).andStubReturn(new SLF4JSystemOutput[]{outMock, errMock});
+
 	}
 	
 	@Test
@@ -97,7 +109,9 @@ public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
 	
 	@Test
 	public void stopSendingSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManager() {
-		slf4jPrintStreamManager.stopSendingSystemOutAndErrToSLF4J();
+		outMock.deregisterLoggerAppender();
+    	errMock.deregisterLoggerAppender();
+    	replayAll();
 		replayAll();
 		SysOutOverSLF4J.stopSendingSystemOutAndErrToSLF4J();
 		verifyAll();
@@ -105,7 +119,8 @@ public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
 	
 	@Test
 	public void restoreOriginalSystemOutputsDelegatesToSLF4JPrintStreamManager() {
-		slf4jPrintStreamManager.restoreOriginalSystemOutputsIfNecessary();
+		outMock.restoreOriginalPrintStream();
+    	errMock.restoreOriginalPrintStream();
 		replayAll();
 		SysOutOverSLF4J.restoreOriginalSystemOutputs();
 		verifyAll();
@@ -136,7 +151,16 @@ public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
 	}
 	
 	@Test
-	public void notInstantiable() throws Throwable {
-		assertNotInstantiable(SysOutOverSLF4J.class);
+	public void isSLF4JPrintStreamReturnsFalseWhenSystemOutIsSLF4JPrintStream() {
+		expect(outMock.isSLF4JPrintStream()).andReturn(false);
+		replayAll();
+		assertFalse(SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams());
+	}
+
+	@Test
+	public void isSLF4JPrintStreamReturnsTrueWhenSystemOutIsSLF4JPrintStream() {
+		expect(outMock.isSLF4JPrintStream()).andReturn(true);
+		replayAll();
+		assertTrue(SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams());
 	}
 }

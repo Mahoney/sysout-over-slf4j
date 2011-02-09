@@ -61,7 +61,7 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
     private SLF4JPrintStreamManager slf4JPrintStreamManagerInstance;
     private ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactoryMock;
     private SLF4JSystemOutput outMock;
-    SLF4JSystemOutput errMock;
+    private SLF4JSystemOutput errMock;
     
     private Logger log = (Logger) LoggerFactory.getLogger(SysOutOverSLF4J.class);
 
@@ -87,52 +87,8 @@ public class TestSLF4JPrintStreamManager extends SysOutOverSLF4JTestCase {
         slf4JPrintStreamManagerInstance.sendSystemOutAndErrToSLF4J(LogLevel.DEBUG, LogLevel.WARN, exceptionHandlingStrategyFactoryMock);
         verifyAll();
         
-//        assertExpectedLoggingEvent(appender.list.get(0), "Replaced standard System.out and System.err PrintStreams with SLF4JPrintStreams", Level.INFO, null, SysOutOverSLF4J.class.getName());
         assertExpectedLoggingEvent(appender.list.get(0), "Redirected System.out and System.err to SLF4J for this context", Level.INFO, null, SysOutOverSLF4J.class.getName());
     }
-    
-    @Test
-    public void stopSendingSystemOutAndErrToSLF4JDeregistersLoggerAppenders() {
-    	outMock.deregisterLoggerAppender();
-    	errMock.deregisterLoggerAppender();
-    	replayAll();
-    	
-    	slf4JPrintStreamManagerInstance.stopSendingSystemOutAndErrToSLF4J();
-    	
-    	verifyAll();
-    }
-    
-//    @Test
-//    public void stopSendingSystemOutAndErrToSLF4JLogsWarningIfSystemOutputsAreNotSLF4JPrintStreams() {
-//    	
-//    	slf4JPrintStreamManagerInstance.stopSendingSystemOutAndErrToSLF4J();
-    	
-//    	assertExpectedLoggingEvent(appender.list.get(0),
-//    			"Cannot stop sending System.out and System.err to SLF4J - they are not being sent there at the moment",
-//    			Level.WARN, null, SysOutOverSLF4J.class.getName());
-//    }
-    
-    @Test
-    public void restoreOriginalSystemOutputsIfNecessaryRestoresOriginalPrintStreams() throws Exception {
-    	outMock.restoreOriginalPrintStream();
-    	errMock.restoreOriginalPrintStream();
-        replayAll();
-
-        slf4JPrintStreamManagerInstance.restoreOriginalSystemOutputsIfNecessary();
-        verifyAll();
-        
-//        assertExpectedLoggingEvent(appender.list.get(0), "Restored original System.out and System.err", Level.INFO, null, SysOutOverSLF4J.class.getName());
-    }
-    
-//    @Test
-//    public void restoreOriginalSystemOutputsIfNecessaryDoesNotRestoreOriginalPrintStreamsIfNotSLF4JPrintStreams() {
-//        replayAll();
-//
-//        slf4JPrintStreamManagerInstance.restoreOriginalSystemOutputsIfNecessary();
-//        verifyAll();
-        
-//        assertExpectedLoggingEvent(appender.list.get(0), "System.out and System.err are not SLF4JPrintStreams - cannot restore", Level.WARN, null, SysOutOverSLF4J.class.getName());
-//    }
     
     private void expectLoggerAppendersToBeRegistered(LogLevel outLevel, LogLevel errLevel) throws Exception {
     	expectLoggerAppenderToBeRegistered(outMock, outLevel);

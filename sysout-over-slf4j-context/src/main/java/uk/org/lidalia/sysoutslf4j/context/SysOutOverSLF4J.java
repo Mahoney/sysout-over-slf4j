@@ -98,7 +98,7 @@ public final class SysOutOverSLF4J {
 	public static void sendSystemOutAndErrToSLF4J(final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
 		sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.ERROR, exceptionHandlingStrategyFactory);
 	}
-	
+
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
 	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream} and registers
@@ -125,7 +125,9 @@ public final class SysOutOverSLF4J {
 	 */
 	public static void stopSendingSystemOutAndErrToSLF4J() {
 		synchronized (System.class) {
-			SLF4J_PRINT_STREAM_MANAGER.stopSendingSystemOutAndErrToSLF4J();
+			for (SLF4JSystemOutput systemOutput : SLF4JSystemOutput.values()) {
+				systemOutput.deregisterLoggerAppender();
+			}
 		}
 	}
 
@@ -138,10 +140,11 @@ public final class SysOutOverSLF4J {
 	 */
 	public static void restoreOriginalSystemOutputs() {
 		synchronized (System.class) {
-			SLF4J_PRINT_STREAM_MANAGER.restoreOriginalSystemOutputsIfNecessary();
+			for (SLF4JSystemOutput systemOutput : SLF4JSystemOutput.values()) {
+				systemOutput.restoreOriginalPrintStream();
+			}
 		}
 	}
-
 
 	/**
 	 * Registers a package as being a logging system and hence any calls to
@@ -184,6 +187,4 @@ public final class SysOutOverSLF4J {
 	public static boolean systemOutputsAreSLF4JPrintStreams() {
 		return SLF4JSystemOutput.OUT.isSLF4JPrintStream();
 	}
-
-
 }
