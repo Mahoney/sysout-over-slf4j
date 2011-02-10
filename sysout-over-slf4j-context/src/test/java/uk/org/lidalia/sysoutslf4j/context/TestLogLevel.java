@@ -24,7 +24,7 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
-import static org.easymock.EasyMock.createStrictMock;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
@@ -39,8 +39,8 @@ import uk.org.lidalia.sysoutslf4j.context.LogLevel;
 
 public class TestLogLevel {
 	
-	private Logger mockLogger = createStrictMock(Logger.class);
-	private Marker expectedMarker = makeMarker();
+	private Logger mockLogger = createMock(Logger.class);
+	private Marker expectedMarker = (new BasicMarkerFactory()).getMarker("expected");
 	
 	@After
 	public void verifyMocks() {
@@ -122,9 +122,4 @@ public class TestLogLevel {
 		assertEquals(LogLevel.WARN, LogLevel.valueOf("WARN"));
 		replay(mockLogger);
 	}
-
-	private Marker makeMarker() {
-		return (new BasicMarkerFactory()).getMarker("expected");
-	}
-	
 }

@@ -24,19 +24,17 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
-import static org.easymock.EasyMock.createStrictControl;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
+import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
+import static org.powermock.api.easymock.PowerMock.replayAll;
 
 import java.io.PrintStream;
 
-import org.easymock.IMocksControl;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
@@ -54,19 +52,18 @@ public class TestLoggerAppenderImpl extends SysOutOverSLF4JTestCase {
 
 	private static final String CLASS_IN_LOGGING_SYSTEM = "org.logging.LoggerClass";
 	private static final String CLASS_NAME = "org.something.SomeClass";
-	
+
 	private LogLevel level = LogLevel.INFO;
-	
-	private IMocksControl mocksControl = createStrictControl();
-	private ExceptionHandlingStrategy exceptionHandlingStrategyMock = mocksControl.createMock(ExceptionHandlingStrategy.class);
-	private ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactoryMock = mocksControl.createMock(ExceptionHandlingStrategyFactory.class);
-	private PrintStream printStreamMock = mocksControl.createMock(PrintStream.class);
-	private Logger loggerMock = mocksControl.createMock(Logger.class);
-	private LoggingSystemRegister loggingSystemRegisterMock = mocksControl.createMock(LoggingSystemRegister.class);
+
+	private ExceptionHandlingStrategy exceptionHandlingStrategyMock = createMock(ExceptionHandlingStrategy.class);
+	private ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactoryMock = createMock(ExceptionHandlingStrategyFactory.class);
+	private PrintStream origPrintStreamMock = createMock(PrintStream.class);
+	private Logger loggerMock = createMock(Logger.class);
+	private LoggingSystemRegister loggingSystemRegisterMock = createMock(LoggingSystemRegister.class);
 
 	@Before
 	public void setUp() {
-		expect(exceptionHandlingStrategyFactoryMock.makeExceptionHandlingStrategy(level, printStreamMock)).andStubReturn(exceptionHandlingStrategyMock);
+		expect(exceptionHandlingStrategyFactoryMock.makeExceptionHandlingStrategy(level, origPrintStreamMock)).andStubReturn(exceptionHandlingStrategyMock);
 		
 		mockStatic(LoggerFactory.class);
 		expect(LoggerFactory.getLogger(CLASS_NAME)).andStubReturn(loggerMock);
@@ -80,7 +77,7 @@ public class TestLoggerAppenderImpl extends SysOutOverSLF4JTestCase {
 		exceptionHandlingStrategyMock.notifyNotStackTrace();
 		replayAll();
 		
-		LoggerAppenderImpl loggerAppenderImplInstance = new LoggerAppenderImpl(level, exceptionHandlingStrategyFactoryMock, printStreamMock, loggingSystemRegisterMock);
+		LoggerAppenderImpl loggerAppenderImplInstance = new LoggerAppenderImpl(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
 		loggerAppenderImplInstance.append("irrelevant");
 	}
 
@@ -89,10 +86,10 @@ public class TestLoggerAppenderImpl extends SysOutOverSLF4JTestCase {
 		loggingSystemRegisterMock.isInLoggingSystem(CLASS_IN_LOGGING_SYSTEM);
 		expectLastCall().andStubReturn(true);
 
-		printStreamMock.println("some text");
+		origPrintStreamMock.println("some text");
 		replayAll();
 		
-		LoggerAppenderImpl loggerAppenderImplInstance = new LoggerAppenderImpl(level, exceptionHandlingStrategyFactoryMock, printStreamMock, loggingSystemRegisterMock);
+		LoggerAppenderImpl loggerAppenderImplInstance = new LoggerAppenderImpl(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
 		loggerAppenderImplInstance.appendAndLog("some text", CLASS_IN_LOGGING_SYSTEM, false);
 	}
 
@@ -102,7 +99,7 @@ public class TestLoggerAppenderImpl extends SysOutOverSLF4JTestCase {
 		loggerMock.info("some text");
 		replayAll();
 		
-		LoggerAppenderImpl loggerAppenderImplInstance = new LoggerAppenderImpl(level, exceptionHandlingStrategyFactoryMock, printStreamMock, loggingSystemRegisterMock);
+		LoggerAppenderImpl loggerAppenderImplInstance = new LoggerAppenderImpl(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
 		loggerAppenderImplInstance.appendAndLog("some text", CLASS_NAME, false);
 	}
 
@@ -111,7 +108,7 @@ public class TestLoggerAppenderImpl extends SysOutOverSLF4JTestCase {
 		exceptionHandlingStrategyMock.handleExceptionLine("some text", loggerMock);
 		replayAll();
 	
-		LoggerAppenderImpl loggerAppenderImplInstance = new LoggerAppenderImpl(level, exceptionHandlingStrategyFactoryMock, printStreamMock, loggingSystemRegisterMock);
+		LoggerAppenderImpl loggerAppenderImplInstance = new LoggerAppenderImpl(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
 		loggerAppenderImplInstance.appendAndLog("some text", CLASS_NAME, true);
 	}
 
@@ -124,20 +121,10 @@ public class TestLoggerAppenderImpl extends SysOutOverSLF4JTestCase {
 		loggerMock.info("34");
 		replayAll();
 		
-		LoggerAppenderImpl loggerAppenderImplInstance = new LoggerAppenderImpl(level, exceptionHandlingStrategyFactoryMock, printStreamMock, loggingSystemRegisterMock);
+		LoggerAppenderImpl loggerAppenderImplInstance = new LoggerAppenderImpl(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
 		loggerAppenderImplInstance.append("1");
 		loggerAppenderImplInstance.appendAndLog("2", CLASS_NAME, false);
 		loggerAppenderImplInstance.append("3");
 		loggerAppenderImplInstance.appendAndLog("4", CLASS_NAME, false);
-	}
-	
-	private void replayAll() {
-		mocksControl.replay();
-		PowerMock.replayAll();
-	}
-	
-	@After
-	public void verifyAll() {
-		mocksControl.verify();
 	}
 }
