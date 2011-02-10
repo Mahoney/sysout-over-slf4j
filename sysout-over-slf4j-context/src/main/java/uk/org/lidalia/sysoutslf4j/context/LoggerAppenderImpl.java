@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
+import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.system.LoggerAppender;
 
 public class LoggerAppenderImpl implements LoggerAppender {
@@ -37,14 +38,17 @@ public class LoggerAppenderImpl implements LoggerAppender {
 	private final LogLevel level;
 	private final ExceptionHandlingStrategy exceptionHandlingStrategy;
 	private final PrintStream originalPrintStream;
+	private final LoggingSystemRegister loggingSystemRegister;
+	
 	private StringBuilder buffer = new StringBuilder();
 
-	LoggerAppenderImpl(final LogLevel level, final ExceptionHandlingStrategy exceptionHandlingStrategy,
-			final PrintStream originalPrintStream) {
+	LoggerAppenderImpl(final LogLevel level, final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
+			final PrintStream originalPrintStream, LoggingSystemRegister loggingSystemRegister) {
 		super();
 		this.level = level;
-		this.exceptionHandlingStrategy = exceptionHandlingStrategy;
+		this.exceptionHandlingStrategy = exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(level, originalPrintStream);
 		this.originalPrintStream = originalPrintStream;
+		this.loggingSystemRegister = loggingSystemRegister;
 	}
 
 	public void append(final String message) {
@@ -65,7 +69,7 @@ public class LoggerAppenderImpl implements LoggerAppender {
 	}
 
 	private void logOrPrint(final String logStatement, final String className, final boolean isStackTrace) {
-		if (SysOutOverSLF4J.isInLoggingSystem(className)) {
+		if (loggingSystemRegister.isInLoggingSystem(className)) {
 			originalPrintStream.println(logStatement);
 		} else {
 			log(logStatement, className, isStackTrace);

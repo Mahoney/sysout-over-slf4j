@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory;
+import uk.org.lidalia.sysoutslf4j.system.LoggerAppender;
 import uk.org.lidalia.sysoutslf4j.system.SLF4JSystemOutput;
 
 /**
@@ -44,10 +45,10 @@ import uk.org.lidalia.sysoutslf4j.system.SLF4JSystemOutput;
  * @see uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream
  */
 public final class SysOutOverSLF4J {
-	
+
+	private static final Logger LOG = LoggerFactory.getLogger(SysOutOverSLF4J.class);
 	private static final LoggingSystemRegister LOGGING_SYSTEM_REGISTER = new LoggingSystemRegister();
-	private static final SLF4JPrintStreamManager SLF4J_PRINT_STREAM_MANAGER = new SLF4JPrintStreamManager();
-	
+
 	static {
 		final SysOutOverSLF4JInitialiser sysOutOverSLF4JInitialiser = new SysOutOverSLF4JInitialiser(LOGGING_SYSTEM_REGISTER);
 		final Logger loggerImplementation = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
@@ -114,8 +115,20 @@ public final class SysOutOverSLF4J {
 	public static void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel,
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
 		synchronized (System.class) {
-			SLF4J_PRINT_STREAM_MANAGER.sendSystemOutAndErrToSLF4J(outLevel, errLevel, exceptionHandlingStrategyFactory);
+			registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JSystemOutput.OUT, outLevel);
+			registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JSystemOutput.ERR, errLevel);
+			LOG.info("Redirected System.out and System.err to SLF4J for this context");
 		}
+	}
+
+	private static void registerNewLoggerAppender(
+			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
+			final SLF4JSystemOutput slf4jSystemOutput, final LogLevel logLevel) {
+
+		final LoggerAppender loggerAppender = new LoggerAppenderImpl(
+				logLevel, exceptionHandlingStrategyFactory, slf4jSystemOutput.getOriginalPrintStream(), LOGGING_SYSTEM_REGISTER);
+		ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(loggerAppender);
+		slf4jSystemOutput.registerLoggerAppender(loggerAppender);
 	}
 
 	/**
