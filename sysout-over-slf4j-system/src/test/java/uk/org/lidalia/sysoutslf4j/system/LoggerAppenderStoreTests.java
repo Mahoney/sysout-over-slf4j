@@ -34,7 +34,7 @@ import org.junit.Test;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.system.LoggerAppenderStore;
 
-public class TestLoggerAppenderStore extends SysOutOverSLF4JTestCase {
+public class LoggerAppenderStoreTests extends SysOutOverSLF4JTestCase {
 	
 	private final LoggerAppenderStore storeUnderTest = new LoggerAppenderStore();
 	private final ClassLoader[] classLoaders = { new ClassLoader() { }, new ClassLoader() { } };

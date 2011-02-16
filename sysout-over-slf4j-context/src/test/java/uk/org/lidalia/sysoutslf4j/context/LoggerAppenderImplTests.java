@@ -48,7 +48,7 @@ import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStr
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({LoggerFactory.class})
-public class TestLoggerAppenderImpl extends SysOutOverSLF4JTestCase {
+public class LoggerAppenderImplTests extends SysOutOverSLF4JTestCase {
 
 	private static final String CLASS_IN_LOGGING_SYSTEM = "org.logging.LoggerClass";
 	private static final String CLASS_NAME = "org.something.SomeClass";
