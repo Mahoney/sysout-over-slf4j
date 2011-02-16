@@ -49,10 +49,6 @@ import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 public class SLF4JSystemOutputTests extends SysOutOverSLF4JTestCase {
 
 	@Test
-	public void testfail() {
-		fail();
-	}
-	@Test
 	public void isSLF4JPrintStreamReturnsFalseWhenSystemOutIsSLF4JPrintStream() {
 		assertFalse(SLF4JSystemOutput.OUT.isSLF4JPrintStream());
 		assertFalse(SLF4JSystemOutput.ERR.isSLF4JPrintStream());
