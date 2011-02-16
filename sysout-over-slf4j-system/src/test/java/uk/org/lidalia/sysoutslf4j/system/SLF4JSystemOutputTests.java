@@ -32,6 +32,7 @@ import static org.easymock.EasyMock.same;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -47,6 +48,10 @@ import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 @PrepareForTest({SLF4JPrintStream.class, SLF4JSystemOutput.class})
 public class SLF4JSystemOutputTests extends SysOutOverSLF4JTestCase {
 
+	@Test
+	public void testfail() {
+		fail();
+	}
 	@Test
 	public void isSLF4JPrintStreamReturnsFalseWhenSystemOutIsSLF4JPrintStream() {
 		assertFalse(SLF4JSystemOutput.OUT.isSLF4JPrintStream());
