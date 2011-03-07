@@ -124,7 +124,6 @@ public final class SysOutOverSLF4J {
 	private static void registerNewLoggerAppender(
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
 			final SLF4JSystemOutput slf4jSystemOutput, final LogLevel logLevel) {
-
 		final LoggerAppender loggerAppender = new LoggerAppenderImpl(
 				logLevel, exceptionHandlingStrategyFactory, slf4jSystemOutput.getOriginalPrintStream(), LOGGING_SYSTEM_REGISTER);
 		ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(loggerAppender);

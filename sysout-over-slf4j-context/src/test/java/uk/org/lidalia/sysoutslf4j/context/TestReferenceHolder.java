@@ -25,6 +25,7 @@
 package uk.org.lidalia.sysoutslf4j.context;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static uk.org.lidalia.testutils.Assert.assertNotInstantiable;
 
 import java.lang.ref.WeakReference;
@@ -45,6 +46,19 @@ public class TestReferenceHolder {
 		System.gc();
 		
 		assertNotNull(ref.get());
+	}
+
+	@Test
+	public void allowGarbageCollectionForLifeOfClassLoaderFreesUpInstance() {
+		Object object = new Object();
+		WeakReference<Object> ref = new WeakReference<Object>(object);
+		
+		ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(object);
+		ReferenceHolder.allowGarbageCollection(object);
+		object = null;
+		System.gc();
+		
+		assertNull(ref.get());
 	}
 
 	@Test
