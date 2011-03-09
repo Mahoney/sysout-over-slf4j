@@ -36,7 +36,7 @@ import javassist.util.proxy.ProxyFactory;
 import org.apache.commons.lang.SerializationUtils;
 import org.powermock.reflect.Whitebox;
 
-import uk.org.lidalia.testutils.ExceptionUtils;
+import uk.org.lidalia.lang.Exceptions;
 
 public class CrossClassLoaderTestUtils {
 
@@ -103,7 +103,7 @@ public class CrossClassLoaderTestUtils {
 		try {
 			return Enum.valueOf(destinationClass, enumInstance.name());
 		} catch (Exception e) {
-			throw ExceptionUtils.asRuntimeException(e);
+			throw Exceptions.asRuntimeException(e);
 		}
 	}
 	
@@ -119,7 +119,7 @@ public class CrossClassLoaderTestUtils {
 		try {
 			return (E) proxyFactory.create(classToProxy.getDeclaredConstructors()[0].getParameterTypes(), new Object[classToProxy.getDeclaredConstructors()[0].getParameterTypes().length], handler);
 		} catch (Exception e) {
-			throw ExceptionUtils.asRuntimeException(e);
+			throw Exceptions.asRuntimeException(e);
 		}
 	}
 
@@ -129,7 +129,7 @@ public class CrossClassLoaderTestUtils {
 			Object object = SerializationUtils.deserialize(objectAsBytes);
 			return object;
 		} catch (Exception e) {
-			throw ExceptionUtils.asRuntimeException(e);
+			throw Exceptions.asRuntimeException(e);
 		}
 	}
 }

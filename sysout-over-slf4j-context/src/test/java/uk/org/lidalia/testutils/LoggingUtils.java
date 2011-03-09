@@ -27,6 +27,8 @@ package uk.org.lidalia.testutils;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.LoggerFactory;
 
+import uk.org.lidalia.lang.Exceptions;
+
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -46,7 +48,7 @@ public class LoggingUtils {
 			Class<?> loggingUtils = classLoader.loadClass(LoggingUtils.class.getName());
 			Whitebox.invokeMethod(loggingUtils, "turnOffRootLogging");
 		} catch (Exception e) {
-			throw ExceptionUtils.asRuntimeException(e);
+			throw Exceptions.asRuntimeException(e);
 		}
 	}
 	

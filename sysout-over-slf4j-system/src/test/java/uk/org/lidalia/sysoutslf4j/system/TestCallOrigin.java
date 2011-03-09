@@ -27,7 +27,7 @@ package uk.org.lidalia.sysoutslf4j.system;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static uk.org.lidalia.testutils.Assert.shouldThrow;
+import static uk.org.lidalia.test.Assert.shouldThrow;
 
 import java.util.concurrent.Callable;
 

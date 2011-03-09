@@ -25,7 +25,7 @@
 package uk.org.lidalia.sysoutslf4j.context;
 
 import static org.junit.Assert.assertNotNull;
-import static uk.org.lidalia.testutils.Assert.assertNotInstantiable;
+import static uk.org.lidalia.test.Assert.assertNotInstantiable;
 
 import java.lang.ref.WeakReference;
 

@@ -32,7 +32,7 @@ import static org.powermock.api.easymock.PowerMock.expectNew;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
-import static uk.org.lidalia.testutils.Assert.assertNotInstantiable;
+import static uk.org.lidalia.test.Assert.assertNotInstantiable;
 
 import java.io.PrintStream;
 
