@@ -35,7 +35,11 @@ final class ReferenceHolder {
 	static void preventGarbageCollectionForLifeOfClassLoader(final Object objectToBeMaintained) {
 		REFERENCES.put(objectToBeMaintained, objectToBeMaintained);
 	}
-	
+
+	static void allowGarbageCollection(final Object objectBeingMaintained) {
+		REFERENCES.remove(objectBeingMaintained);
+	}
+
 	private ReferenceHolder() {
 		throw new UnsupportedOperationException("Not instantiable");
 	}
