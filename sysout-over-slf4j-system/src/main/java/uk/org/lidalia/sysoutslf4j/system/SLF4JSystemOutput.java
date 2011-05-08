@@ -85,7 +85,7 @@ public enum SLF4JSystemOutput {
 		}
 	}
 
-	public void registerLoggerAppender(LoggerAppender loggerAppender) {
+	public void registerLoggerAppender(final LoggerAppender loggerAppender) {
 		final Lock writeLock = systemOutput.getLock().writeLock();
 		writeLock.lock();
 		try {

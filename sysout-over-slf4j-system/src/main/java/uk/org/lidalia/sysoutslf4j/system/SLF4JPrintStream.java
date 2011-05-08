@@ -273,11 +273,11 @@ final class SLF4JPrintStream extends PrintStream { // NOPMD superclass has too m
 		originalPrintStream.write(bytes);
 	}
 	
-	private synchronized void doPrint(String string) {
+	private synchronized void doPrint(final String string) { // NOPMD deliberate method synchronization
 		delegate.delegatePrint(string);
 	}
 	
-	private synchronized void doPrintln(String string) {
+	private synchronized void doPrintln(final String string) { // NOPMD deliberate method synchronization
 		delegate.delegatePrintln(string);
 	}
 

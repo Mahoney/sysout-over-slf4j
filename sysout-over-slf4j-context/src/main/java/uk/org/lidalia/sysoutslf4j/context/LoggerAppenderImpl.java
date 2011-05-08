@@ -43,10 +43,11 @@ public class LoggerAppenderImpl implements LoggerAppender {
 	private StringBuilder buffer = new StringBuilder();
 
 	LoggerAppenderImpl(final LogLevel level, final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
-			final PrintStream originalPrintStream, LoggingSystemRegister loggingSystemRegister) {
+			final PrintStream originalPrintStream, final LoggingSystemRegister loggingSystemRegister) {
 		super();
 		this.level = level;
-		this.exceptionHandlingStrategy = exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(level, originalPrintStream);
+		this.exceptionHandlingStrategy =
+				exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(level, originalPrintStream);
 		this.originalPrintStream = originalPrintStream;
 		this.loggingSystemRegister = loggingSystemRegister;
 	}

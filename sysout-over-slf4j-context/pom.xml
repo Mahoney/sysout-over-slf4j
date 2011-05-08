@@ -4,11 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<groupId>uk.org.lidalia</groupId>
-		<artifactId>sysout-over-slf4j</artifactId>
-	    <version>2.0.0-SNAPSHOT</version>
-    </parent>
-    <artifactId>sysout-over-slf4j-context</artifactId>
+		<groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
+		<artifactId>parent</artifactId>
+		<version>2.0.0-SNAPSHOT</version>
+		<relativePath>../parent</relativePath>
+	</parent>
+	<artifactId>sysout-over-slf4j-context</artifactId>
 	<packaging>jar</packaging>
 	<dependencies>
 		<!-- COMPILE -->
