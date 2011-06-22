@@ -24,10 +24,10 @@
 
 package uk.org.lidalia.sysoutslf4j.system;
 
-public interface LoggerAppender {
+public interface SimplePrintStream {
 
-	void append(String message);
+	void print(String message);
 
-	void appendAndLog(String message);
+	void println(String message);
 
 }

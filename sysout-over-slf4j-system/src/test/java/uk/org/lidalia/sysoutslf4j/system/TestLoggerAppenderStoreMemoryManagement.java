@@ -33,18 +33,18 @@ import java.lang.reflect.Proxy;
 import org.junit.Test;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.system.LoggerAppenderStore;
+import uk.org.lidalia.sysoutslf4j.system.SimplePrintStreamStore;
 import uk.org.lidalia.testutils.NoOpInvocationHandler;
 
 public class TestLoggerAppenderStoreMemoryManagement extends SysOutOverSLF4JTestCase {
 
-	private final LoggerAppenderStore storeUnderTest = new LoggerAppenderStore();
+	private final SimplePrintStreamStore storeUnderTest = new SimplePrintStreamStore();
 
 	private ClassLoader classLoader = new ClassLoader(){};
 	private final WeakReference<ClassLoader> refToClassLoader =
 		new WeakReference<ClassLoader>(classLoader, new ReferenceQueue<Object>());
-	private LoggerAppender loggerAppender = (LoggerAppender) Proxy.newProxyInstance(
-			classLoader, new Class[] {LoggerAppender.class}, NoOpInvocationHandler.INSTANCE);
+	private SimplePrintStream loggerAppender = (SimplePrintStream) Proxy.newProxyInstance(
+			classLoader, new Class[] {SimplePrintStream.class}, NoOpInvocationHandler.INSTANCE);
 
 	@Test
 	public void loggerAppenderStoreDoesNotCauseAClassLoaderLeak() throws Exception {

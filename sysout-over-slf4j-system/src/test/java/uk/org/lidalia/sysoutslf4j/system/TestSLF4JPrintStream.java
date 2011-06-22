@@ -38,14 +38,14 @@ import java.util.Locale;
 import org.junit.After;
 import org.junit.Test;
 
-import uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamDelegate;
-import uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream;
+import uk.org.lidalia.sysoutslf4j.system.PerContextPrintStreamDelegate;
+import uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream;
 
 public class TestSLF4JPrintStream {
 	
-	private SLF4JPrintStreamDelegate mockDelegate = createStrictMock(SLF4JPrintStreamDelegate.class);
+	private PerContextPrintStreamDelegate mockDelegate = createStrictMock(PerContextPrintStreamDelegate.class);
 	private PrintStream mockOriginalPrintStream = createStrictMock(PrintStream.class);
-	private SLF4JPrintStream slf4jPrintStreamImpl = new SLF4JPrintStream(mockOriginalPrintStream, mockDelegate);
+	private PerContextPrintStream slf4jPrintStreamImpl = new PerContextPrintStream(mockOriginalPrintStream, mockDelegate);
 	
 	@After
 	public void verifyMocks() {
@@ -330,16 +330,16 @@ public class TestSLF4JPrintStream {
 	
 	@Test
 	public void registerLoggerAppenderDelegatesToDelegate() {
-		LoggerAppender loggerAppender = createStrictMock(LoggerAppender.class);
-		mockDelegate.registerLoggerAppender(loggerAppender);
+		SimplePrintStream loggerAppender = createStrictMock(SimplePrintStream.class);
+		mockDelegate.registerSimplePrintStream(loggerAppender);
 		replayAll();
-		slf4jPrintStreamImpl.registerLoggerAppender(loggerAppender);
+		slf4jPrintStreamImpl.registerSimplePrintStream(loggerAppender);
 	}
 	
 	@Test
 	public void deregisterLoggerAppenderDelegatesToDelegate() {
-		mockDelegate.deregisterLoggerAppender();
+		mockDelegate.deregisterSimplePrintStream();
 		replayAll();
-		slf4jPrintStreamImpl.deregisterLoggerAppender();
+		slf4jPrintStreamImpl.deregisterSimplePrintStream();
 	}
 }

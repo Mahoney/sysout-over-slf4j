@@ -49,26 +49,26 @@ import uk.org.lidalia.sysoutslf4j.context.LoggingSystemRegister;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory;
-import uk.org.lidalia.sysoutslf4j.system.SLF4JSystemOutput;
+import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ SysOutOverSLF4J.class, SLF4JSystemOutput.class })
+@PrepareForTest({ SysOutOverSLF4J.class, PerContextSystemOutput.class })
 public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
 
 	private LoggingSystemRegister loggingSystemRegisterMock = createMock(LoggingSystemRegister.class);
-	private SLF4JSystemOutput outMock;
-    private SLF4JSystemOutput errMock;
+	private PerContextSystemOutput outMock;
+    private PerContextSystemOutput errMock;
 
 	@Before
 	public void setStaticMocks() {
 		Whitebox.setInternalState(SysOutOverSLF4J.class, loggingSystemRegisterMock);
 		
-		outMock = createMock(SLF4JSystemOutput.class);
-        errMock = createMock(SLF4JSystemOutput.class);
-    	Whitebox.setInternalState(SLF4JSystemOutput.class, "OUT", outMock);
-    	Whitebox.setInternalState(SLF4JSystemOutput.class, "ERR", errMock);
-    	mockStatic(SLF4JSystemOutput.class);
-    	expect(SLF4JSystemOutput.values()).andStubReturn(new SLF4JSystemOutput[]{outMock, errMock});
+		outMock = createMock(PerContextSystemOutput.class);
+        errMock = createMock(PerContextSystemOutput.class);
+    	Whitebox.setInternalState(PerContextSystemOutput.class, "OUT", outMock);
+    	Whitebox.setInternalState(PerContextSystemOutput.class, "ERR", errMock);
+    	mockStatic(PerContextSystemOutput.class);
+    	expect(PerContextSystemOutput.values()).andStubReturn(new PerContextSystemOutput[]{outMock, errMock});
 
 	}
 	
@@ -111,18 +111,18 @@ public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
     	expectLoggerAppenderToBeRegistered(errMock, errLevel, exceptionHandlingStrategyFactory);
     }
 
-	private void expectLoggerAppenderToBeRegistered(SLF4JSystemOutput systemOutputMock, LogLevel logLevel, ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws Exception {
+	private void expectLoggerAppenderToBeRegistered(PerContextSystemOutput systemOutputMock, LogLevel logLevel, ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws Exception {
 		PrintStream originalPrintStreamMock = createMock(PrintStream.class);
         expect(systemOutputMock.getOriginalPrintStream()).andStubReturn(originalPrintStreamMock);
         LoggerAppenderImpl loggerAppenderMock = createMock(LoggerAppenderImpl.class);
         expectNew(LoggerAppenderImpl.class, logLevel, exceptionHandlingStrategyFactory, originalPrintStreamMock, loggingSystemRegisterMock).andReturn(loggerAppenderMock);
-        systemOutputMock.registerLoggerAppender(loggerAppenderMock);
+        systemOutputMock.registerSimplePrintStream(loggerAppenderMock);
 	}
 
 	@Test
 	public void stopSendingSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManager() {
-		outMock.deregisterLoggerAppender();
-    	errMock.deregisterLoggerAppender();
+		outMock.deregisterSimplePrintStream();
+    	errMock.deregisterSimplePrintStream();
     	replayAll();
 		replayAll();
 		SysOutOverSLF4J.stopSendingSystemOutAndErrToSLF4J();
@@ -164,14 +164,14 @@ public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
 	
 	@Test
 	public void isSLF4JPrintStreamReturnsFalseWhenSystemOutIsSLF4JPrintStream() {
-		expect(outMock.isSLF4JPrintStream()).andReturn(false);
+		expect(outMock.isPerContextPrintStream()).andReturn(false);
 		replayAll();
 		assertFalse(SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams());
 	}
 
 	@Test
 	public void isSLF4JPrintStreamReturnsTrueWhenSystemOutIsSLF4JPrintStream() {
-		expect(outMock.isSLF4JPrintStream()).andReturn(true);
+		expect(outMock.isPerContextPrintStream()).andReturn(true);
 		replayAll();
 		assertTrue(SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams());
 	}

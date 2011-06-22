@@ -32,16 +32,16 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
-class LoggerAppenderStore {
+class SimplePrintStreamStore {
 
-	private final Map<ClassLoader, WeakReference<LoggerAppender>> loggerAppenderMap =
-		new WeakHashMap<ClassLoader, WeakReference<LoggerAppender>>();
+	private final Map<ClassLoader, WeakReference<SimplePrintStream>> loggerAppenderMap =
+		new WeakHashMap<ClassLoader, WeakReference<SimplePrintStream>>();
 	
 	private final ReadWriteLock lock = new ReentrantReadWriteLock();
 	private final Lock readLock = lock.readLock();
 	private final Lock writeLock = lock.writeLock();
 
-	LoggerAppender get() {
+	SimplePrintStream get() {
 		readLock.lock();
 		try {
 			return get(contextClassLoader());
@@ -50,9 +50,9 @@ class LoggerAppenderStore {
 		}
 	}
 
-	private LoggerAppender get(final ClassLoader classLoader) {
-		final WeakReference<LoggerAppender> loggerAppenderReference = loggerAppenderMap.get(classLoader);
-		final LoggerAppender result;
+	private SimplePrintStream get(final ClassLoader classLoader) {
+		final WeakReference<SimplePrintStream> loggerAppenderReference = loggerAppenderMap.get(classLoader);
+		final SimplePrintStream result;
 		if (loggerAppenderReference == null) {
 			if (classLoader == null) {
 				result = null;
@@ -65,10 +65,10 @@ class LoggerAppenderStore {
 		return result;
 	}
 
-	void put(final LoggerAppender loggerAppender) {
+	void put(final SimplePrintStream loggerAppender) {
 		writeLock.lock();
 		try {
-			loggerAppenderMap.put(contextClassLoader(), new WeakReference<LoggerAppender>(loggerAppender));
+			loggerAppenderMap.put(contextClassLoader(), new WeakReference<SimplePrintStream>(loggerAppender));
 		} finally {
 			writeLock.unlock();
 		}

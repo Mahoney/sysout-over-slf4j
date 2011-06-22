@@ -32,9 +32,9 @@ import org.slf4j.LoggerFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.context.CallOrigin;
-import uk.org.lidalia.sysoutslf4j.system.LoggerAppender;
+import uk.org.lidalia.sysoutslf4j.system.SimplePrintStream;
 
-public class LoggerAppenderImpl implements LoggerAppender {
+public class LoggerAppenderImpl implements SimplePrintStream {
 
 	private final LogLevel level;
 	private final ExceptionHandlingStrategy exceptionHandlingStrategy;
@@ -53,12 +53,12 @@ public class LoggerAppenderImpl implements LoggerAppender {
 		this.loggingSystemRegister = loggingSystemRegister;
 	}
 
-	public void append(final String message) {
+	public void print(final String message) {
 		exceptionHandlingStrategy.notifyNotStackTrace();
 		buffer.append(message);
 	}
 
-	public void appendAndLog(final String message) {		
+	public void println(final String message) {		
 		buffer.append(message);
 		final String logStatement = flushBuffer();
 		logOrPrint(logStatement);

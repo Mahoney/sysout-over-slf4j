@@ -37,17 +37,17 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import uk.org.lidalia.sysoutslf4j.system.LoggerAppenderStore;
-import uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamDelegate;
+import uk.org.lidalia.sysoutslf4j.system.SimplePrintStreamStore;
+import uk.org.lidalia.sysoutslf4j.system.PerContextPrintStreamDelegate;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ PrintStream.class })
 public class TestSLF4JPrintStreamDelegate {
 
 	private PrintStream originalPrintStreamMock = createMock(PrintStream.class);
-	private LoggerAppenderStore loggerAppenderStoreMock = createMock(LoggerAppenderStore.class);
-	private SLF4JPrintStreamDelegate delegate = new SLF4JPrintStreamDelegate(originalPrintStreamMock, loggerAppenderStoreMock);
-	private LoggerAppender loggerAppenderMock = createMock(LoggerAppender.class);
+	private SimplePrintStreamStore loggerAppenderStoreMock = createMock(SimplePrintStreamStore.class);
+	private PerContextPrintStreamDelegate delegate = new PerContextPrintStreamDelegate(originalPrintStreamMock, loggerAppenderStoreMock);
+	private SimplePrintStream loggerAppenderMock = createMock(SimplePrintStream.class);
 	
 	@After
 	public void verifyMocks() {
@@ -59,7 +59,7 @@ public class TestSLF4JPrintStreamDelegate {
 		loggerAppenderStoreMock.put(loggerAppenderMock);
 		replayAll();
 		
-		delegate.registerLoggerAppender(loggerAppenderMock);
+		delegate.registerSimplePrintStream(loggerAppenderMock);
 	}
 	
 	@Test
@@ -67,7 +67,7 @@ public class TestSLF4JPrintStreamDelegate {
 		loggerAppenderStoreMock.remove();
 		replayAll();
 		
-		delegate.deregisterLoggerAppender();
+		delegate.deregisterSimplePrintStream();
 	}
 	
 	@Test
@@ -82,7 +82,7 @@ public class TestSLF4JPrintStreamDelegate {
 	@Test
 	public void delegatePrintlnCallsLoggerAppenderAppendAndLog() {
 		expect(loggerAppenderStoreMock.get()).andReturn(loggerAppenderMock);
-		loggerAppenderMock.appendAndLog("the message");
+		loggerAppenderMock.println("the message");
 		replayAll();
 		
 		delegate.delegatePrintln("the message");
@@ -100,7 +100,7 @@ public class TestSLF4JPrintStreamDelegate {
 	@Test
 	public void delegatePrintCallsLoggerAppenderAppendAndLogWhenMessageEndsWithUnixLineBreak() {
 		expect(loggerAppenderStoreMock.get()).andReturn(loggerAppenderMock);
-		loggerAppenderMock.appendAndLog("the message");
+		loggerAppenderMock.println("the message");
 		replayAll();
 		
 		delegate.delegatePrint("the message\n");
@@ -109,7 +109,7 @@ public class TestSLF4JPrintStreamDelegate {
 	@Test
 	public void delegatePrintCallsLoggerAppenderAppendAndLogWhenMessageEndsWithWindowsLineBreak() {
 		expect(loggerAppenderStoreMock.get()).andReturn(loggerAppenderMock);
-		loggerAppenderMock.appendAndLog("the message");
+		loggerAppenderMock.println("the message");
 		replayAll();
 		
 		delegate.delegatePrint("the message\r\n");
@@ -118,7 +118,7 @@ public class TestSLF4JPrintStreamDelegate {
 	@Test
 	public void delegatePrintCallsLoggerAppenderAppendWhenMessageDoesNotEndWithLineBreak() {
 		expect(loggerAppenderStoreMock.get()).andReturn(loggerAppenderMock);
-		loggerAppenderMock.append("the message");
+		loggerAppenderMock.print("the message");
 		replayAll();
 		
 		delegate.delegatePrint("the message");

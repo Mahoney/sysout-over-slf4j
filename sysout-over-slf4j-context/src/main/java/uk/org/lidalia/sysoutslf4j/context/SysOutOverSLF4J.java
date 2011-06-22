@@ -29,20 +29,20 @@ import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory;
-import uk.org.lidalia.sysoutslf4j.system.LoggerAppender;
-import uk.org.lidalia.sysoutslf4j.system.SLF4JSystemOutput;
+import uk.org.lidalia.sysoutslf4j.system.SimplePrintStream;
+import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
 
 /**
  * Public interface to the sysout-over-slf4j module. Provides all methods necessary to manage wrapping the existing
  * {@link System#out} and {@link System#err} {@link java.io.PrintStream}s with
- * custom {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream}s that redirect to a logging system
+ * custom {@link uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream}s that redirect to a logging system
  * via SLF4J.
  *
  * Synchronizes on System.class to ensure proper synchronization even if this class is loaded
  * by multiple classloaders.
  *
  * @author Robert Elliot
- * @see uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream
+ * @see uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream
  */
 public final class SysOutOverSLF4J {
 
@@ -57,7 +57,7 @@ public final class SysOutOverSLF4J {
 
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
-	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream} and registers
+	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream} and registers
 	 * SLF4J for the current context.<br/>
 	 * Can be called any number of times, and is synchronized on System.class.<br/>
 	 * Uses the {@link uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory}
@@ -70,7 +70,7 @@ public final class SysOutOverSLF4J {
 	
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
-	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream} and registers
+	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream} and registers
 	 * SLF4J for the current context's classloader.<br/>
 	 * Can be called any number of times, and is synchronized on System.class.<br/>
 	 * Uses the LogPerLineExceptionHandlingStrategy for handling printlns coming from
@@ -87,7 +87,7 @@ public final class SysOutOverSLF4J {
 
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
-	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream} and registers
+	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream} and registers
 	 * SLF4J for the current context's classloader.<br/>
 	 * Can be called any number of times, and is synchronized on System.class.
 	 * Logs at info level for System.out and at error level for System.err.
@@ -102,7 +102,7 @@ public final class SysOutOverSLF4J {
 
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
-	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStream} and registers
+	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream} and registers
 	 * SLF4J for the current context's classloader.<br/>
 	 * Can be called any number of times, and is synchronized on System.class.<br/>
 	 * 
@@ -115,19 +115,19 @@ public final class SysOutOverSLF4J {
 	public static void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel,
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
 		synchronized (System.class) {
-			registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JSystemOutput.OUT, outLevel);
-			registerNewLoggerAppender(exceptionHandlingStrategyFactory, SLF4JSystemOutput.ERR, errLevel);
+			registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.OUT, outLevel);
+			registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.ERR, errLevel);
 			LOG.info("Redirected System.out and System.err to SLF4J for this context");
 		}
 	}
 
 	private static void registerNewLoggerAppender(
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
-			final SLF4JSystemOutput slf4jSystemOutput, final LogLevel logLevel) {
-		final LoggerAppender loggerAppender = new LoggerAppenderImpl(
+			final PerContextSystemOutput slf4jSystemOutput, final LogLevel logLevel) {
+		final SimplePrintStream loggerAppender = new LoggerAppenderImpl(
 				logLevel, exceptionHandlingStrategyFactory, slf4jSystemOutput.getOriginalPrintStream(), LOGGING_SYSTEM_REGISTER);
 		ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(loggerAppender);
-		slf4jSystemOutput.registerLoggerAppender(loggerAppender);
+		slf4jSystemOutput.registerSimplePrintStream(loggerAppender);
 	}
 
 	/**
@@ -137,8 +137,8 @@ public final class SysOutOverSLF4J {
 	 */
 	public static void stopSendingSystemOutAndErrToSLF4J() {
 		synchronized (System.class) {
-			for (SLF4JSystemOutput systemOutput : SLF4JSystemOutput.values()) {
-				systemOutput.deregisterLoggerAppender();
+			for (PerContextSystemOutput systemOutput : PerContextSystemOutput.values()) {
+				systemOutput.deregisterSimplePrintStream();
 			}
 		}
 	}
@@ -152,7 +152,7 @@ public final class SysOutOverSLF4J {
 	 */
 	public static void restoreOriginalSystemOutputs() {
 		synchronized (System.class) {
-			for (SLF4JSystemOutput systemOutput : SLF4JSystemOutput.values()) {
+			for (PerContextSystemOutput systemOutput : PerContextSystemOutput.values()) {
 				systemOutput.restoreOriginalPrintStream();
 			}
 		}
@@ -197,6 +197,6 @@ public final class SysOutOverSLF4J {
 	}
 
 	public static boolean systemOutputsAreSLF4JPrintStreams() {
-		return SLF4JSystemOutput.OUT.isSLF4JPrintStream();
+		return PerContextSystemOutput.OUT.isPerContextPrintStream();
 	}
 }

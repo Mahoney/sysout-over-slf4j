@@ -27,26 +27,26 @@ package uk.org.lidalia.sysoutslf4j.system;
 import java.io.PrintStream;
 import java.util.concurrent.locks.Lock;
 
-public enum SLF4JSystemOutput {
+public enum PerContextSystemOutput {
 
 	OUT(SystemOutput.OUT), ERR(SystemOutput.ERR);
 	
 	private final SystemOutput systemOutput;
 	
-	private SLF4JSystemOutput(final SystemOutput systemOutput) {
+	private PerContextSystemOutput(final SystemOutput systemOutput) {
 		this.systemOutput = systemOutput;
 	}
 	
-	public boolean isSLF4JPrintStream() {
-		return systemOutput.get() instanceof SLF4JPrintStream;
+	public boolean isPerContextPrintStream() {
+		return systemOutput.get() instanceof PerContextPrintStream;
 	}
 	
 	public void restoreOriginalPrintStream() {
 		final Lock writeLock = systemOutput.getLock().writeLock();
 		writeLock.lock();
 		try {
-			if (isSLF4JPrintStream()) {
-				systemOutput.set(getSLF4JPrintStream().getOriginalPrintStream());
+			if (isPerContextPrintStream()) {
+				systemOutput.set(getPerContextPrintStream().getOriginalPrintStream());
 			}
 		} finally {
 			writeLock.unlock();
@@ -58,8 +58,8 @@ public enum SLF4JSystemOutput {
 		final Lock readLock = systemOutput.getLock().readLock();
 		readLock.lock();
 		try {
-			if (isSLF4JPrintStream()) {
-				result = getSLF4JPrintStream().getOriginalPrintStream();
+			if (isPerContextPrintStream()) {
+				result = getPerContextPrintStream().getOriginalPrintStream();
 			} else {
 				result = systemOutput.get();
 			}
@@ -69,43 +69,43 @@ public enum SLF4JSystemOutput {
 		}
 	}
 	
-	private SLF4JPrintStream getSLF4JPrintStream() {
-		return (SLF4JPrintStream) systemOutput.get();
+	private PerContextPrintStream getPerContextPrintStream() {
+		return (PerContextPrintStream) systemOutput.get();
 	}
 	
-	public void deregisterLoggerAppender() {
+	public void deregisterSimplePrintStream() {
 		final Lock readLock = systemOutput.getLock().readLock();
 		readLock.lock();
 		try {
-			if (isSLF4JPrintStream()) {
-				getSLF4JPrintStream().deregisterLoggerAppender();
+			if (isPerContextPrintStream()) {
+				getPerContextPrintStream().deregisterSimplePrintStream();
 			}
 		} finally {
 			readLock.unlock();
 		}
 	}
 
-	public void registerLoggerAppender(final LoggerAppender loggerAppender) {
+	public void registerSimplePrintStream(final SimplePrintStream simplePrintStream) {
 		final Lock writeLock = systemOutput.getLock().writeLock();
 		writeLock.lock();
 		try {
-			makeSLF4JPrintStream();
-			getSLF4JPrintStream().registerLoggerAppender(loggerAppender);
+			makePerContextPrintStream();
+			getPerContextPrintStream().registerSimplePrintStream(simplePrintStream);
 		} finally {
 			writeLock.unlock();
 		}
 	}
 	
-	private void makeSLF4JPrintStream() {
-		if (!isSLF4JPrintStream()) {
-			systemOutput.set(buildSLF4JPrintStream());
+	private void makePerContextPrintStream() {
+		if (!isPerContextPrintStream()) {
+			systemOutput.set(buildPerContextPrintStream());
 		}
 	}
 	
-	private SLF4JPrintStream buildSLF4JPrintStream() {
-		final LoggerAppenderStore loggerAppenderStore = new LoggerAppenderStore();
+	private PerContextPrintStream buildPerContextPrintStream() {
+		final SimplePrintStreamStore simplePrintStreamStore = new SimplePrintStreamStore();
 		final PrintStream originalPrintStream = systemOutput.get();
-		final SLF4JPrintStreamDelegate delegate = new SLF4JPrintStreamDelegate(originalPrintStream, loggerAppenderStore);
-		return new SLF4JPrintStream(originalPrintStream, delegate);
+		final PerContextPrintStreamDelegate delegate = new PerContextPrintStreamDelegate(originalPrintStream, simplePrintStreamStore);
+		return new PerContextPrintStream(originalPrintStream, delegate);
 	}
 }

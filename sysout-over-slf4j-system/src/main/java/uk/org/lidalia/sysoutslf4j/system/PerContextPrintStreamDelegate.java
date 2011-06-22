@@ -27,47 +27,43 @@ package uk.org.lidalia.sysoutslf4j.system;
 import java.io.PrintStream;
 
 
-class SLF4JPrintStreamDelegate {
+class PerContextPrintStreamDelegate {
 	
 	private final PrintStream originalPrintStream;
-	private final LoggerAppenderStore loggerAppenderStore;
+	private final SimplePrintStreamStore simplePrintStreamStore;
 
-	SLF4JPrintStreamDelegate(final PrintStream originalPrintStream, final LoggerAppenderStore loggerAppenderStore) {
+	PerContextPrintStreamDelegate(final PrintStream originalPrintStream, final SimplePrintStreamStore simplePrintStreamStore) {
 		super();
 		this.originalPrintStream = originalPrintStream;
-		this.loggerAppenderStore = loggerAppenderStore;
+		this.simplePrintStreamStore = simplePrintStreamStore;
 	}
 
-	void registerLoggerAppender(final LoggerAppender loggerAppender) {
-		loggerAppenderStore.put(loggerAppender);
+	void registerSimplePrintStream(final SimplePrintStream simplePrintStream) {
+		simplePrintStreamStore.put(simplePrintStream);
 	}
 	
-	void deregisterLoggerAppender() {
-		loggerAppenderStore.remove();
+	void deregisterSimplePrintStream() {
+		simplePrintStreamStore.remove();
 	}
 
 	void delegatePrintln(final String message) {
-		final LoggerAppender loggerAppender = loggerAppenderStore.get();
-		if (loggerAppender == null) {
+		final SimplePrintStream simplePrintStream = simplePrintStreamStore.get();
+		if (simplePrintStream == null) {
 			originalPrintStream.println(message);
 		} else {
-			appendAndLog(message, loggerAppender);
+			simplePrintStream.println(message);
 		}
 	}
 
 	void delegatePrint(final String message) {
-		final LoggerAppender loggerAppender = loggerAppenderStore.get();
-		if (loggerAppender == null) {
+		final SimplePrintStream simplePrintStream = simplePrintStreamStore.get();
+		if (simplePrintStream == null) {
 			originalPrintStream.print(message);
 		} else if (message.endsWith("\n")) {
 			final String messageWithoutLineBreak = StringUtils.stripEnd(message, "\r\n");
-			appendAndLog(messageWithoutLineBreak, loggerAppender);
+			simplePrintStream.println(messageWithoutLineBreak);
 		} else {
-			loggerAppender.append(message);
+			simplePrintStream.print(message);
 		}
-	}
-
-	private static void appendAndLog(final String message, final LoggerAppender loggerAppender) {
-		loggerAppender.appendAndLog(message);
 	}
 }

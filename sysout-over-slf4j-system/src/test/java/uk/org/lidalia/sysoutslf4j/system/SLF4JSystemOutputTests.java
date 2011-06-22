@@ -44,31 +44,31 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({SLF4JPrintStream.class, SLF4JSystemOutput.class})
+@PrepareForTest({PerContextPrintStream.class, PerContextSystemOutput.class})
 public class SLF4JSystemOutputTests extends SysOutOverSLF4JTestCase {
 
 	@Test
 	public void isSLF4JPrintStreamReturnsFalseWhenSystemOutIsSLF4JPrintStream() {
-		assertFalse(SLF4JSystemOutput.OUT.isSLF4JPrintStream());
-		assertFalse(SLF4JSystemOutput.ERR.isSLF4JPrintStream());
+		assertFalse(PerContextSystemOutput.OUT.isPerContextPrintStream());
+		assertFalse(PerContextSystemOutput.ERR.isPerContextPrintStream());
 	}
 
 	@Test
 	public void isSLF4JPrintStreamReturnsTrueWhenSystemOutIsSLF4JPrintStream() {
-		System.setOut(new SLF4JPrintStream(System.out, null));
-		assertTrue(SLF4JSystemOutput.OUT.isSLF4JPrintStream());
+		System.setOut(new PerContextPrintStream(System.out, null));
+		assertTrue(PerContextSystemOutput.OUT.isPerContextPrintStream());
 		
-		System.setErr(new SLF4JPrintStream(System.err, null));
-		assertTrue(SLF4JSystemOutput.ERR.isSLF4JPrintStream());
+		System.setErr(new PerContextPrintStream(System.err, null));
+		assertTrue(PerContextSystemOutput.ERR.isPerContextPrintStream());
 	}
 
 	@Test
 	public void restoreOriginalPrintStreamDoesNothingIfOutputIsOriginalPrintStream() {
-		assertRestoreOriginalPrintStreamDoesNothingIfOutputIsOriginalPrintStream(SystemOutput.OUT, SLF4JSystemOutput.OUT);
-		assertRestoreOriginalPrintStreamDoesNothingIfOutputIsOriginalPrintStream(SystemOutput.ERR, SLF4JSystemOutput.ERR);
+		assertRestoreOriginalPrintStreamDoesNothingIfOutputIsOriginalPrintStream(SystemOutput.OUT, PerContextSystemOutput.OUT);
+		assertRestoreOriginalPrintStreamDoesNothingIfOutputIsOriginalPrintStream(SystemOutput.ERR, PerContextSystemOutput.ERR);
 	}
 
-	private void assertRestoreOriginalPrintStreamDoesNothingIfOutputIsOriginalPrintStream(SystemOutput output, SLF4JSystemOutput slf4jOutput) {
+	private void assertRestoreOriginalPrintStreamDoesNothingIfOutputIsOriginalPrintStream(SystemOutput output, PerContextSystemOutput slf4jOutput) {
 		PrintStream original = output.get();
 		slf4jOutput.restoreOriginalPrintStream();
 		assertSame(original, output.get());
@@ -76,11 +76,11 @@ public class SLF4JSystemOutputTests extends SysOutOverSLF4JTestCase {
 
 	@Test
 	public void restoreOriginalPrintStreamDoesNothingIfOutputIsNotSLF4JPrintStream() {
-		assertRestoreOriginalPrintStreamDoesNothingIfOutputIsNotSLF4JPrintStream(SystemOutput.OUT, SLF4JSystemOutput.OUT);
-		assertRestoreOriginalPrintStreamDoesNothingIfOutputIsNotSLF4JPrintStream(SystemOutput.ERR, SLF4JSystemOutput.ERR);
+		assertRestoreOriginalPrintStreamDoesNothingIfOutputIsNotSLF4JPrintStream(SystemOutput.OUT, PerContextSystemOutput.OUT);
+		assertRestoreOriginalPrintStreamDoesNothingIfOutputIsNotSLF4JPrintStream(SystemOutput.ERR, PerContextSystemOutput.ERR);
 	}
 
-	private void assertRestoreOriginalPrintStreamDoesNothingIfOutputIsNotSLF4JPrintStream(SystemOutput output, SLF4JSystemOutput slf4jOutput) {
+	private void assertRestoreOriginalPrintStreamDoesNothingIfOutputIsNotSLF4JPrintStream(SystemOutput output, PerContextSystemOutput slf4jOutput) {
 		PrintStream other = new PrintStream(new ByteArrayOutputStream());
 		output.set(other);
 		slf4jOutput.restoreOriginalPrintStream();
@@ -89,30 +89,30 @@ public class SLF4JSystemOutputTests extends SysOutOverSLF4JTestCase {
 
 	@Test
 	public void restoreOriginalPrintStreamRestoresOriginalPrintStreamIfOutputIsSLF4JPrintStream() {
-		assertRestoreOriginalPrintStreamRestoresOriginalPrintStreamIfOutputIsSLF4JPrintStream(SystemOutput.OUT, SLF4JSystemOutput.OUT);
-		assertRestoreOriginalPrintStreamRestoresOriginalPrintStreamIfOutputIsSLF4JPrintStream(SystemOutput.ERR, SLF4JSystemOutput.ERR);
+		assertRestoreOriginalPrintStreamRestoresOriginalPrintStreamIfOutputIsSLF4JPrintStream(SystemOutput.OUT, PerContextSystemOutput.OUT);
+		assertRestoreOriginalPrintStreamRestoresOriginalPrintStreamIfOutputIsSLF4JPrintStream(SystemOutput.ERR, PerContextSystemOutput.ERR);
 	}
 
-	private void assertRestoreOriginalPrintStreamRestoresOriginalPrintStreamIfOutputIsSLF4JPrintStream(SystemOutput output, SLF4JSystemOutput slf4jOutput) {
+	private void assertRestoreOriginalPrintStreamRestoresOriginalPrintStreamIfOutputIsSLF4JPrintStream(SystemOutput output, PerContextSystemOutput slf4jOutput) {
 		PrintStream original = output.get();
-		output.set(new SLF4JPrintStream(output.get(), null));
+		output.set(new PerContextPrintStream(output.get(), null));
 		slf4jOutput.restoreOriginalPrintStream();
 		assertSame(original, output.get());
 	}
 
 	@Test
 	public void getOriginalPrintStreamReturnsOriginalWhenOutputIsOriginalPrintStream() {
-		assertSame(SystemOutput.OUT.get(), SLF4JSystemOutput.OUT.getOriginalPrintStream());
-		assertSame(SystemOutput.ERR.get(), SLF4JSystemOutput.ERR.getOriginalPrintStream());
+		assertSame(SystemOutput.OUT.get(), PerContextSystemOutput.OUT.getOriginalPrintStream());
+		assertSame(SystemOutput.ERR.get(), PerContextSystemOutput.ERR.getOriginalPrintStream());
 	}
 
 	@Test
 	public void getOriginalPrintStreamReturnsCurrentWhenOutputIsNotSLF4JPrintStream() {
-		getOriginalPrintStreamReturnsCurrentWhenOutputIsNotSLF4JPrintStream(SystemOutput.OUT, SLF4JSystemOutput.OUT);
-		getOriginalPrintStreamReturnsCurrentWhenOutputIsNotSLF4JPrintStream(SystemOutput.ERR, SLF4JSystemOutput.ERR);
+		getOriginalPrintStreamReturnsCurrentWhenOutputIsNotSLF4JPrintStream(SystemOutput.OUT, PerContextSystemOutput.OUT);
+		getOriginalPrintStreamReturnsCurrentWhenOutputIsNotSLF4JPrintStream(SystemOutput.ERR, PerContextSystemOutput.ERR);
 	}
 
-	private void getOriginalPrintStreamReturnsCurrentWhenOutputIsNotSLF4JPrintStream(SystemOutput output, SLF4JSystemOutput slf4jOutput) {
+	private void getOriginalPrintStreamReturnsCurrentWhenOutputIsNotSLF4JPrintStream(SystemOutput output, PerContextSystemOutput slf4jOutput) {
 		PrintStream other = new PrintStream(new ByteArrayOutputStream());
 		output.set(other);
 		assertSame(other, slf4jOutput.getOriginalPrintStream());
@@ -120,84 +120,84 @@ public class SLF4JSystemOutputTests extends SysOutOverSLF4JTestCase {
 
 	@Test
 	public void getOriginalPrintStreamReturnsOriginalWhenOutputIsSLF4JPrintStream() {
-		getOriginalPrintStreamReturnsOriginalWhenOutputIsSLF4JPrintStream(SystemOutput.OUT, SLF4JSystemOutput.OUT);
-		getOriginalPrintStreamReturnsOriginalWhenOutputIsSLF4JPrintStream(SystemOutput.ERR, SLF4JSystemOutput.ERR);
+		getOriginalPrintStreamReturnsOriginalWhenOutputIsSLF4JPrintStream(SystemOutput.OUT, PerContextSystemOutput.OUT);
+		getOriginalPrintStreamReturnsOriginalWhenOutputIsSLF4JPrintStream(SystemOutput.ERR, PerContextSystemOutput.ERR);
 	}
 	
-	private void getOriginalPrintStreamReturnsOriginalWhenOutputIsSLF4JPrintStream(SystemOutput output, SLF4JSystemOutput slf4jOutput) {
+	private void getOriginalPrintStreamReturnsOriginalWhenOutputIsSLF4JPrintStream(SystemOutput output, PerContextSystemOutput slf4jOutput) {
 		PrintStream original = output.get();
-		output.set(new SLF4JPrintStream(output.get(), null));
+		output.set(new PerContextPrintStream(output.get(), null));
 		assertSame(original, slf4jOutput.getOriginalPrintStream());
 	}
 
 	@Test
 	public void registerLoggerAppenderMakesSLF4JPrintStreamAndRegistersLoggerAppenderIfSysOutIsNotSLF4JPrintStream() throws Exception {
 		registerLoggerAppenderMakesSLF4JPrintStreamAndRegistersLoggerAppenderIfOutputIsNotSLF4JPrintStream(
-				SystemOutput.OUT, SLF4JSystemOutput.OUT);
+				SystemOutput.OUT, PerContextSystemOutput.OUT);
 	}
 
 	@Test
 	public void registerLoggerAppenderMakesSLF4JPrintStreamAndRegistersLoggerAppenderIfSysErrIsNotSLF4JPrintStream() throws Exception {
 		registerLoggerAppenderMakesSLF4JPrintStreamAndRegistersLoggerAppenderIfOutputIsNotSLF4JPrintStream(
-				SystemOutput.ERR, SLF4JSystemOutput.ERR);
+				SystemOutput.ERR, PerContextSystemOutput.ERR);
 	}
 
 	private void registerLoggerAppenderMakesSLF4JPrintStreamAndRegistersLoggerAppenderIfOutputIsNotSLF4JPrintStream(
-			final SystemOutput output, final SLF4JSystemOutput slf4jOutput) throws Exception {
+			final SystemOutput output, final PerContextSystemOutput slf4jOutput) throws Exception {
 		PrintStream original = output.get();
-		LoggerAppender logAppenderMock = createMock(LoggerAppender.class);
-		SLF4JPrintStream slf4jPrintStreamMock = createMock(SLF4JPrintStream.class);
-		expectNew(SLF4JPrintStream.class, same(original), isA(SLF4JPrintStreamDelegate.class)).andReturn(slf4jPrintStreamMock);
-		slf4jPrintStreamMock.registerLoggerAppender(logAppenderMock);
+		SimplePrintStream logAppenderMock = createMock(SimplePrintStream.class);
+		PerContextPrintStream slf4jPrintStreamMock = createMock(PerContextPrintStream.class);
+		expectNew(PerContextPrintStream.class, same(original), isA(PerContextPrintStreamDelegate.class)).andReturn(slf4jPrintStreamMock);
+		slf4jPrintStreamMock.registerSimplePrintStream(logAppenderMock);
 		replayAll();
 
-		slf4jOutput.registerLoggerAppender(logAppenderMock);
+		slf4jOutput.registerSimplePrintStream(logAppenderMock);
 		assertSame(slf4jPrintStreamMock, output.get());
 	}
 
 	@Test
 	public void registerLoggerAppenderRegistersLoggerAppenderIfSystemOutIsSLF4JPrintStream() {
-		registerLoggerAppenderRegistersLoggerAppenderIfOutputIsSLF4JPrintStream(SystemOutput.OUT, SLF4JSystemOutput.OUT);
+		registerLoggerAppenderRegistersLoggerAppenderIfOutputIsSLF4JPrintStream(SystemOutput.OUT, PerContextSystemOutput.OUT);
 	}
 
 	@Test
 	public void registerLoggerAppenderRegistersLoggerAppenderIfSystemErrIsSLF4JPrintStream() {
-		registerLoggerAppenderRegistersLoggerAppenderIfOutputIsSLF4JPrintStream(SystemOutput.ERR, SLF4JSystemOutput.ERR);
+		registerLoggerAppenderRegistersLoggerAppenderIfOutputIsSLF4JPrintStream(SystemOutput.ERR, PerContextSystemOutput.ERR);
 	}
 
-	private void registerLoggerAppenderRegistersLoggerAppenderIfOutputIsSLF4JPrintStream(SystemOutput output, SLF4JSystemOutput slf4jOutput) {
-		SLF4JPrintStream slf4jPrintStreamMock = createMock(SLF4JPrintStream.class);
-		LoggerAppender logAppenderMock = createMock(LoggerAppender.class);
-		slf4jPrintStreamMock.registerLoggerAppender(logAppenderMock);
+	private void registerLoggerAppenderRegistersLoggerAppenderIfOutputIsSLF4JPrintStream(SystemOutput output, PerContextSystemOutput slf4jOutput) {
+		PerContextPrintStream slf4jPrintStreamMock = createMock(PerContextPrintStream.class);
+		SimplePrintStream logAppenderMock = createMock(SimplePrintStream.class);
+		slf4jPrintStreamMock.registerSimplePrintStream(logAppenderMock);
 		replayAll();
 		
 		output.set(slf4jPrintStreamMock);
-		slf4jOutput.registerLoggerAppender(logAppenderMock);
+		slf4jOutput.registerSimplePrintStream(logAppenderMock);
 	}
 
 	@Test
 	public void deregisterLoggerAppenderDoesNothingIfOutputIsNotSLF4JPrintStream() {
-		SLF4JSystemOutput.OUT.deregisterLoggerAppender();
-		SLF4JSystemOutput.ERR.deregisterLoggerAppender();
+		PerContextSystemOutput.OUT.deregisterSimplePrintStream();
+		PerContextSystemOutput.ERR.deregisterSimplePrintStream();
 		// Nothing happens
 	}
 
 	@Test
 	public void deregisterLoggerAppenderDeregistersAppenderIfSystemOutIsSLF4JPrintStream() {
-		deregisterLoggerAppenderDeregistersAppenderIfOutputIsSLF4JPrintStream(SystemOutput.OUT, SLF4JSystemOutput.OUT);
+		deregisterLoggerAppenderDeregistersAppenderIfOutputIsSLF4JPrintStream(SystemOutput.OUT, PerContextSystemOutput.OUT);
 	}
 
 	@Test
 	public void deregisterLoggerAppenderDeregistersAppenderIfSystemErrIsSLF4JPrintStream() {
-		deregisterLoggerAppenderDeregistersAppenderIfOutputIsSLF4JPrintStream(SystemOutput.ERR, SLF4JSystemOutput.ERR);
+		deregisterLoggerAppenderDeregistersAppenderIfOutputIsSLF4JPrintStream(SystemOutput.ERR, PerContextSystemOutput.ERR);
 	}
 
-	private void deregisterLoggerAppenderDeregistersAppenderIfOutputIsSLF4JPrintStream(SystemOutput output, SLF4JSystemOutput slf4jOutput) {
-		SLF4JPrintStream slf4jPrintStreamMock = createMock(SLF4JPrintStream.class);
-		slf4jPrintStreamMock.deregisterLoggerAppender();
+	private void deregisterLoggerAppenderDeregistersAppenderIfOutputIsSLF4JPrintStream(SystemOutput output, PerContextSystemOutput slf4jOutput) {
+		PerContextPrintStream slf4jPrintStreamMock = createMock(PerContextPrintStream.class);
+		slf4jPrintStreamMock.deregisterSimplePrintStream();
 		replayAll();
 		
 		output.set(slf4jPrintStreamMock);
-		slf4jOutput.deregisterLoggerAppender();
+		slf4jOutput.deregisterSimplePrintStream();
 	}
 }

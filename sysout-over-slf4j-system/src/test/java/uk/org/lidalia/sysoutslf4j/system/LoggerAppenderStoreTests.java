@@ -32,13 +32,13 @@ import static org.powermock.api.easymock.PowerMock.createMock;
 import org.junit.Test;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.system.LoggerAppenderStore;
+import uk.org.lidalia.sysoutslf4j.system.SimplePrintStreamStore;
 
 public class LoggerAppenderStoreTests extends SysOutOverSLF4JTestCase {
 	
-	private final LoggerAppenderStore storeUnderTest = new LoggerAppenderStore();
+	private final SimplePrintStreamStore storeUnderTest = new SimplePrintStreamStore();
 	private final ClassLoader[] classLoaders = { new ClassLoader() { }, new ClassLoader() { } };
-	private final LoggerAppender[] loggerAppenders = { createMock(LoggerAppender.class), createMock(LoggerAppender.class) };
+	private final SimplePrintStream[] loggerAppenders = { createMock(SimplePrintStream.class), createMock(SimplePrintStream.class) };
 	
 	@Test
 	public void loggerAppenderStoresRelativeToContextClassLoader() {
@@ -71,7 +71,7 @@ public class LoggerAppenderStoreTests extends SysOutOverSLF4JTestCase {
 	@Test
 	public void loggerAppenderStoreReturnsLoggerAppenderStoredAgainstParentOfContextClassLoader() {
 		ClassLoader parent = new ClassLoader() { };
-		LoggerAppender loggerAppender = createMock(LoggerAppender.class);
+		SimplePrintStream loggerAppender = createMock(SimplePrintStream.class);
 		currentThread().setContextClassLoader(parent);
 		storeUnderTest.put(loggerAppender);
 		

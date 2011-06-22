@@ -90,12 +90,12 @@ import java.util.Locale;
  *         SLF4J, though a performance hit will occur.
  *         </p>
  */
-final class SLF4JPrintStream extends PrintStream { // NOPMD superclass has too many methods
+final class PerContextPrintStream extends PrintStream { // NOPMD superclass has too many methods
 
 	private final PrintStream originalPrintStream;
-	private final SLF4JPrintStreamDelegate delegate;
+	private final PerContextPrintStreamDelegate delegate;
 
-	SLF4JPrintStream(final PrintStream originalPrintStream, final SLF4JPrintStreamDelegate delegate) {
+	PerContextPrintStream(final PrintStream originalPrintStream, final PerContextPrintStreamDelegate delegate) {
 		// This ByteArrayOutputStream will be unused - we aren't going to touch
 		// the super class.
 		super(new ByteArrayOutputStream());
@@ -281,15 +281,15 @@ final class SLF4JPrintStream extends PrintStream { // NOPMD superclass has too m
 		delegate.delegatePrintln(string);
 	}
 
-	public void registerLoggerAppender(final LoggerAppender loggerAppender) {
-		delegate.registerLoggerAppender(loggerAppender);
+	void registerSimplePrintStream(final SimplePrintStream simplePrintStream) {
+		delegate.registerSimplePrintStream(simplePrintStream);
 	}
 
-	public void deregisterLoggerAppender() {
-		delegate.deregisterLoggerAppender();
+	void deregisterSimplePrintStream() {
+		delegate.deregisterSimplePrintStream();
 	}
 
-	public PrintStream getOriginalPrintStream() {
+	PrintStream getOriginalPrintStream() {
 		return originalPrintStream;
 	}
 }
