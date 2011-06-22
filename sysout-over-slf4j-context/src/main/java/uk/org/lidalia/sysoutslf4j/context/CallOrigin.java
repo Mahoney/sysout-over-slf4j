@@ -22,7 +22,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.sysoutslf4j.system;
+package uk.org.lidalia.sysoutslf4j.context;
 
 final class CallOrigin {
 
@@ -42,7 +42,9 @@ final class CallOrigin {
 		return className;
 	}
 
-	static CallOrigin getCallOrigin(final StackTraceElement[] stackTraceElements, final String libraryPackageName) {
+	static CallOrigin getCallOrigin(final String libraryPackageName) {
+		Thread currentThread = Thread.currentThread();
+		final StackTraceElement[] stackTraceElements = currentThread.getStackTrace();
 		boolean isStackTrace = false;
 		for (StackTraceElement stackTraceElement : stackTraceElements) {
 			String className = stackTraceElement.getClassName();

@@ -68,9 +68,6 @@ class SLF4JPrintStreamDelegate {
 	}
 
 	private static void appendAndLog(final String message, final LoggerAppender loggerAppender) {
-		final StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-		final String libraryPackageName = "uk.org.lidalia.sysoutslf4j";
-		final CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, libraryPackageName);
-		loggerAppender.appendAndLog(message, callOrigin.getClassName(), callOrigin.isPrintingStackTrace());
+		loggerAppender.appendAndLog(message);
 	}
 }

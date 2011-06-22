@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
+import uk.org.lidalia.sysoutslf4j.context.CallOrigin;
 import uk.org.lidalia.sysoutslf4j.system.LoggerAppender;
 
 public class LoggerAppenderImpl implements LoggerAppender {
@@ -57,10 +58,10 @@ public class LoggerAppenderImpl implements LoggerAppender {
 		buffer.append(message);
 	}
 
-	public void appendAndLog(final String message, final String className, final boolean isStackTrace) {
+	public void appendAndLog(final String message) {		
 		buffer.append(message);
 		final String logStatement = flushBuffer();
-		logOrPrint(logStatement, className, isStackTrace);
+		logOrPrint(logStatement);
 	}
 
 	private String flushBuffer() {
@@ -69,12 +70,18 @@ public class LoggerAppenderImpl implements LoggerAppender {
 		return logStatement;
 	}
 
-	private void logOrPrint(final String logStatement, final String className, final boolean isStackTrace) {
-		if (loggingSystemRegister.isInLoggingSystem(className)) {
+	private void logOrPrint(final String logStatement) {
+		final CallOrigin callOrigin = getCallOrigin();
+		if (loggingSystemRegister.isInLoggingSystem(callOrigin.getClassName())) {
 			originalPrintStream.println(logStatement);
 		} else {
-			log(logStatement, className, isStackTrace);
+			log(logStatement, callOrigin.getClassName(), callOrigin.isPrintingStackTrace());
 		}
+	}
+
+	private CallOrigin getCallOrigin() {
+		final CallOrigin callOrigin = CallOrigin.getCallOrigin("uk.org.lidalia.sysoutslf4j");
+		return callOrigin;
 	}
 
 	private void log(final String logStatement, final String className, final boolean isStackTrace) {

@@ -22,48 +22,35 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.sysoutslf4j.system;
+package uk.org.lidalia.sysoutslf4j.context;
 
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.powermock.api.easymock.PowerMock.createNiceMock;
+import static org.powermock.api.easymock.PowerMock.mockStatic;
+import static org.powermock.api.easymock.PowerMock.replayAll;
 import static uk.org.lidalia.test.Assert.shouldThrow;
 
 import java.util.concurrent.Callable;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import uk.org.lidalia.sysoutslf4j.system.CallOrigin;
+import uk.org.lidalia.sysoutslf4j.context.CallOrigin;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ CallOrigin.class, Thread.class })
 public class TestCallOrigin {
-
-	@Test
-	public void testGetCallOriginThrowsNullPointerIfCalledWithNoStackTrace() throws Throwable {
-		shouldThrow(NullPointerException.class, new Callable<Void>() {
-			public Void call() throws Exception {
-				CallOrigin.getCallOrigin(null, "com");
-				return null;
-			}
-		});
-	}
 
 	@Test
 	public void testGetCallOriginThrowsNullPointerIfCalledWithNoLibraryPackageName() throws Throwable {
 		shouldThrow(NullPointerException.class, new Callable<Void>() {
 			public Void call() throws Exception {
-				StackTraceElement[] stackTraceElements = { buildStackTraceElement("org.a.ClassName") };
-				CallOrigin.getCallOrigin(stackTraceElements, null);
-				return null;
-			}
-		});
-	}
-
-	@Test
-	public void testGetCallOriginThrowsIllegalStateExceptionIfCalledWithEmptyStackTrace() throws Throwable {
-		shouldThrow(IllegalStateException.class, new Callable<Void>() {
-			public Void call() throws Exception {
-				StackTraceElement[] stackTraceElements = { };
-				CallOrigin.getCallOrigin(stackTraceElements, "");
+				CallOrigin.getCallOrigin(null);
 				return null;
 			}
 		});
@@ -71,107 +58,136 @@ public class TestCallOrigin {
 
 	@Test
 	public void testGetCallOriginThrowsIllegalStateExceptionIfAllStackTraceElementsAreInTheLibrary() throws Throwable {
-		shouldThrow(IllegalStateException.class, new Callable<Void>() {
+		expectGetStackTraceToReturn(new StackTraceElement[] {
+				buildStackTraceElement("org.a.1"),
+				buildStackTraceElement("org.a.2")
+		});
+		replayAll();
+
+		IllegalStateException exception = shouldThrow(IllegalStateException.class, new Callable<Void>() {
 			public Void call() throws Exception {
-				StackTraceElement[] stackTraceElements = {
-						buildStackTraceElement("org.a.1"),
-						buildStackTraceElement("org.a.2")
-				};
-				CallOrigin.getCallOrigin(stackTraceElements, "org.a");
+				CallOrigin.getCallOrigin("org.a");
 				return null;
 			}
 		});
+		assertEquals("Nothing in the stack originated from outside package name org.a", exception.getMessage());
 	}
 
 	@Test
 	public void testGetCallOriginReturnsFirstClassName() {
-		StackTraceElement[] stackTraceElements = {
+		expectGetStackTraceToReturn(new StackTraceElement[] {
 				buildStackTraceElement("org.a.ClassName"),
 				buildStackTraceElement("org.b.ClassName")
-		};
-		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
+		});
+		replayAll();
+		
+		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
 	}
 
 	@Test
 	public void testGetCallOriginIsNotStackTraceIfThrowableNotFirstElement() {
-		StackTraceElement[] stackTraceElements = { buildStackTraceElement("org.a.ClassName") };
-		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
+		expectGetStackTraceToReturn(new StackTraceElement[] { buildStackTraceElement("org.a.ClassName") });
+		replayAll();
+		
+		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
 		assertFalse(callOrigin.isPrintingStackTrace());
 	}
 
 	@Test
 	public void testGetCallOriginIsStackTraceIfThrowableIsFirstElement() {
-		StackTraceElement[] stackTraceElements = {
+		expectGetStackTraceToReturn(new StackTraceElement[] {
 				buildStackTraceElement("java.lang.Throwable"),
 				buildStackTraceElement("org.a.ClassName")
-		};
-		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
+		});
+		replayAll();
+		
+		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
 		assertTrue(callOrigin.isPrintingStackTrace());
 	}
 
 	@Test
 	public void testGetCallOriginReturnsFirstClassNameOtherThanThrowable() {
-		StackTraceElement[] stackTraceElements = {
+		expectGetStackTraceToReturn(new StackTraceElement[] {
 				buildStackTraceElement("java.lang.Throwable"),
 				buildStackTraceElement("org.a.ClassName")
-		};
-		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
+		});
+		replayAll();
+		
+		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
 	}
 
 	@Test
 	public void testGetCallOriginReturnsFirstClassNameOtherThanThread() {
-		StackTraceElement[] stackTraceElements = {
+		expectGetStackTraceToReturn(new StackTraceElement[] {
 				buildStackTraceElement("java.lang.Thread"),
 				buildStackTraceElement("org.a.ClassName")
-		};
-		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
+		});
+		replayAll();
+		
+		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
 	}
 
 	@Test
 	public void testGetCallOriginReturnsFirstClassNameOutsideTheLibrary() {
-		StackTraceElement[] stackTraceElements = {
+		expectGetStackTraceToReturn(new StackTraceElement[] {
 				buildStackTraceElement("com.something"),
 				buildStackTraceElement("com.somethingelse"),
 				buildStackTraceElement("org.a.ClassName")
-		};
-		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
+		});
+		replayAll();
+		
+		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
 	}
 
 	@Test
 	public void testGetCallOriginIsStackTraceIfThrowableIsFirstElementOutsideTheLibrary() {
-		StackTraceElement[] stackTraceElements = {
+		expectGetStackTraceToReturn(new StackTraceElement[] {
 				buildStackTraceElement("com.something"),
 				buildStackTraceElement("com.somethingelse"),
 				buildStackTraceElement("java.lang.Throwable"),
 				buildStackTraceElement("org.a.ClassName")
-		};
-		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
+		});
+		replayAll();
+		
+		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
 		assertTrue(callOrigin.isPrintingStackTrace());
 	}
 
 	@Test
 	public void testGetCallOriginReturnsFirstClassNameOutsideTheLibraryOtherThanThreadOrThrowable() {
-		StackTraceElement[] stackTraceElements = {
+		expectGetStackTraceToReturn(new StackTraceElement[] {
 				buildStackTraceElement("java.lang.Thread"),
 				buildStackTraceElement("com.something"),
 				buildStackTraceElement("com.somethingelse"),
 				buildStackTraceElement("java.lang.Throwable"),
 				buildStackTraceElement("org.a.ClassName"),
 				buildStackTraceElement("org.b.ClassName")
-		};
-		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
+		});
+		replayAll();
+		
+		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
 	}
 
 	@Test
 	public void testGetCallOriginReturnsInnerClassesAsTheOuterClass() {
-		StackTraceElement[] stackTraceElements = { buildStackTraceElement("org.a.ClassName$InnerClass") };
-		CallOrigin callOrigin = CallOrigin.getCallOrigin(stackTraceElements, "com");
+		expectGetStackTraceToReturn(new StackTraceElement[] { buildStackTraceElement("org.a.ClassName$InnerClass") });
+		replayAll();
+		
+		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
+	}
+
+	private void expectGetStackTraceToReturn(StackTraceElement[] stackTraceElements) {
+		Thread mockThread = createNiceMock(Thread.class);
+		expect(mockThread.getStackTrace()).andStubReturn(stackTraceElements);
+		mockStatic(Thread.class);
+		expect(Thread.currentThread()).andStubReturn(mockThread);
+		expect(Thread.class.getName()).andStubReturn("java.lang.Thread");
 	}
 
 	private StackTraceElement buildStackTraceElement(String declaringClass) {

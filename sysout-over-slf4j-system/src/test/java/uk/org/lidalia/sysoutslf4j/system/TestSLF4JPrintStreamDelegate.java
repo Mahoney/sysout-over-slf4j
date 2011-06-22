@@ -24,11 +24,8 @@
 
 package uk.org.lidalia.sysoutslf4j.system;
 
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
 import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
@@ -40,12 +37,11 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import uk.org.lidalia.sysoutslf4j.system.CallOrigin;
 import uk.org.lidalia.sysoutslf4j.system.LoggerAppenderStore;
 import uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamDelegate;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ PrintStream.class, CallOrigin.class })
+@PrepareForTest({ PrintStream.class })
 public class TestSLF4JPrintStreamDelegate {
 
 	private PrintStream originalPrintStreamMock = createMock(PrintStream.class);
@@ -86,8 +82,7 @@ public class TestSLF4JPrintStreamDelegate {
 	@Test
 	public void delegatePrintlnCallsLoggerAppenderAppendAndLog() {
 		expect(loggerAppenderStoreMock.get()).andReturn(loggerAppenderMock);
-		mockGettingCallOrigin("classname", true);
-		loggerAppenderMock.appendAndLog("the message", "classname", true);
+		loggerAppenderMock.appendAndLog("the message");
 		replayAll();
 		
 		delegate.delegatePrintln("the message");
@@ -105,8 +100,7 @@ public class TestSLF4JPrintStreamDelegate {
 	@Test
 	public void delegatePrintCallsLoggerAppenderAppendAndLogWhenMessageEndsWithUnixLineBreak() {
 		expect(loggerAppenderStoreMock.get()).andReturn(loggerAppenderMock);
-		mockGettingCallOrigin("classname", true);
-		loggerAppenderMock.appendAndLog("the message", "classname", true);
+		loggerAppenderMock.appendAndLog("the message");
 		replayAll();
 		
 		delegate.delegatePrint("the message\n");
@@ -115,8 +109,7 @@ public class TestSLF4JPrintStreamDelegate {
 	@Test
 	public void delegatePrintCallsLoggerAppenderAppendAndLogWhenMessageEndsWithWindowsLineBreak() {
 		expect(loggerAppenderStoreMock.get()).andReturn(loggerAppenderMock);
-		mockGettingCallOrigin("classname", true);
-		loggerAppenderMock.appendAndLog("the message", "classname", true);
+		loggerAppenderMock.appendAndLog("the message");
 		replayAll();
 		
 		delegate.delegatePrint("the message\r\n");
@@ -129,14 +122,5 @@ public class TestSLF4JPrintStreamDelegate {
 		replayAll();
 		
 		delegate.delegatePrint("the message");
-	}
-
-	private void mockGettingCallOrigin(String className, boolean printingStackTrace) {
-		CallOrigin callOriginMock = createMock(CallOrigin.class);
-		expect(callOriginMock.isPrintingStackTrace()).andStubReturn(printingStackTrace);
-		expect(callOriginMock.getClassName()).andStubReturn(className);
-
-		mockStatic(CallOrigin.class);
-		expect(CallOrigin.getCallOrigin(isA(StackTraceElement[].class), eq("uk.org.lidalia.sysoutslf4j"))).andStubReturn(callOriginMock);
 	}
 }

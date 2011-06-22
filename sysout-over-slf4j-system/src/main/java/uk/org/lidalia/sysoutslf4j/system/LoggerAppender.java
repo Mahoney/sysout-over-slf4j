@@ -28,6 +28,6 @@ public interface LoggerAppender {
 
 	void append(String message);
 
-	void appendAndLog(String message, String className, boolean isStackTrace);
+	void appendAndLog(String message);
 
 }

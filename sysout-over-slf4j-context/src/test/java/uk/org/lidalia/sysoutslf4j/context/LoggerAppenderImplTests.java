@@ -24,8 +24,10 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.isA;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
@@ -45,9 +47,10 @@ import uk.org.lidalia.sysoutslf4j.context.LogLevel;
 import uk.org.lidalia.sysoutslf4j.context.LoggerAppenderImpl;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
+import uk.org.lidalia.sysoutslf4j.context.CallOrigin;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({LoggerFactory.class})
+@PrepareForTest({LoggerFactory.class, CallOrigin.class})
 public class LoggerAppenderImplTests extends SysOutOverSLF4JTestCase {
 
 	private static final String CLASS_IN_LOGGING_SYSTEM = "org.logging.LoggerClass";
@@ -83,6 +86,7 @@ public class LoggerAppenderImplTests extends SysOutOverSLF4JTestCase {
 
 	@Test
 	public void appendAndLogPrintsToPrintStreamIfInLoggingSystem() {
+		mockGettingCallOrigin(CLASS_IN_LOGGING_SYSTEM, false);
 		loggingSystemRegisterMock.isInLoggingSystem(CLASS_IN_LOGGING_SYSTEM);
 		expectLastCall().andStubReturn(true);
 
@@ -90,30 +94,34 @@ public class LoggerAppenderImplTests extends SysOutOverSLF4JTestCase {
 		replayAll();
 		
 		LoggerAppenderImpl loggerAppenderImplInstance = new LoggerAppenderImpl(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
-		loggerAppenderImplInstance.appendAndLog("some text", CLASS_IN_LOGGING_SYSTEM, false);
+		loggerAppenderImplInstance.appendAndLog("some text");
 	}
 
 	@Test
 	public void appendAndLogNonStackTraceLogsAndNotifiesNotStackTrace() {
+		mockGettingCallOrigin(CLASS_NAME, false);
+
 		exceptionHandlingStrategyMock.notifyNotStackTrace();
 		loggerMock.info("some text");
 		replayAll();
 		
 		LoggerAppenderImpl loggerAppenderImplInstance = new LoggerAppenderImpl(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
-		loggerAppenderImplInstance.appendAndLog("some text", CLASS_NAME, false);
+		loggerAppenderImplInstance.appendAndLog("some text");
 	}
 
 	@Test
 	public void appendAndLogStackTraceCallsExceptionHandlingStrategy() {
+		mockGettingCallOrigin(CLASS_NAME, true);
 		exceptionHandlingStrategyMock.handleExceptionLine("some text", loggerMock);
 		replayAll();
 	
 		LoggerAppenderImpl loggerAppenderImplInstance = new LoggerAppenderImpl(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
-		loggerAppenderImplInstance.appendAndLog("some text", CLASS_NAME, true);
+		loggerAppenderImplInstance.appendAndLog("some text");
 	}
 
 	@Test
 	public void appendAndLogFlushesAndResetsBuffer() {
+		mockGettingCallOrigin(CLASS_NAME, false);
 		exceptionHandlingStrategyMock.notifyNotStackTrace();
 		expectLastCall().asStub();
 		
@@ -123,8 +131,17 @@ public class LoggerAppenderImplTests extends SysOutOverSLF4JTestCase {
 		
 		LoggerAppenderImpl loggerAppenderImplInstance = new LoggerAppenderImpl(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
 		loggerAppenderImplInstance.append("1");
-		loggerAppenderImplInstance.appendAndLog("2", CLASS_NAME, false);
+		loggerAppenderImplInstance.appendAndLog("2");
 		loggerAppenderImplInstance.append("3");
-		loggerAppenderImplInstance.appendAndLog("4", CLASS_NAME, false);
+		loggerAppenderImplInstance.appendAndLog("4");
+	}
+
+	private void mockGettingCallOrigin(String className, boolean printingStackTrace) {
+		CallOrigin callOriginMock = createMock(CallOrigin.class);
+		expect(callOriginMock.isPrintingStackTrace()).andStubReturn(printingStackTrace);
+		expect(callOriginMock.getClassName()).andStubReturn(className);
+
+		mockStatic(CallOrigin.class);
+		expect(CallOrigin.getCallOrigin(eq("uk.org.lidalia.sysoutslf4j"))).andStubReturn(callOriginMock);
 	}
 }
