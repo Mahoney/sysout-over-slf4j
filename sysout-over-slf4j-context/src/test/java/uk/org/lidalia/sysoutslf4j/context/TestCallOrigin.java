@@ -58,10 +58,10 @@ public class TestCallOrigin {
 
 	@Test
 	public void testGetCallOriginThrowsIllegalStateExceptionIfAllStackTraceElementsAreInTheLibrary() throws Throwable {
-		expectGetStackTraceToReturn(new StackTraceElement[] {
-				buildStackTraceElement("org.a.1"),
-				buildStackTraceElement("org.a.2")
-		});
+		expectGetStackTraceToReturn(
+				stackTraceElement("org.a.1"),
+				stackTraceElement("org.a.2")
+		);
 		replayAll();
 
 		IllegalStateException exception = shouldThrow(IllegalStateException.class, new Callable<Void>() {
@@ -75,10 +75,10 @@ public class TestCallOrigin {
 
 	@Test
 	public void testGetCallOriginReturnsFirstClassName() {
-		expectGetStackTraceToReturn(new StackTraceElement[] {
-				buildStackTraceElement("org.a.ClassName"),
-				buildStackTraceElement("org.b.ClassName")
-		});
+		expectGetStackTraceToReturn(
+				stackTraceElement("org.a.ClassName"),
+				stackTraceElement("org.b.ClassName")
+		);
 		replayAll();
 		
 		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
@@ -87,7 +87,7 @@ public class TestCallOrigin {
 
 	@Test
 	public void testGetCallOriginIsNotStackTraceIfThrowableNotFirstElement() {
-		expectGetStackTraceToReturn(new StackTraceElement[] { buildStackTraceElement("org.a.ClassName") });
+		expectGetStackTraceToReturn(stackTraceElement("org.a.ClassName"));
 		replayAll();
 		
 		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
@@ -96,10 +96,10 @@ public class TestCallOrigin {
 
 	@Test
 	public void testGetCallOriginIsStackTraceIfThrowableIsFirstElement() {
-		expectGetStackTraceToReturn(new StackTraceElement[] {
-				buildStackTraceElement("java.lang.Throwable"),
-				buildStackTraceElement("org.a.ClassName")
-		});
+		expectGetStackTraceToReturn(
+				stackTraceElement("java.lang.Throwable"),
+				stackTraceElement("org.a.ClassName")
+		);
 		replayAll();
 		
 		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
@@ -108,10 +108,10 @@ public class TestCallOrigin {
 
 	@Test
 	public void testGetCallOriginReturnsFirstClassNameOtherThanThrowable() {
-		expectGetStackTraceToReturn(new StackTraceElement[] {
-				buildStackTraceElement("java.lang.Throwable"),
-				buildStackTraceElement("org.a.ClassName")
-		});
+		expectGetStackTraceToReturn(
+				stackTraceElement("java.lang.Throwable"),
+				stackTraceElement("org.a.ClassName")
+		);
 		replayAll();
 		
 		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
@@ -120,10 +120,10 @@ public class TestCallOrigin {
 
 	@Test
 	public void testGetCallOriginReturnsFirstClassNameOtherThanThread() {
-		expectGetStackTraceToReturn(new StackTraceElement[] {
-				buildStackTraceElement("java.lang.Thread"),
-				buildStackTraceElement("org.a.ClassName")
-		});
+		expectGetStackTraceToReturn(
+				stackTraceElement("java.lang.Thread"),
+				stackTraceElement("org.a.ClassName")
+		);
 		replayAll();
 		
 		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
@@ -132,11 +132,11 @@ public class TestCallOrigin {
 
 	@Test
 	public void testGetCallOriginReturnsFirstClassNameOutsideTheLibrary() {
-		expectGetStackTraceToReturn(new StackTraceElement[] {
-				buildStackTraceElement("com.something"),
-				buildStackTraceElement("com.somethingelse"),
-				buildStackTraceElement("org.a.ClassName")
-		});
+		expectGetStackTraceToReturn(
+				stackTraceElement("com.something"),
+				stackTraceElement("com.somethingelse"),
+				stackTraceElement("org.a.ClassName")
+		);
 		replayAll();
 		
 		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
@@ -145,12 +145,12 @@ public class TestCallOrigin {
 
 	@Test
 	public void testGetCallOriginIsStackTraceIfThrowableIsFirstElementOutsideTheLibrary() {
-		expectGetStackTraceToReturn(new StackTraceElement[] {
-				buildStackTraceElement("com.something"),
-				buildStackTraceElement("com.somethingelse"),
-				buildStackTraceElement("java.lang.Throwable"),
-				buildStackTraceElement("org.a.ClassName")
-		});
+		expectGetStackTraceToReturn(
+				stackTraceElement("com.something"),
+				stackTraceElement("com.somethingelse"),
+				stackTraceElement("java.lang.Throwable"),
+				stackTraceElement("org.a.ClassName")
+		);
 		replayAll();
 		
 		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
@@ -159,14 +159,14 @@ public class TestCallOrigin {
 
 	@Test
 	public void testGetCallOriginReturnsFirstClassNameOutsideTheLibraryOtherThanThreadOrThrowable() {
-		expectGetStackTraceToReturn(new StackTraceElement[] {
-				buildStackTraceElement("java.lang.Thread"),
-				buildStackTraceElement("com.something"),
-				buildStackTraceElement("com.somethingelse"),
-				buildStackTraceElement("java.lang.Throwable"),
-				buildStackTraceElement("org.a.ClassName"),
-				buildStackTraceElement("org.b.ClassName")
-		});
+		expectGetStackTraceToReturn(
+				stackTraceElement("java.lang.Thread"),
+				stackTraceElement("com.something"),
+				stackTraceElement("com.somethingelse"),
+				stackTraceElement("java.lang.Throwable"),
+				stackTraceElement("org.a.ClassName"),
+				stackTraceElement("org.b.ClassName")
+		);
 		replayAll();
 		
 		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
@@ -175,14 +175,14 @@ public class TestCallOrigin {
 
 	@Test
 	public void testGetCallOriginReturnsInnerClassesAsTheOuterClass() {
-		expectGetStackTraceToReturn(new StackTraceElement[] { buildStackTraceElement("org.a.ClassName$InnerClass") });
+		expectGetStackTraceToReturn(new StackTraceElement[] { stackTraceElement("org.a.ClassName$InnerClass") });
 		replayAll();
 		
 		CallOrigin callOrigin = CallOrigin.getCallOrigin("com");
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
 	}
 
-	private void expectGetStackTraceToReturn(StackTraceElement[] stackTraceElements) {
+	private void expectGetStackTraceToReturn(StackTraceElement... stackTraceElements) {
 		Thread mockThread = createNiceMock(Thread.class);
 		expect(mockThread.getStackTrace()).andStubReturn(stackTraceElements);
 		mockStatic(Thread.class);
@@ -190,7 +190,7 @@ public class TestCallOrigin {
 		expect(Thread.class.getName()).andStubReturn("java.lang.Thread");
 	}
 
-	private StackTraceElement buildStackTraceElement(String declaringClass) {
+	private StackTraceElement stackTraceElement(String declaringClass) {
 		return new StackTraceElement(declaringClass, "", "", 0);
 	}
 }
