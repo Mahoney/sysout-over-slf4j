@@ -25,76 +25,88 @@
 package uk.org.lidalia.sysoutslf4j.system;
 
 import static java.lang.Thread.currentThread;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.powermock.api.easymock.PowerMock.createMock;
 
 import org.junit.Test;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.system.SimplePrintStreamStore;
+import uk.org.lidalia.sysoutslf4j.system.PerContextStore;
 
-public class LoggerAppenderStoreTests extends SysOutOverSLF4JTestCase {
+public class PerContextStoreTests extends SysOutOverSLF4JTestCase {
 	
-	private final SimplePrintStreamStore storeUnderTest = new SimplePrintStreamStore();
+	private final PerContextStore<String> storeUnderTest = new PerContextStore<String>();
 	private final ClassLoader[] classLoaders = { new ClassLoader() { }, new ClassLoader() { } };
-	private final SimplePrintStream[] loggerAppenders = { createMock(SimplePrintStream.class), createMock(SimplePrintStream.class) };
+	private final String[] objectsToStore = { "1", "2" };
 	
 	@Test
-	public void loggerAppenderStoresRelativeToContextClassLoader() {
-		storeAppendersAgainstDifferentContextClassLoaders();
-		assertCorrectAppenderReturnedForEachClassLoader();
+	public void perContextStoreStoresValueRelativeToContextClassLoader() {
+		storeValuesAgainstDifferentContextClassLoaders();
+		assertCorrectValueReturnedForEachClassLoader();
 	}
 
-	private void storeAppendersAgainstDifferentContextClassLoaders() {
+	private void storeValuesAgainstDifferentContextClassLoaders() {
 		for (int i = 0; i < classLoaders.length; i++) {
 			currentThread().setContextClassLoader(classLoaders[i]);
-			storeUnderTest.put(loggerAppenders[i]);
+			storeUnderTest.put(objectsToStore[i]);
 		}
 	}
 	
-	private void assertCorrectAppenderReturnedForEachClassLoader() {
+	private void assertCorrectValueReturnedForEachClassLoader() {
 		for (int i = 0; i < classLoaders.length; i++) {
 			currentThread().setContextClassLoader(classLoaders[i]);
-			assertSame(loggerAppenders[i], storeUnderTest.get());
+			assertSame(objectsToStore[i], storeUnderTest.get());
 		}
 	}
 	
 	@Test
-	public void loggerAppenderStoreWorksIfContextClassLoaderIsNull() {
+	public void perContextStoreWorksIfContextClassLoaderIsNull() {
 		currentThread().setContextClassLoader(null);
-		storeUnderTest.put(loggerAppenders[0]);
+		storeUnderTest.put("value");
 		assertNull(currentThread().getContextClassLoader());
-		assertSame(loggerAppenders[0], storeUnderTest.get());
+		assertEquals("value", storeUnderTest.get());
 	}
 	
 	@Test
-	public void loggerAppenderStoreReturnsLoggerAppenderStoredAgainstParentOfContextClassLoader() {
+	public void perContextStoreReturnsValueStoredAgainstParentOfContextClassLoader() {
 		ClassLoader parent = new ClassLoader() { };
-		SimplePrintStream loggerAppender = createMock(SimplePrintStream.class);
+		String value = "aValue";
 		currentThread().setContextClassLoader(parent);
-		storeUnderTest.put(loggerAppender);
+		storeUnderTest.put(value);
 		
 		ClassLoader child = new ClassLoader(parent) { };
 		currentThread().setContextClassLoader(child);
 		
-		assertSame(loggerAppender, storeUnderTest.get());
+		assertSame(value, storeUnderTest.get());
 	}
 	
 	@Test
-	public void loggerAppenderStoreReturnsNullIfNoClassLoaderStored() {
+	public void perContextStoreReturnsNullIfNoValueStoredAndNoDefaultSet() {
 		assertNull(storeUnderTest.get());
 	}
 
 	@Test
-	public void removeRemovesLoggerAppenderForCurrentContextClassLoader() {
-		storeAppendersAgainstDifferentContextClassLoaders();
+	public void perContextStoreReturnsDefaultIfNoClassLoaderStored() {
+		PerContextStore<String> storeUnderTest = new PerContextStore<String>("default");
+		assertEquals("default", storeUnderTest.get());
+	}
+
+	@Test
+	public void removeRemovesValueForCurrentContextClassLoader() {
+		storeValuesAgainstDifferentContextClassLoaders();
 		currentThread().setContextClassLoader(classLoaders[0]);
 		storeUnderTest.remove();
 		assertNull(storeUnderTest.get());
 		for (int i = 1; i < classLoaders.length; i++) {
 			currentThread().setContextClassLoader(classLoaders[i]);
-			assertSame(loggerAppenders[i], storeUnderTest.get());
+			assertSame(objectsToStore[i], storeUnderTest.get());
 		}
+	}
+	
+	@Test
+	public void getDefaultValueReturnsDefaultValue() {
+		PerContextStore<String> storeUnderTest = new PerContextStore<String>("default");
+		assertEquals("default", storeUnderTest.getDefaultValue());
 	}
 }

@@ -24,12 +24,13 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
+import java.io.PrintStream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory;
-import uk.org.lidalia.sysoutslf4j.system.SimplePrintStream;
 import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
 
 /**
@@ -124,10 +125,12 @@ public final class SysOutOverSLF4J {
 	private static void registerNewLoggerAppender(
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
 			final PerContextSystemOutput slf4jSystemOutput, final LogLevel logLevel) {
-		final SimplePrintStream loggerAppender = new LoggerAppenderImpl(
-				logLevel, exceptionHandlingStrategyFactory, slf4jSystemOutput.getOriginalPrintStream(), LOGGING_SYSTEM_REGISTER);
-		ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(loggerAppender);
-		slf4jSystemOutput.registerSimplePrintStream(loggerAppender);
+		PrintStream originalPrintStream = slf4jSystemOutput.getOriginalPrintStream();
+		final LoggerAppender loggerAppender = new LoggerAppender(
+				logLevel, exceptionHandlingStrategyFactory, originalPrintStream, LOGGING_SYSTEM_REGISTER);
+		final PrintStream slf4jPrintStream = new PerContextPrintStream(originalPrintStream, loggerAppender);
+		ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(slf4jPrintStream);
+		slf4jSystemOutput.registerPrintStreamForThisContext(slf4jPrintStream);
 	}
 
 	/**
@@ -138,7 +141,7 @@ public final class SysOutOverSLF4J {
 	public static void stopSendingSystemOutAndErrToSLF4J() {
 		synchronized (System.class) {
 			for (PerContextSystemOutput systemOutput : PerContextSystemOutput.values()) {
-				systemOutput.deregisterSimplePrintStream();
+				systemOutput.deregisterPrintStreamForThisContext();
 			}
 		}
 	}

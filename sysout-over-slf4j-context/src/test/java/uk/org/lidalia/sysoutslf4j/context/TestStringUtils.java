@@ -22,58 +22,58 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.sysoutslf4j.system;
+package uk.org.lidalia.sysoutslf4j.context;
 
 import static org.junit.Assert.assertEquals;
+import static uk.org.lidalia.test.Assert.assertNotInstantiable;
+import static uk.org.lidalia.test.Assert.shouldThrow;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.util.concurrent.Callable;
 
 import org.junit.Test;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
+import uk.org.lidalia.sysoutslf4j.context.StringUtils;
 
-public class TestSystemOutput extends SysOutOverSLF4JTestCase {
-
-	@Test
-	public void SYSOUTGetReturnsSysout() {
-		PrintStream actual = SystemOutput.OUT.get();
-		assertEquals(System.out, actual);
-	}
+public class TestStringUtils extends SysOutOverSLF4JTestCase {
 
 	@Test
-	public void SYSERRGetReturnsSyserr() {
-		PrintStream actual = SystemOutput.ERR.get();
-		assertEquals(System.err, actual);
-	}
-
-	@Test
-	public void SYSOUTSetAltersSysout() {
-		PrintStream expected = new PrintStream(new ByteArrayOutputStream());
-		SystemOutput.OUT.set(expected);
-		assertEquals(expected, System.out);
-	}
-
-	@Test
-	public void SYSERRSetAltersSyserr() {
-		PrintStream expected = new PrintStream(new ByteArrayOutputStream());
-		SystemOutput.ERR.set(expected);
-		assertEquals(expected, System.err);
+	public void stripEndStripsEnd() {
+		assertEquals("hello wo", StringUtils.stripEnd("hello world", "elders"));
 	}
 	
 	@Test
-	public void SYSOUTToString() {
-		assertEquals("System.out", SystemOutput.OUT.toString());
+	public void stripEndReturnsEmptyStringIfEmptyStringPassedIn() {
+		assertEquals("", StringUtils.stripEnd("", "irrelevant"));
 	}
 	
 	@Test
-	public void SYSERRToString() {
-		assertEquals("System.err", SystemOutput.ERR.toString());
+	public void stripEndReturnsInputIfEmptyStripCharsPassedIn() {
+		assertEquals("hello", StringUtils.stripEnd("hello", ""));
 	}
 	
 	@Test
-	public void valueOf() {
-		assertEquals(SystemOutput.ERR, SystemOutput.valueOf("ERR"));
+	public void stripEndThrowsNullPointerExceptionIfInputIsNull() throws Throwable {
+		shouldThrow(NullPointerException.class, new Callable<Void>() {
+			public Void call() throws Exception {
+				StringUtils.stripEnd(null, "irrelevant");
+				return null;
+			}
+		});
+	}
+	
+	@Test
+	public void stripEndThrowsNullPointerExceptionIfStripCharsIsNull() throws Throwable {
+		shouldThrow(NullPointerException.class, new Callable<Void>() {
+			public Void call() throws Exception {
+				StringUtils.stripEnd("irrelevant", null);
+				return null;
+			}
+		});
+	}
+	
+	@Test
+	public void notInstantiable() throws Throwable {
+		assertNotInstantiable(StringUtils.class);
 	}
 }

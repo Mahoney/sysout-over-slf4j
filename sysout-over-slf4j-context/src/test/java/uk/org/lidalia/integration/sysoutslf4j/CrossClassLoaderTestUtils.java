@@ -34,7 +34,6 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.powermock.reflect.Whitebox;
 
 import uk.org.lidalia.lang.Exceptions;
 
@@ -62,7 +61,7 @@ public class CrossClassLoaderTestUtils {
 			args = args == null ? new Object[0] : args;
 			Method targetMethod = target.getClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
 			targetMethod.setAccessible(true);
-			Object result = Whitebox.invokeMethod(targetMethod, target, args);
+			Object result = targetMethod.invoke(target, args);
 			if (result == null) {
 				return null;
 			}

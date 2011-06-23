@@ -28,23 +28,20 @@ import static org.junit.Assert.assertNull;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Proxy;
 
 import org.junit.Test;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.system.SimplePrintStreamStore;
-import uk.org.lidalia.testutils.NoOpInvocationHandler;
+import uk.org.lidalia.sysoutslf4j.system.PerContextStore;
 
-public class TestLoggerAppenderStoreMemoryManagement extends SysOutOverSLF4JTestCase {
+public class PerContextStoreMemoryManagementTests extends SysOutOverSLF4JTestCase {
 
-	private final SimplePrintStreamStore storeUnderTest = new SimplePrintStreamStore();
+	private final PerContextStore<String> storeUnderTest = new PerContextStore<String>();
 
 	private ClassLoader classLoader = new ClassLoader(){};
 	private final WeakReference<ClassLoader> refToClassLoader =
 		new WeakReference<ClassLoader>(classLoader, new ReferenceQueue<Object>());
-	private SimplePrintStream loggerAppender = (SimplePrintStream) Proxy.newProxyInstance(
-			classLoader, new Class[] {SimplePrintStream.class}, NoOpInvocationHandler.INSTANCE);
+	private String valueToStore = "some value";
 
 	@Test
 	public void loggerAppenderStoreDoesNotCauseAClassLoaderLeak() throws Exception {
@@ -56,7 +53,7 @@ public class TestLoggerAppenderStoreMemoryManagement extends SysOutOverSLF4JTest
 
 	private void storeLoggerAppenderAgainstClassLoader() {
 		Thread.currentThread().setContextClassLoader(classLoader);
-		storeUnderTest.put(loggerAppender);
+		storeUnderTest.put(valueToStore);
 	}
 
 	private void removeLocalReferenceToClassLoader() {
@@ -65,7 +62,7 @@ public class TestLoggerAppenderStoreMemoryManagement extends SysOutOverSLF4JTest
 	}
 	
 	private void removeLocalReferenceToLoggerAppenderAndGarbageCollect() {
-		loggerAppender = null;
+		valueToStore = null;
 		System.gc();
 	}
 

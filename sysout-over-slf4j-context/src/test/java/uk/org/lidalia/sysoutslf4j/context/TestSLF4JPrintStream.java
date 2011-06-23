@@ -22,29 +22,30 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.sysoutslf4j.system;
+package uk.org.lidalia.sysoutslf4j.context;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.powermock.api.easymock.PowerMock.createNiceMock;
 import static org.powermock.api.easymock.PowerMock.createStrictMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
+import static uk.org.lidalia.test.Assert.shouldThrow;
 
 import java.io.PrintStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.concurrent.Callable;
 
 import org.junit.After;
 import org.junit.Test;
 
-import uk.org.lidalia.sysoutslf4j.system.PerContextPrintStreamDelegate;
-import uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream;
-
 public class TestSLF4JPrintStream {
 	
-	private PerContextPrintStreamDelegate mockDelegate = createStrictMock(PerContextPrintStreamDelegate.class);
 	private PrintStream mockOriginalPrintStream = createStrictMock(PrintStream.class);
+	private LoggerAppender mockDelegate = createNiceMock(LoggerAppender.class);
 	private PerContextPrintStream slf4jPrintStreamImpl = new PerContextPrintStream(mockOriginalPrintStream, mockDelegate);
 	
 	@After
@@ -54,7 +55,7 @@ public class TestSLF4JPrintStream {
 	
 	@Test
 	public void appendCharDelegatesToDelegatePrint() {
-		mockDelegate.delegatePrint("a");
+		mockDelegate.print("a");
 		replayAll();
 		PrintStream returnedPrintStream = slf4jPrintStreamImpl.append('a');
 		assertSame(slf4jPrintStreamImpl, returnedPrintStream);
@@ -62,7 +63,7 @@ public class TestSLF4JPrintStream {
 	
 	@Test
 	public void printCharSeqDelegatesToDelegatePrint() {
-		mockDelegate.delegatePrint("expected");
+		mockDelegate.print("expected");
 		replayAll();
 		PrintStream returnedPrintStream = slf4jPrintStreamImpl.append((CharSequence) "expected");
 		assertSame(slf4jPrintStreamImpl, returnedPrintStream);
@@ -70,7 +71,7 @@ public class TestSLF4JPrintStream {
 	
 	@Test
 	public void printBoundedCharSeqDelegatesToDelegatePrint() {
-		mockDelegate.delegatePrint("expected");
+		mockDelegate.print("expected");
 		replayAll();
 		PrintStream returnedPrintStream = slf4jPrintStreamImpl.append((CharSequence) "1 expected 2", 2, 10);
 		assertSame(slf4jPrintStreamImpl, returnedPrintStream);
@@ -84,175 +85,173 @@ public class TestSLF4JPrintStream {
 	
 	@Test
 	public void closeDelegatesToOriginalPrintStream() {
-		mockOriginalPrintStream.close();
 		replayAll();
 		slf4jPrintStreamImpl.close();
 	}
 	
 	@Test
 	public void flushDelegatesToOriginalPrintStream() {
-		mockOriginalPrintStream.flush();
 		replayAll();
 		slf4jPrintStreamImpl.flush();
 	}
 	
 	@Test
 	public void printBooleanDelegatesToDelegatePrint() {
-		mockDelegate.delegatePrint("true");
+		mockDelegate.print("true");
 		replayAll();
 		slf4jPrintStreamImpl.print(true);
 	}
 	
 	@Test
 	public void printCharDelegatesToDelegatePrint() {
-		mockDelegate.delegatePrint("a");
+		mockDelegate.print("a");
 		replayAll();
 		slf4jPrintStreamImpl.print('a');
 	}
 	
 	@Test
 	public void printCharArrayDelegatesToDelegatePrint() {
-		mockDelegate.delegatePrint("abc");
+		mockDelegate.print("abc");
 		replayAll();
 		slf4jPrintStreamImpl.print(new char[]{'a', 'b', 'c'});
 	}
 	
 	@Test
 	public void printDoubleDelegatesToDelegatePrint() {
-		mockDelegate.delegatePrint("2.0");
+		mockDelegate.print("2.0");
 		replayAll();
 		slf4jPrintStreamImpl.print(2d);
 	}
 	
 	@Test
 	public void printFloatDelegatesToDelegatePrint() {
-		mockDelegate.delegatePrint("2.0");
+		mockDelegate.print("2.0");
 		replayAll();
 		slf4jPrintStreamImpl.print(2f);
 	}
 	
 	@Test
 	public void printIntDelegatesToDelegatePrint() {
-		mockDelegate.delegatePrint("2");
+		mockDelegate.print("2");
 		replayAll();
 		slf4jPrintStreamImpl.print(2);
 	}
 	
 	@Test
 	public void printLongDelegatesToDelegatePrint() {
-		mockDelegate.delegatePrint("2");
+		mockDelegate.print("2");
 		replayAll();
 		slf4jPrintStreamImpl.print(2L);
 	}
 	
 	@Test
 	public void printObjectDelegatesToDelegatePrint() {
-		mockDelegate.delegatePrint("text");
+		mockDelegate.print("text");
 		replayAll();
 		slf4jPrintStreamImpl.print((Object) "text");
 	}
 	
 	@Test
 	public void printNullObjectDelegatesToDelegatePrint() {
-		mockDelegate.delegatePrint("null");
+		mockDelegate.print("null");
 		replayAll();
 		slf4jPrintStreamImpl.print((Object) null);
 	}
 	
 	@Test
 	public void printStringDelegatesToDelegatePrint() {
-		mockDelegate.delegatePrint("something");
+		mockDelegate.print("something");
 		replayAll();
 		slf4jPrintStreamImpl.print("something");
 	}
 	
 	@Test
 	public void printNullStringDelegatesToDelegatePrint() {
-		mockDelegate.delegatePrint("null");
+		mockDelegate.print("null");
 		replayAll();
 		slf4jPrintStreamImpl.print((String) null);
 	}
 	
 	@Test
 	public void printlnDelegatesToDelegatePrintln() {
-		mockDelegate.delegatePrintln("");
+		mockDelegate.println("");
 		replayAll();
 		slf4jPrintStreamImpl.println();
 	}
 	
 	@Test
 	public void printlnBooleanDelegatesToDelegatePrintln() {
-		mockDelegate.delegatePrintln("true");
+		mockDelegate.println("true");
 		replayAll();
 		slf4jPrintStreamImpl.println(true);
 	}
 	
 	@Test
 	public void printlnCharDelegatesToDelegatePrintln() {
-		mockDelegate.delegatePrintln("a");
+		mockDelegate.println("a");
 		replayAll();
 		slf4jPrintStreamImpl.println('a');
 	}
 	
 	@Test
 	public void printlnCharArrayDelegatesToDelegatePrintln() {
-		mockDelegate.delegatePrintln("abc");
+		mockDelegate.println("abc");
 		replayAll();
 		slf4jPrintStreamImpl.println(new char[]{'a', 'b', 'c'});
 	}
 	
 	@Test
 	public void printlnDoubleDelegatesToDelegatePrintln() {
-		mockDelegate.delegatePrintln("2.0");
+		mockDelegate.println("2.0");
 		replayAll();
 		slf4jPrintStreamImpl.println(2d);
 	}
 	
 	@Test
 	public void printlnFloatDelegatesToDelegatePrintln() {
-		mockDelegate.delegatePrintln("2.0");
+		mockDelegate.println("2.0");
 		replayAll();
 		slf4jPrintStreamImpl.println(2f);
 	}
 	
 	@Test
 	public void printlnIntDelegatesToDelegatePrintln() {
-		mockDelegate.delegatePrintln("2");
+		mockDelegate.println("2");
 		replayAll();
 		slf4jPrintStreamImpl.println(2);
 	}
 	
 	@Test
 	public void printlnLongDelegatesToDelegatePrintln() {
-		mockDelegate.delegatePrintln("2");
+		mockDelegate.println("2");
 		replayAll();
 		slf4jPrintStreamImpl.println(2L);
 	}
 	
 	@Test
 	public void printlnObjectDelegatesToDelegatePrintln() {
-		mockDelegate.delegatePrintln("text");
+		mockDelegate.println("text");
 		replayAll();
 		slf4jPrintStreamImpl.println((Object) "text");
 	}
 	
 	@Test
 	public void printlnNullObjectDelegatesToDelegatePrintln() {
-		mockDelegate.delegatePrintln("null");
+		mockDelegate.println("null");
 		replayAll();
 		slf4jPrintStreamImpl.println((Object) null);
 	}
 	
 	@Test
 	public void printlnStringDelegatesToDelegatePrintln() {
-		mockDelegate.delegatePrintln("something");
+		mockDelegate.println("something");
 		replayAll();
 		slf4jPrintStreamImpl.println("something");
 	}
 	
 	@Test
 	public void printlnNullStringDelegatesToDelegatePrintln() {
-		mockDelegate.delegatePrintln(null);
+		mockDelegate.println(null);
 		replayAll();
 		slf4jPrintStreamImpl.println((String) null);
 	}
@@ -285,7 +284,7 @@ public class TestSLF4JPrintStream {
 	
 	@Test
 	public void formatLocaleStringDelegatesToDelegatePrintWithCorrectlyFormattedString() {
-		mockDelegate.delegatePrint(String.format(Locale.JAPANESE, TEST_FORMAT, DATE));
+		mockDelegate.print(String.format(Locale.JAPANESE, TEST_FORMAT, DATE));
 		replayAll();
 		PrintStream returned = slf4jPrintStreamImpl.format(Locale.JAPANESE, TEST_FORMAT, DATE);
 		assertSame(slf4jPrintStreamImpl, returned);
@@ -293,7 +292,7 @@ public class TestSLF4JPrintStream {
 		
 	@Test
 	public void formatStringDelegatesToDelegatePrintWithCorrectlyFormattedString() {
-		mockDelegate.delegatePrint(String.format(TEST_FORMAT, DATE));
+		mockDelegate.print(String.format(TEST_FORMAT, DATE));
 		replayAll();
 		PrintStream returned = slf4jPrintStreamImpl.format(TEST_FORMAT, DATE);
 		assertSame(slf4jPrintStreamImpl, returned);
@@ -301,7 +300,7 @@ public class TestSLF4JPrintStream {
 		
 	@Test
 	public void printfLocaleStringDelegatesToDelegatePrintWithCorrectlyFormattedString() {
-		mockDelegate.delegatePrint(String.format(Locale.JAPANESE, TEST_FORMAT, DATE));
+		mockDelegate.print(String.format(Locale.JAPANESE, TEST_FORMAT, DATE));
 		replayAll();
 		PrintStream returned = slf4jPrintStreamImpl.printf(Locale.JAPANESE, TEST_FORMAT, DATE);
 		assertSame(slf4jPrintStreamImpl, returned);
@@ -309,37 +308,22 @@ public class TestSLF4JPrintStream {
 	
 	@Test
 	public void printfStringObjectArrayDelegatesToDelegatePrintWithCorrectlyFormattedString() {
-		mockDelegate.delegatePrint(String.format(TEST_FORMAT, DATE));
+		mockDelegate.print(String.format(TEST_FORMAT, DATE));
 		replayAll();
 		PrintStream returned = slf4jPrintStreamImpl.printf(TEST_FORMAT, DATE);
 		assertSame(slf4jPrintStreamImpl, returned);
 	}
 	
 	@Test
-	public void setErrorThrowsUnsupportedOperationException() {
-		mockOriginalPrintStream.println("WARNING - calling setError on SLFJPrintStream does nothing");
+	public void setErrorThrowsUnsupportedOperationException() throws Throwable {
 		replayAll();
-		slf4jPrintStreamImpl.setError();
-	}
-	
-	@Test
-	public void getOriginalPrintStreamReturnsOriginalPrintStream() {
-		assertSame(mockOriginalPrintStream, slf4jPrintStreamImpl.getOriginalPrintStream());
-		replayAll();
-	}
-	
-	@Test
-	public void registerLoggerAppenderDelegatesToDelegate() {
-		SimplePrintStream loggerAppender = createStrictMock(SimplePrintStream.class);
-		mockDelegate.registerSimplePrintStream(loggerAppender);
-		replayAll();
-		slf4jPrintStreamImpl.registerSimplePrintStream(loggerAppender);
-	}
-	
-	@Test
-	public void deregisterLoggerAppenderDelegatesToDelegate() {
-		mockDelegate.deregisterSimplePrintStream();
-		replayAll();
-		slf4jPrintStreamImpl.deregisterSimplePrintStream();
+		UnsupportedOperationException exception = shouldThrow(UnsupportedOperationException.class, new Callable<Void>() {
+			@Override
+			public Void call() throws Exception {
+				slf4jPrintStreamImpl.setError();
+				return null;
+			}
+		});
+		assertEquals("Setting an error on a PerContextPrintStream does not make sense", exception.getMessage());
 	}
 }

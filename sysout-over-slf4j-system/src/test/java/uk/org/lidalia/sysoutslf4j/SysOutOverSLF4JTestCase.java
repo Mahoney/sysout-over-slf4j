@@ -1,14 +1,9 @@
 package uk.org.lidalia.sysoutslf4j;
 
-import static org.powermock.api.easymock.PowerMock.replay;
-import static org.powermock.api.easymock.PowerMock.resetAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
-
 import java.io.PrintStream;
 
 import org.junit.After;
 import org.junit.Before;
-import org.powermock.core.MockRepository;
 
 import uk.org.lidalia.testutils.SLF4JTestCase;
 
@@ -62,18 +57,5 @@ public abstract class SysOutOverSLF4JTestCase extends SLF4JTestCase {
 	@After
 	public void restoreOriginalContextClassLoader() {
 		Thread.currentThread().setContextClassLoader(originalContextClassLoader);
-	}
-
-	@After
-	public void verifyAllMocks() {
-		for (Object classToReplayOrVerify : MockRepository.getObjectsToAutomaticallyReplayAndVerify()) {
-			try {
-				replay(classToReplayOrVerify);
-			} catch (IllegalStateException ise) {
-				// ignore
-			}
-		}
-		verifyAll();
-		resetAll();
 	}
 }

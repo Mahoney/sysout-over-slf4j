@@ -24,46 +24,56 @@
 
 package uk.org.lidalia.sysoutslf4j.system;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import org.junit.Test;
 
-class PerContextPrintStreamDelegate {
+import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
+import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
+
+public class SystemOutputTests extends SysOutOverSLF4JTestCase {
+
+	@Test
+	public void SYSOUTGetReturnsSysout() {
+		PrintStream actual = SystemOutput.OUT.get();
+		assertEquals(System.out, actual);
+	}
+
+	@Test
+	public void SYSERRGetReturnsSyserr() {
+		PrintStream actual = SystemOutput.ERR.get();
+		assertEquals(System.err, actual);
+	}
+
+	@Test
+	public void SYSOUTSetAltersSysout() {
+		PrintStream expected = new PrintStream(new ByteArrayOutputStream());
+		SystemOutput.OUT.set(expected);
+		assertEquals(expected, System.out);
+	}
+
+	@Test
+	public void SYSERRSetAltersSyserr() {
+		PrintStream expected = new PrintStream(new ByteArrayOutputStream());
+		SystemOutput.ERR.set(expected);
+		assertEquals(expected, System.err);
+	}
 	
-	private final PrintStream originalPrintStream;
-	private final SimplePrintStreamStore simplePrintStreamStore;
-
-	PerContextPrintStreamDelegate(final PrintStream originalPrintStream, final SimplePrintStreamStore simplePrintStreamStore) {
-		super();
-		this.originalPrintStream = originalPrintStream;
-		this.simplePrintStreamStore = simplePrintStreamStore;
-	}
-
-	void registerSimplePrintStream(final SimplePrintStream simplePrintStream) {
-		simplePrintStreamStore.put(simplePrintStream);
+	@Test
+	public void SYSOUTToString() {
+		assertEquals("System.out", SystemOutput.OUT.toString());
 	}
 	
-	void deregisterSimplePrintStream() {
-		simplePrintStreamStore.remove();
+	@Test
+	public void SYSERRToString() {
+		assertEquals("System.err", SystemOutput.ERR.toString());
 	}
-
-	void delegatePrintln(final String message) {
-		final SimplePrintStream simplePrintStream = simplePrintStreamStore.get();
-		if (simplePrintStream == null) {
-			originalPrintStream.println(message);
-		} else {
-			simplePrintStream.println(message);
-		}
-	}
-
-	void delegatePrint(final String message) {
-		final SimplePrintStream simplePrintStream = simplePrintStreamStore.get();
-		if (simplePrintStream == null) {
-			originalPrintStream.print(message);
-		} else if (message.endsWith("\n")) {
-			final String messageWithoutLineBreak = StringUtils.stripEnd(message, "\r\n");
-			simplePrintStream.println(messageWithoutLineBreak);
-		} else {
-			simplePrintStream.print(message);
-		}
+	
+	@Test
+	public void valueOf() {
+		assertEquals(SystemOutput.ERR, SystemOutput.valueOf("ERR"));
 	}
 }

@@ -52,7 +52,7 @@ import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionH
 import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ SysOutOverSLF4J.class, PerContextSystemOutput.class })
+@PrepareForTest({ SysOutOverSLF4J.class, PerContextSystemOutput.class, PerContextPrintStream.class })
 public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
 
 	private LoggingSystemRegister loggingSystemRegisterMock = createMock(LoggingSystemRegister.class);
@@ -114,15 +114,17 @@ public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
 	private void expectLoggerAppenderToBeRegistered(PerContextSystemOutput systemOutputMock, LogLevel logLevel, ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws Exception {
 		PrintStream originalPrintStreamMock = createMock(PrintStream.class);
         expect(systemOutputMock.getOriginalPrintStream()).andStubReturn(originalPrintStreamMock);
-        LoggerAppenderImpl loggerAppenderMock = createMock(LoggerAppenderImpl.class);
-        expectNew(LoggerAppenderImpl.class, logLevel, exceptionHandlingStrategyFactory, originalPrintStreamMock, loggingSystemRegisterMock).andReturn(loggerAppenderMock);
-        systemOutputMock.registerSimplePrintStream(loggerAppenderMock);
+        LoggerAppender loggerAppenderMock = createMock(LoggerAppender.class);
+        expectNew(LoggerAppender.class, logLevel, exceptionHandlingStrategyFactory, originalPrintStreamMock, loggingSystemRegisterMock).andReturn(loggerAppenderMock);
+        PerContextPrintStream perContextPrintStream = createMock(PerContextPrintStream.class);
+        expectNew(PerContextPrintStream.class, originalPrintStreamMock, loggerAppenderMock).andReturn(perContextPrintStream);
+        systemOutputMock.registerPrintStreamForThisContext(perContextPrintStream);
 	}
 
 	@Test
 	public void stopSendingSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManager() {
-		outMock.deregisterSimplePrintStream();
-    	errMock.deregisterSimplePrintStream();
+		outMock.deregisterPrintStreamForThisContext();
+    	errMock.deregisterPrintStreamForThisContext();
     	replayAll();
 		replayAll();
 		SysOutOverSLF4J.stopSendingSystemOutAndErrToSLF4J();

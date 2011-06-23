@@ -22,7 +22,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.sysoutslf4j.system;
+package uk.org.lidalia.sysoutslf4j.context;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -92,83 +92,87 @@ import java.util.Locale;
  */
 final class PerContextPrintStream extends PrintStream { // NOPMD superclass has too many methods
 
-	private final PerContextStore<PrintStream> printStreamStore;
+	private final PrintStream originalPrintStream;
+	private final LoggerAppender delegate;
 
-	PerContextPrintStream(final PrintStream originalPrintStream) {
-		// This ByteArrayOutputStream will be unused - we aren't going to touch
-		// the super class.
+	PerContextPrintStream(final PrintStream originalPrintStream, final LoggerAppender delegate) {
+		// This ByteArrayOutputStream will be unused - we aren't going to touch the super class.
 		super(new ByteArrayOutputStream());
-		this.printStreamStore = new PerContextStore<PrintStream>(originalPrintStream);
+		this.originalPrintStream = originalPrintStream;
+		this.delegate = delegate;
 	}
 
 	@Override
-	public synchronized void println(final String string) {
-		printStreamStore.get().println(string);
+	public void println(final String string) {
+		delegate.println(string);
 	}
 
 	@Override
-	public synchronized void println(final Object object) {
-		printStreamStore.get().println(object);
+	public void println(final Object object) {
+		delegate.println(String.valueOf(object));
 	}
 
 	@Override
-	public synchronized void println() {
-		printStreamStore.get().println();
+	public void println() {
+		delegate.println("");
 	}
 
 	@Override
-	public synchronized void println(final boolean bool) {
-		printStreamStore.get().println(bool);
+	public void println(final boolean bool) {
+		delegate.println(String.valueOf(bool));
 	}
 
 	@Override
-	public synchronized void println(final char character) {
-		printStreamStore.get().println(character);
+	public void println(final char character) {
+		delegate.println(String.valueOf(character));
 	}
 
 	@Override
-	public synchronized void println(final char[] charArray) {
-		printStreamStore.get().println(charArray);
+	public void println(final char[] charArray) {
+		delegate.println(String.valueOf(charArray));
 	}
 
 	@Override
-	public synchronized void println(final double doub) {
-		printStreamStore.get().println(doub);
+	public void println(final double doub) {
+		delegate.println(String.valueOf(doub));
 	}
 
 	@Override
-	public synchronized void println(final float floa) {
-		printStreamStore.get().println(floa);
+	public void println(final float floa) {
+		delegate.println(String.valueOf(floa));
 	}
 
 	@Override
-	public synchronized void println(final int integer) {
-		printStreamStore.get().println(integer);
+	public void println(final int integer) {
+		delegate.println(String.valueOf(integer));
 	}
 
 	@Override
-	public synchronized void println(final long lon) {
-		printStreamStore.get().println(lon);
+	public void println(final long lon) {
+		delegate.println(String.valueOf(lon));
 	}
 
 	@Override
-	public synchronized PrintStream append(final char character) {
-		return printStreamStore.get().append(character); //QUERY should we return the delegate or the top level PrintStream?
+	public PrintStream append(final char character) {
+		delegate.print(String.valueOf(character));
+		return this;
 	}
 
 	@Override
-	public synchronized PrintStream append(final CharSequence csq, final int start, final int end) {
-		return printStreamStore.get().append(csq, start, end);
+	public PrintStream append(final CharSequence csq, final int start, final int end) {
+		delegate.print(csq.subSequence(start, end).toString());
+		return this;
 	}
 
 	@Override
-	public synchronized PrintStream append(final CharSequence csq) {
-		return printStreamStore.get().append(csq);
+	public PrintStream append(final CharSequence csq) {
+		delegate.print(csq.toString());
+		return this;
 	}
 
 	@Override
 	public boolean checkError() {
-		return printStreamStore.get().checkError();
+		return false;
 	}
 
 	@Override
@@ -177,104 +181,94 @@ final class PerContextPrintStream extends PrintStream { // NOPMD superclass has 
 	}
 
 	@Override
-	public synchronized void close() {
-		printStreamStore.get().close();
+	public void close() {
+		// QUERY what to do with this?
 	}
 
 	@Override
-	public synchronized void flush() {
-		printStreamStore.get().flush();
+	public void flush() {
+		// QUERY what to do with this?
 	}
 
 	@Override
-	public synchronized PrintStream format(final Locale locale, final String format, final Object... args) {
-		return printStreamStore.get().format(locale, format, args);
+	public PrintStream format(final Locale locale, final String format, final Object... args) {
+		final String string = String.format(locale, format, args);
+		delegate.print(string);
+		return this;
 	}
 
 	@Override
-	public synchronized PrintStream format(final String format, final Object... args) {
-		return printStreamStore.get().format(format, args);
+	public PrintStream format(final String format, final Object... args) {
+		return format(Locale.getDefault(), format, args);
 	}
 
 	@Override
-	public synchronized void print(final boolean bool) {
-		printStreamStore.get().print(bool);
+	public void print(final boolean bool) {
+		delegate.print(String.valueOf(bool));
 	}
 
 	@Override
-	public synchronized void print(final char character) {
-		printStreamStore.get().print(character);
+	public void print(final char character) {
+		delegate.print(String.valueOf(character));
 	}
 
 	@Override
-	public synchronized void print(final char[] charArray) {
-		printStreamStore.get().print(charArray);
+	public void print(final char[] charArray) {
+		delegate.print(String.valueOf(charArray));
 	}
 
 	@Override
-	public synchronized void print(final double doubl) {
-		printStreamStore.get().print(doubl);
+	public void print(final double doubl) {
+		delegate.print(String.valueOf(doubl));
 	}
 
 	@Override
-	public synchronized void print(final float floa) {
-		printStreamStore.get().print(floa);
+	public void print(final float floa) {
+		delegate.print(String.valueOf(floa));
 	}
 
 	@Override
-	public synchronized void print(final int integer) {
-		printStreamStore.get().print(integer);
+	public void print(final int integer) {
+		delegate.print(String.valueOf(integer));
 	}
 
 	@Override
-	public synchronized void print(final long lon) {
-		printStreamStore.get().print(lon);
+	public void print(final long lon) {
+		delegate.print(String.valueOf(lon));
 	}
 
 	@Override
-	public synchronized void print(final Object object) {
-		printStreamStore.get().print(object);
+	public void print(final Object object) {
+		delegate.print(String.valueOf(object));
 	}
 
 	@Override
-	public synchronized void print(final String string) {
-		printStreamStore.get().print(string);
+	public void print(final String string) {
+		delegate.print(String.valueOf(string));
 	}
 
 	@Override
-	public synchronized PrintStream printf(final Locale locale, final String format, final Object... args) {
-		return printStreamStore.get().printf(locale, format, args);
+	public PrintStream printf(final Locale locale, final String format, final Object... args) {
+		return format(locale, format, args);
 	}
 
 	@Override
-	public synchronized PrintStream printf(final String format, final Object... args) {
-		return printStreamStore.get().printf(format, args);
+	public PrintStream printf(final String format, final Object... args) {
+		return format(format, args);
 	}
 
 	@Override
-	public synchronized void write(final byte[] buf, final int off, final int len) {
-		printStreamStore.get().write(buf, off, len);
+	public void write(final byte[] buf, final int off, final int len) {
+		originalPrintStream.write(buf, off, len);
 	}
 
 	@Override
-	public synchronized void write(final int integer) {
-		printStreamStore.get().write(integer);
+	public void write(final int integer) {
+		originalPrintStream.write(integer);
 	}
 
 	@Override
-	public synchronized void write(final byte[] bytes) throws IOException {
-		printStreamStore.get().write(bytes);
-	}
-
-	void registerPrintStreamForThisContext(final PrintStream printStreamForThisContext) {
-		printStreamStore.put(printStreamForThisContext);
-	}
-
-	void deregisterPrintStreamForThisContext() {
-		printStreamStore.remove();
-	}
-
-	PrintStream getOriginalPrintStream() {
-		return printStreamStore.getDefaultValue();
+	public void write(final byte[] bytes) throws IOException {
+		originalPrintStream.write(bytes);
 	}
 }

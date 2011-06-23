@@ -32,16 +32,25 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
-class SimplePrintStreamStore {
+public class PerContextStore<T> {
 
-	private final Map<ClassLoader, WeakReference<SimplePrintStream>> loggerAppenderMap =
-		new WeakHashMap<ClassLoader, WeakReference<SimplePrintStream>>();
+	private final Map<ClassLoader, WeakReference<T>> loggerAppenderMap =
+		new WeakHashMap<ClassLoader, WeakReference<T>>();
+	private final T defaultValue;
 	
 	private final ReadWriteLock lock = new ReentrantReadWriteLock();
 	private final Lock readLock = lock.readLock();
 	private final Lock writeLock = lock.writeLock();
 
-	SimplePrintStream get() {
+	public PerContextStore() {
+		this(null);
+	}
+
+	public PerContextStore(final T defaultValue) {
+		this.defaultValue = defaultValue; 
+	}
+
+	public T get() {
 		readLock.lock();
 		try {
 			return get(contextClassLoader());
@@ -50,12 +59,17 @@ class SimplePrintStreamStore {
 		}
 	}
 
-	private SimplePrintStream get(final ClassLoader classLoader) {
-		final WeakReference<SimplePrintStream> loggerAppenderReference = loggerAppenderMap.get(classLoader);
-		final SimplePrintStream result;
+	public final T getDefaultValue() {
+		return defaultValue;
+	}
+
+	// TODO write test for when weakreference returns null...
+	private T get(final ClassLoader classLoader) {
+		final WeakReference<T> loggerAppenderReference = loggerAppenderMap.get(classLoader);
+		final T result;
 		if (loggerAppenderReference == null) {
 			if (classLoader == null) {
-				result = null;
+				result = defaultValue;
 			} else {
 				result = get(classLoader.getParent());
 			}
@@ -65,16 +79,16 @@ class SimplePrintStreamStore {
 		return result;
 	}
 
-	void put(final SimplePrintStream loggerAppender) {
+	public void put(final T loggerAppender) {
 		writeLock.lock();
 		try {
-			loggerAppenderMap.put(contextClassLoader(), new WeakReference<SimplePrintStream>(loggerAppender));
+			loggerAppenderMap.put(contextClassLoader(), new WeakReference<T>(loggerAppender));
 		} finally {
 			writeLock.unlock();
 		}
 	}
 
-	void remove() {
+	public void remove() {
 		writeLock.lock();
 		try {
 			loggerAppenderMap.remove(contextClassLoader());

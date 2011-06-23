@@ -32,9 +32,8 @@ import org.slf4j.LoggerFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.context.CallOrigin;
-import uk.org.lidalia.sysoutslf4j.system.SimplePrintStream;
 
-public class LoggerAppenderImpl implements SimplePrintStream {
+class LoggerAppender {
 
 	private final LogLevel level;
 	private final ExceptionHandlingStrategy exceptionHandlingStrategy;
@@ -43,7 +42,7 @@ public class LoggerAppenderImpl implements SimplePrintStream {
 	
 	private StringBuilder buffer = new StringBuilder();
 
-	LoggerAppenderImpl(final LogLevel level, final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
+	LoggerAppender(final LogLevel level, final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
 			final PrintStream originalPrintStream, final LoggingSystemRegister loggingSystemRegister) {
 		super();
 		this.level = level;
@@ -53,12 +52,17 @@ public class LoggerAppenderImpl implements SimplePrintStream {
 		this.loggingSystemRegister = loggingSystemRegister;
 	}
 
-	public void print(final String message) {
-		exceptionHandlingStrategy.notifyNotStackTrace();
-		buffer.append(message);
+	void print(final String message) {
+		if (message.endsWith("\n")) {
+			final String messageWithoutLineBreak = StringUtils.stripEnd(message, "\r\n");
+			println(messageWithoutLineBreak);
+		} else {
+			exceptionHandlingStrategy.notifyNotStackTrace();
+			buffer.append(message);
+		}
 	}
 
-	public void println(final String message) {		
+	void println(final String message) {		
 		buffer.append(message);
 		final String logStatement = flushBuffer();
 		logOrPrint(logStatement);

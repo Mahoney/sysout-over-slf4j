@@ -73,24 +73,24 @@ public enum PerContextSystemOutput {
 		return (PerContextPrintStream) systemOutput.get();
 	}
 	
-	public void deregisterSimplePrintStream() {
+	public void deregisterPrintStreamForThisContext() {
 		final Lock readLock = systemOutput.getLock().readLock();
 		readLock.lock();
 		try {
 			if (isPerContextPrintStream()) {
-				getPerContextPrintStream().deregisterSimplePrintStream();
+				getPerContextPrintStream().deregisterPrintStreamForThisContext();
 			}
 		} finally {
 			readLock.unlock();
 		}
 	}
 
-	public void registerSimplePrintStream(final SimplePrintStream simplePrintStream) {
+	public void registerPrintStreamForThisContext(final PrintStream printStreamForThisContext) {
 		final Lock writeLock = systemOutput.getLock().writeLock();
 		writeLock.lock();
 		try {
 			makePerContextPrintStream();
-			getPerContextPrintStream().registerSimplePrintStream(simplePrintStream);
+			getPerContextPrintStream().registerPrintStreamForThisContext(printStreamForThisContext);
 		} finally {
 			writeLock.unlock();
 		}
@@ -103,9 +103,7 @@ public enum PerContextSystemOutput {
 	}
 	
 	private PerContextPrintStream buildPerContextPrintStream() {
-		final SimplePrintStreamStore simplePrintStreamStore = new SimplePrintStreamStore();
 		final PrintStream originalPrintStream = systemOutput.get();
-		final PerContextPrintStreamDelegate delegate = new PerContextPrintStreamDelegate(originalPrintStream, simplePrintStreamStore);
-		return new PerContextPrintStream(originalPrintStream, delegate);
+		return new PerContextPrintStream(originalPrintStream);
 	}
 }
