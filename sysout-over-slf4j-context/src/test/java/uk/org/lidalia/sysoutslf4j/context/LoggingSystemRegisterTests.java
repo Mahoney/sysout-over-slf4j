@@ -48,7 +48,7 @@ import uk.org.lidalia.testutils.LoggingUtils;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ LoggingSystemRegister.class })
 @SuppressStaticInitializationFor("uk.org.lidalia.sysoutslf4j.context.LoggingSystemRegister")
-public class TestLoggingSystemRegister {
+public class LoggingSystemRegisterTests {
 
 	private LoggingSystemRegister loggingSystemRegister = new LoggingSystemRegister();
 	private Logger loggerMock = createMock(Logger.class);

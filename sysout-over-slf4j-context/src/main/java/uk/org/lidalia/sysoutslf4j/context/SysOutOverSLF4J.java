@@ -128,7 +128,7 @@ public final class SysOutOverSLF4J {
 		PrintStream originalPrintStream = slf4jSystemOutput.getOriginalPrintStream();
 		final LoggerAppender loggerAppender = new LoggerAppender(
 				logLevel, exceptionHandlingStrategyFactory, originalPrintStream, LOGGING_SYSTEM_REGISTER);
-		final PrintStream slf4jPrintStream = new PerContextPrintStream(originalPrintStream, loggerAppender);
+		final PrintStream slf4jPrintStream = new SLF4JPrintStream(originalPrintStream, loggerAppender);
 		ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(slf4jPrintStream);
 		slf4jSystemOutput.registerPrintStreamForThisContext(slf4jPrintStream);
 	}

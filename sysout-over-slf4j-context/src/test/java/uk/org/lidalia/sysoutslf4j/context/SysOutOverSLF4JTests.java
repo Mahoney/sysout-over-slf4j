@@ -52,8 +52,8 @@ import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionH
 import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ SysOutOverSLF4J.class, PerContextSystemOutput.class, PerContextPrintStream.class })
-public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
+@PrepareForTest({ SysOutOverSLF4J.class, PerContextSystemOutput.class, SLF4JPrintStream.class })
+public class SysOutOverSLF4JTests extends SysOutOverSLF4JTestCase {
 
 	private LoggingSystemRegister loggingSystemRegisterMock = createMock(LoggingSystemRegister.class);
 	private PerContextSystemOutput outMock;
@@ -116,8 +116,8 @@ public class TestSysOutOverSLF4J extends SysOutOverSLF4JTestCase {
         expect(systemOutputMock.getOriginalPrintStream()).andStubReturn(originalPrintStreamMock);
         LoggerAppender loggerAppenderMock = createMock(LoggerAppender.class);
         expectNew(LoggerAppender.class, logLevel, exceptionHandlingStrategyFactory, originalPrintStreamMock, loggingSystemRegisterMock).andReturn(loggerAppenderMock);
-        PerContextPrintStream perContextPrintStream = createMock(PerContextPrintStream.class);
-        expectNew(PerContextPrintStream.class, originalPrintStreamMock, loggerAppenderMock).andReturn(perContextPrintStream);
+        SLF4JPrintStream perContextPrintStream = createMock(SLF4JPrintStream.class);
+        expectNew(SLF4JPrintStream.class, originalPrintStreamMock, loggerAppenderMock).andReturn(perContextPrintStream);
         systemOutputMock.registerPrintStreamForThisContext(perContextPrintStream);
 	}
 

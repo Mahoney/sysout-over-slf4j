@@ -34,7 +34,7 @@ import org.junit.Test;
 
 import uk.org.lidalia.sysoutslf4j.context.ReferenceHolder;
 
-public class TestReferenceHolder {
+public class ReferenceHolderTests {
 	
 	@Test
 	public void preventGarbageCollectionForLifeOfClassLoaderMaintainsInstance() {

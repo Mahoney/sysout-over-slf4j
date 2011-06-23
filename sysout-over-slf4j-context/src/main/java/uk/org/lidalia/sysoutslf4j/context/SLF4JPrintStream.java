@@ -90,12 +90,12 @@ import java.util.Locale;
  *         SLF4J, though a performance hit will occur.
  *         </p>
  */
-final class PerContextPrintStream extends PrintStream { // NOPMD superclass has too many methods
+final class SLF4JPrintStream extends PrintStream { // NOPMD superclass has too many methods
 
 	private final PrintStream originalPrintStream;
 	private final LoggerAppender delegate;
 
-	PerContextPrintStream(final PrintStream originalPrintStream, final LoggerAppender delegate) {
+	SLF4JPrintStream(final PrintStream originalPrintStream, final LoggerAppender delegate) {
 		// This ByteArrayOutputStream will be unused - we aren't going to touch the super class.
 		super(new ByteArrayOutputStream());
 		this.originalPrintStream = originalPrintStream;
@@ -104,69 +104,69 @@ final class PerContextPrintStream extends PrintStream { // NOPMD superclass has 
 
 	@Override
 	public void println(final String string) {
-		delegate.println(string);
+		delegate.appendAndLog(string);
 	}
 
 	@Override
 	public void println(final Object object) {
-		delegate.println(String.valueOf(object));
+		delegate.appendAndLog(String.valueOf(object));
 	}
 
 	@Override
 	public void println() {
-		delegate.println("");
+		delegate.appendAndLog("");
 	}
 
 	@Override
 	public void println(final boolean bool) {
-		delegate.println(String.valueOf(bool));
+		delegate.appendAndLog(String.valueOf(bool));
 	}
 
 	@Override
 	public void println(final char character) {
-		delegate.println(String.valueOf(character));
+		delegate.appendAndLog(String.valueOf(character));
 	}
 
 	@Override
 	public void println(final char[] charArray) {
-		delegate.println(String.valueOf(charArray));
+		delegate.appendAndLog(String.valueOf(charArray));
 	}
 
 	@Override
 	public void println(final double doub) {
-		delegate.println(String.valueOf(doub));
+		delegate.appendAndLog(String.valueOf(doub));
 	}
 
 	@Override
 	public void println(final float floa) {
-		delegate.println(String.valueOf(floa));
+		delegate.appendAndLog(String.valueOf(floa));
 	}
 
 	@Override
 	public void println(final int integer) {
-		delegate.println(String.valueOf(integer));
+		delegate.appendAndLog(String.valueOf(integer));
 	}
 
 	@Override
 	public void println(final long lon) {
-		delegate.println(String.valueOf(lon));
+		delegate.appendAndLog(String.valueOf(lon));
 	}
 
 	@Override
 	public PrintStream append(final char character) {
-		delegate.print(String.valueOf(character));
+		delegate.append(String.valueOf(character));
 		return this;
 	}
 
 	@Override
 	public PrintStream append(final CharSequence csq, final int start, final int end) {
-		delegate.print(csq.subSequence(start, end).toString());
+		delegate.append(csq.subSequence(start, end).toString());
 		return this;
 	}
 
 	@Override
 	public PrintStream append(final CharSequence csq) {
-		delegate.print(csq.toString());
+		delegate.append(csq.toString());
 		return this;
 	}
 
@@ -193,7 +193,7 @@ final class PerContextPrintStream extends PrintStream { // NOPMD superclass has 
 	@Override
 	public PrintStream format(final Locale locale, final String format, final Object... args) {
 		final String string = String.format(locale, format, args);
-		delegate.print(string);
+		delegate.append(string);
 		return this;
 	}
 
@@ -204,47 +204,47 @@ final class PerContextPrintStream extends PrintStream { // NOPMD superclass has 
 
 	@Override
 	public void print(final boolean bool) {
-		delegate.print(String.valueOf(bool));
+		delegate.append(String.valueOf(bool));
 	}
 
 	@Override
 	public void print(final char character) {
-		delegate.print(String.valueOf(character));
+		delegate.append(String.valueOf(character));
 	}
 
 	@Override
 	public void print(final char[] charArray) {
-		delegate.print(String.valueOf(charArray));
+		delegate.append(String.valueOf(charArray));
 	}
 
 	@Override
 	public void print(final double doubl) {
-		delegate.print(String.valueOf(doubl));
+		delegate.append(String.valueOf(doubl));
 	}
 
 	@Override
 	public void print(final float floa) {
-		delegate.print(String.valueOf(floa));
+		delegate.append(String.valueOf(floa));
 	}
 
 	@Override
 	public void print(final int integer) {
-		delegate.print(String.valueOf(integer));
+		delegate.append(String.valueOf(integer));
 	}
 
 	@Override
 	public void print(final long lon) {
-		delegate.print(String.valueOf(lon));
+		delegate.append(String.valueOf(lon));
 	}
 
 	@Override
 	public void print(final Object object) {
-		delegate.print(String.valueOf(object));
+		delegate.append(String.valueOf(object));
 	}
 
 	@Override
 	public void print(final String string) {
-		delegate.print(String.valueOf(string));
+		delegate.append(String.valueOf(string));
 	}
 
 	@Override

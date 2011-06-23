@@ -52,17 +52,17 @@ class LoggerAppender {
 		this.loggingSystemRegister = loggingSystemRegister;
 	}
 
-	void print(final String message) {
+	void append(final String message) {
 		if (message.endsWith("\n")) {
 			final String messageWithoutLineBreak = StringUtils.stripEnd(message, "\r\n");
-			println(messageWithoutLineBreak);
+			appendAndLog(messageWithoutLineBreak);
 		} else {
 			exceptionHandlingStrategy.notifyNotStackTrace();
 			buffer.append(message);
 		}
 	}
 
-	void println(final String message) {		
+	void appendAndLog(final String message) {		
 		buffer.append(message);
 		final String logStatement = flushBuffer();
 		logOrPrint(logStatement);

@@ -44,7 +44,7 @@ import uk.org.lidalia.sysoutslf4j.context.CallOrigin;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ CallOrigin.class, Thread.class })
-public class TestCallOrigin {
+public class CallOriginTests {
 
 	@Test
 	public void testGetCallOriginThrowsNullPointerIfCalledWithNoLibraryPackageName() throws Throwable {

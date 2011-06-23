@@ -39,7 +39,7 @@ import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4JServletContextListener;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ SysOutOverSLF4J.class })
-public class TestSysOutOverSLF4JServletContextListener extends SysOutOverSLF4JTestCase {
+public class SysOutOverSLF4JServletContextListenerTests extends SysOutOverSLF4JTestCase {
 	
 	private SysOutOverSLF4JServletContextListener servletContextListener = new SysOutOverSLF4JServletContextListener();
 	

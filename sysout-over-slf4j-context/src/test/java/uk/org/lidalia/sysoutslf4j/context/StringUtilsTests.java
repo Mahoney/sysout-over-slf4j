@@ -35,7 +35,7 @@ import org.junit.Test;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.context.StringUtils;
 
-public class TestStringUtils extends SysOutOverSLF4JTestCase {
+public class StringUtilsTests extends SysOutOverSLF4JTestCase {
 
 	@Test
 	public void stripEndStripsEnd() {

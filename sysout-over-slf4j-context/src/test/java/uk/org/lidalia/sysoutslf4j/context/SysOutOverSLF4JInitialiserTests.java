@@ -49,7 +49,7 @@ import ch.qos.logback.core.read.ListAppender;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ ch.qos.logback.classic.Logger.class })
-public class TestSysOutOverSLF4JInitialiser {
+public class SysOutOverSLF4JInitialiserTests {
 	
 	static {
 		LoggingUtils.turnOffRootLogging();
@@ -61,7 +61,7 @@ public class TestSysOutOverSLF4JInitialiser {
 	private ch.qos.logback.classic.Logger initialiserLogger;
 	private ListAppender<ILoggingEvent> appender;
 	
-	public TestSysOutOverSLF4JInitialiser() {
+	public SysOutOverSLF4JInitialiserTests() {
 		setUpLogger();
 		loggingSystemRegister = createStrictMock(LoggingSystemRegister.class);
 		initialiser = new SysOutOverSLF4JInitialiser(loggingSystemRegister);

@@ -50,7 +50,7 @@ import uk.org.lidalia.sysoutslf4j.context.CallOrigin;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({LoggerFactory.class, CallOrigin.class})
-public class LoggerAppenderImplTests extends SysOutOverSLF4JTestCase {
+public class LoggerAppenderTests extends SysOutOverSLF4JTestCase {
 
 	private static final String CLASS_IN_LOGGING_SYSTEM = "org.logging.LoggerClass";
 	private static final String CLASS_NAME = "org.something.SomeClass";
@@ -81,7 +81,7 @@ public class LoggerAppenderImplTests extends SysOutOverSLF4JTestCase {
 		replayAll();
 		
 		LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
-		loggerAppenderImplInstance.print("irrelevant");
+		loggerAppenderImplInstance.append("irrelevant");
 	}
 
 	@Test
@@ -94,7 +94,7 @@ public class LoggerAppenderImplTests extends SysOutOverSLF4JTestCase {
 		replayAll();
 		
 		LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
-		loggerAppenderImplInstance.print("the message\n");
+		loggerAppenderImplInstance.append("the message\n");
 	}
 
 	@Test
@@ -107,7 +107,7 @@ public class LoggerAppenderImplTests extends SysOutOverSLF4JTestCase {
 		replayAll();
 		
 		LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
-		loggerAppenderImplInstance.print("the message\r\n");
+		loggerAppenderImplInstance.append("the message\r\n");
 	}
 
 	@Test
@@ -120,7 +120,7 @@ public class LoggerAppenderImplTests extends SysOutOverSLF4JTestCase {
 		replayAll();
 		
 		LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
-		loggerAppenderImplInstance.println("some text");
+		loggerAppenderImplInstance.appendAndLog("some text");
 	}
 
 	@Test
@@ -132,7 +132,7 @@ public class LoggerAppenderImplTests extends SysOutOverSLF4JTestCase {
 		replayAll();
 		
 		LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
-		loggerAppenderImplInstance.println("some text");
+		loggerAppenderImplInstance.appendAndLog("some text");
 	}
 
 	@Test
@@ -142,7 +142,7 @@ public class LoggerAppenderImplTests extends SysOutOverSLF4JTestCase {
 		replayAll();
 	
 		LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
-		loggerAppenderImplInstance.println("some text");
+		loggerAppenderImplInstance.appendAndLog("some text");
 	}
 
 	@Test
@@ -156,10 +156,10 @@ public class LoggerAppenderImplTests extends SysOutOverSLF4JTestCase {
 		replayAll();
 		
 		LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
-		loggerAppenderImplInstance.print("1");
-		loggerAppenderImplInstance.println("2");
-		loggerAppenderImplInstance.print("3");
-		loggerAppenderImplInstance.println("4");
+		loggerAppenderImplInstance.append("1");
+		loggerAppenderImplInstance.appendAndLog("2");
+		loggerAppenderImplInstance.append("3");
+		loggerAppenderImplInstance.appendAndLog("4");
 	}
 
 	private void mockGettingCallOrigin(String className, boolean printingStackTrace) {

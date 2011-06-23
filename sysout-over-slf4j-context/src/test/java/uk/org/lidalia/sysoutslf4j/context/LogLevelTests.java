@@ -37,7 +37,7 @@ import org.slf4j.helpers.BasicMarkerFactory;
 
 import uk.org.lidalia.sysoutslf4j.context.LogLevel;
 
-public class TestLogLevel {
+public class LogLevelTests {
 	
 	private Logger mockLogger = createMock(Logger.class);
 	private Marker expectedMarker = (new BasicMarkerFactory()).getMarker("expected");
