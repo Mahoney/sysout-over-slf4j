@@ -26,9 +26,9 @@ package uk.org.lidalia.sysoutslf4j.context;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.verifyZeroInteractions;
 
 import java.util.Set;
 
@@ -42,7 +42,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 
-import uk.org.lidalia.sysoutslf4j.context.LoggingSystemRegister;
 import uk.org.lidalia.testutils.LoggingUtils;
 
 @RunWith(PowerMockRunner.class)
@@ -51,7 +50,7 @@ import uk.org.lidalia.testutils.LoggingUtils;
 public class LoggingSystemRegisterTests {
 
 	private LoggingSystemRegister loggingSystemRegister = new LoggingSystemRegister();
-	private Logger loggerMock = createMock(Logger.class);
+	private Logger loggerMock = mock(Logger.class);
 
 	@BeforeClass
 	public static void turnOffRootLogging() {
@@ -83,28 +82,25 @@ public class LoggingSystemRegisterTests {
 	
 	@Test
 	public void registerLoggingSystemLogsThatItWasRegistered() {
-		loggerMock.info("Package {} registered; all classes within it or subpackages of it will "
-				+ "be allowed to print to System.out and System.err", "some.package");
-		replayAll();
 		loggingSystemRegister.registerLoggingSystem("some.package");
-		verifyAll();
+		verify(loggerMock).info("Package {} registered; all classes within it or subpackages of it will "
+				+ "be allowed to print to System.out and System.err", "some.package");
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void unregisterLoggingSystemLogsThatItWasUnregisteredIfLoggingSystemRegistered() {
 		Whitebox.getInternalState(loggingSystemRegister, Set.class).add("some.package");
-		loggerMock.info("Package {} unregistered; all classes within it or subpackages of it will "
-				+ "have System.out and System.err redirected to SLF4J", "some.package");
-		replayAll();
+
 		loggingSystemRegister.unregisterLoggingSystem("some.package");
-		verifyAll();
+
+		verify(loggerMock).info("Package {} unregistered; all classes within it or subpackages of it will "
+				+ "have System.out and System.err redirected to SLF4J", "some.package");
 	}
-	
+
 	@Test
 	public void unregisterLoggingSystemDoesNotLogIfLoggingSystemNotRegisterdPresent() {
-		replayAll();
 		loggingSystemRegister.unregisterLoggingSystem("some.package");
-		verifyAll();
+		verifyZeroInteractions(loggerMock);
 	}
 }

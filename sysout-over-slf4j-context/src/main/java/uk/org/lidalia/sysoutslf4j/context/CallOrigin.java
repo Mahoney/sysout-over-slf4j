@@ -24,6 +24,8 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
+import uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream;
+
 final class CallOrigin {
 
 	private final boolean printingStackTrace;
@@ -42,24 +44,20 @@ final class CallOrigin {
 		return className;
 	}
 
-	static CallOrigin getCallOrigin(final String libraryPackageName) {
+	static CallOrigin getCallOrigin() {
 		Thread currentThread = Thread.currentThread();
 		final StackTraceElement[] stackTraceElements = currentThread.getStackTrace();
-		boolean isStackTrace = false;
-		for (StackTraceElement stackTraceElement : stackTraceElements) {
-			String className = stackTraceElement.getClassName();
-			if (className.equals(Throwable.class.getName())) {
-				isStackTrace = true;
-			} else if (outsideThisLibrary(className, libraryPackageName)) {
-				className = getOuterClassName(className);
-				return new CallOrigin(isStackTrace, className);
+		for (int i = stackTraceElements.length - 1; i >= 0; i--) {
+			StackTraceElement stackTraceElement = stackTraceElements[i];
+			String currentClassName = stackTraceElement.getClassName();
+			if (currentClassName.equals(Throwable.class.getName()) && stackTraceElement.getMethodName().equals("printStackTrace")) {
+				return new CallOrigin(true, getOuterClassName(stackTraceElements[i + 1].getClassName()));
+			}
+			if (currentClassName.equals(PerContextPrintStream.class.getName())) {
+				return new CallOrigin(false, getOuterClassName(stackTraceElements[i + 1].getClassName()));
 			}
 		}
-		throw new IllegalStateException("Nothing in the stack originated from outside package name " + libraryPackageName);
-	}
-
-	private static boolean outsideThisLibrary(final String className, final String libraryPackageName) {
-		return !className.equals(Thread.class.getName()) && !className.startsWith(libraryPackageName); // NOPMD not using thread
+		throw new IllegalStateException("Must be called from down stack of " + PerContextPrintStream.class.getName());
 	}
 
 	private static String getOuterClassName(final String className) {

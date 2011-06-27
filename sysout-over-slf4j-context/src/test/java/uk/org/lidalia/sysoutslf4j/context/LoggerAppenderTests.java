@@ -24,12 +24,14 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.mockStatic;
-import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyZeroInteractions;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.io.PrintStream;
 
@@ -41,133 +43,106 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.context.LogLevel;
-import uk.org.lidalia.sysoutslf4j.context.LoggerAppender;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
-import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
-import uk.org.lidalia.sysoutslf4j.context.CallOrigin;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({LoggerFactory.class, CallOrigin.class})
-public class LoggerAppenderTests extends SysOutOverSLF4JTestCase {
+@PrepareForTest({LoggerFactory.class, CallOrigin.class, LoggingSystemRegister.class})
+public class LoggerAppenderTests {
 
 	private static final String CLASS_IN_LOGGING_SYSTEM = "org.logging.LoggerClass";
 	private static final String CLASS_NAME = "org.something.SomeClass";
 
 	private LogLevel level = LogLevel.INFO;
 
-	private ExceptionHandlingStrategy exceptionHandlingStrategyMock = createMock(ExceptionHandlingStrategy.class);
-	private ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactoryMock = createMock(ExceptionHandlingStrategyFactory.class);
-	private PrintStream origPrintStreamMock = createMock(PrintStream.class);
-	private Logger loggerMock = createMock(Logger.class);
-	private LoggingSystemRegister loggingSystemRegisterMock = createMock(LoggingSystemRegister.class);
+	private ExceptionHandlingStrategy exceptionHandlingStrategyMock = mock(ExceptionHandlingStrategy.class);
+	private PrintStream origPrintStreamMock = mock(PrintStream.class);
+	private Logger loggerMock = mock(Logger.class);
+	private LoggingSystemRegister loggingSystemRegisterMock = mock(LoggingSystemRegister.class);
+	private LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyMock, origPrintStreamMock, loggingSystemRegisterMock);
 
 	@Before
 	public void setUp() {
-		expect(exceptionHandlingStrategyFactoryMock.makeExceptionHandlingStrategy(level, origPrintStreamMock)).andStubReturn(exceptionHandlingStrategyMock);
-		
 		mockStatic(LoggerFactory.class);
-		expect(LoggerFactory.getLogger(CLASS_NAME)).andStubReturn(loggerMock);
+		when(LoggerFactory.getLogger(anyString())).thenReturn(mock(Logger.class));
+		when(LoggerFactory.getLogger(CLASS_NAME)).thenReturn(loggerMock);
 		
-		loggingSystemRegisterMock.isInLoggingSystem(CLASS_NAME);
-		expectLastCall().andStubReturn(false);
+		when(loggingSystemRegisterMock.isInLoggingSystem(CLASS_NAME)).thenReturn(false);
+		when(loggingSystemRegisterMock.isInLoggingSystem(CLASS_IN_LOGGING_SYSTEM)).thenReturn(true);
 		
+		mockGettingCallOrigin(CLASS_NAME, false);
 	}
 
 	@Test
 	public void appendNotifiesNotStackTrace() {
-		exceptionHandlingStrategyMock.notifyNotStackTrace();
-		replayAll();
-		
-		LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
 		loggerAppenderImplInstance.append("irrelevant");
+		verify(exceptionHandlingStrategyMock).notifyNotStackTrace();
 	}
 
 	@Test
 	public void appendLogsWhenMessageEndsWithUnixLineBreak() {
-		mockGettingCallOrigin(CLASS_NAME, false);
-		exceptionHandlingStrategyMock.notifyNotStackTrace();
-		expectLastCall().asStub();
-		
-		loggerMock.info("the message");
-		replayAll();
-		
-		LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
 		loggerAppenderImplInstance.append("the message\n");
+		verify(loggerMock).info("the message");
 	}
 
 	@Test
 	public void delegatePrintCallsLoggerAppenderAppendAndLogWhenMessageEndsWithWindowsLineBreak() {
-		mockGettingCallOrigin(CLASS_NAME, false);
-		exceptionHandlingStrategyMock.notifyNotStackTrace();
-		expectLastCall().asStub();
-		
-		loggerMock.info("the message");
-		replayAll();
-		
-		LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
 		loggerAppenderImplInstance.append("the message\r\n");
+		verify(loggerMock).info("the message");
 	}
 
 	@Test
 	public void appendAndLogPrintsToPrintStreamIfInLoggingSystem() {
 		mockGettingCallOrigin(CLASS_IN_LOGGING_SYSTEM, false);
-		loggingSystemRegisterMock.isInLoggingSystem(CLASS_IN_LOGGING_SYSTEM);
-		expectLastCall().andStubReturn(true);
-
-		origPrintStreamMock.println("some text");
-		replayAll();
 		
-		LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
 		loggerAppenderImplInstance.appendAndLog("some text");
+		
+		verify(origPrintStreamMock).println("some text");
 	}
 
 	@Test
-	public void appendAndLogNonStackTraceLogsAndNotifiesNotStackTrace() {
-		mockGettingCallOrigin(CLASS_NAME, false);
-
-		exceptionHandlingStrategyMock.notifyNotStackTrace();
-		loggerMock.info("some text");
-		replayAll();
-		
-		LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
+	public void appendAndLogNonStackTraceNotifiesNotStackTrace() {
 		loggerAppenderImplInstance.appendAndLog("some text");
+		verify(exceptionHandlingStrategyMock).notifyNotStackTrace();
+	}
+
+	@Test
+	public void appendAndLogLogs() {
+		loggerAppenderImplInstance.appendAndLog("some text");
+		
+		verify(loggerMock).info("some text");
+		verify(exceptionHandlingStrategyMock, never()).handleExceptionLine(anyString(), any(Logger.class));
 	}
 
 	@Test
 	public void appendAndLogStackTraceCallsExceptionHandlingStrategy() {
 		mockGettingCallOrigin(CLASS_NAME, true);
-		exceptionHandlingStrategyMock.handleExceptionLine("some text", loggerMock);
-		replayAll();
-	
-		LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
-		loggerAppenderImplInstance.appendAndLog("some text");
+		
+		loggerAppenderImplInstance.appendAndLog("exception line");
+		
+		verify(exceptionHandlingStrategyMock).handleExceptionLine("exception line", loggerMock);
+		verify(exceptionHandlingStrategyMock, never()).notifyNotStackTrace();
+		verifyZeroInteractions(loggerMock);
 	}
 
 	@Test
 	public void appendAndLogFlushesAndResetsBuffer() {
-		mockGettingCallOrigin(CLASS_NAME, false);
-		exceptionHandlingStrategyMock.notifyNotStackTrace();
-		expectLastCall().asStub();
-		
-		loggerMock.info("12");
-		loggerMock.info("34");
-		replayAll();
-		
-		LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyFactoryMock, origPrintStreamMock, loggingSystemRegisterMock);
 		loggerAppenderImplInstance.append("1");
 		loggerAppenderImplInstance.appendAndLog("2");
+		
+		verify(loggerMock).info("12");
+		
 		loggerAppenderImplInstance.append("3");
 		loggerAppenderImplInstance.appendAndLog("4");
+		
+		verify(loggerMock).info("34");
 	}
 
 	private void mockGettingCallOrigin(String className, boolean printingStackTrace) {
-		CallOrigin callOriginMock = createMock(CallOrigin.class);
-		expect(callOriginMock.isPrintingStackTrace()).andStubReturn(printingStackTrace);
-		expect(callOriginMock.getClassName()).andStubReturn(className);
+		CallOrigin callOriginMock = mock(CallOrigin.class);
+		when(callOriginMock.isPrintingStackTrace()).thenReturn(printingStackTrace);
+		when(callOriginMock.getClassName()).thenReturn(className);
 
 		mockStatic(CallOrigin.class);
-		expect(CallOrigin.getCallOrigin(eq("uk.org.lidalia.sysoutslf4j"))).andStubReturn(callOriginMock);
+		when(CallOrigin.getCallOrigin()).thenReturn(callOriginMock);
 	}
 }

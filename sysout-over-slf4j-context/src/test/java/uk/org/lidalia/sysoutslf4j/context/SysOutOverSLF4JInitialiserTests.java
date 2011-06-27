@@ -26,11 +26,9 @@ package uk.org.lidalia.sysoutslf4j.context;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.powermock.api.easymock.PowerMock.createStrictMock;
-import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.mock;
 
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -38,17 +36,15 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.org.lidalia.sysoutslf4j.context.LoggingSystemRegister;
-import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4JInitialiser;
+import uk.org.lidalia.testutils.ClassCreationUtils;
 import uk.org.lidalia.testutils.LoggingUtils;
-
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ch.qos.logback.classic.Logger.class })
+@PrepareForTest({ LoggingSystemRegister.class, ch.qos.logback.classic.Logger.class })
 public class SysOutOverSLF4JInitialiserTests {
 	
 	static {
@@ -63,7 +59,7 @@ public class SysOutOverSLF4JInitialiserTests {
 	
 	public SysOutOverSLF4JInitialiserTests() {
 		setUpLogger();
-		loggingSystemRegister = createStrictMock(LoggingSystemRegister.class);
+		loggingSystemRegister = mock(LoggingSystemRegister.class);
 		initialiser = new SysOutOverSLF4JInitialiser(loggingSystemRegister);
 	}
 	
@@ -77,24 +73,14 @@ public class SysOutOverSLF4JInitialiserTests {
 		appender.start();
 		initialiserLogger.addAppender(appender);
 	}
-	
-	@After
-	public void verifyAllMocks() {
-		try {
-			replayAll();
-		} catch (IllegalStateException ise) {
-			// ignore
-		}
-		verifyAll();
-	}
 
 	@Test
 	public void initialiseWithX4JuliRegistersLoggingPackageAutomatically() throws Exception {
 		Logger x4juliLogger = makeMockLogger("org.x4juli.X4JuliLogger");
 		
 		givenLoggerIsA(x4juliLogger);
-		expectX4juliToBeRegistered();
 		whenInitialiseIsCalled();
+		thenX4juliIsRegistered();
 	}
 	
 	@Test
@@ -102,8 +88,8 @@ public class SysOutOverSLF4JInitialiserTests {
 		Logger grleaSimpleLogger = makeMockLogger("org.grlea.log.adapters.slf4j.Slf4jAdapter");
 		
 		givenLoggerIsA(grleaSimpleLogger);
-		expectGrleaSimpleLoggerToBeRegistered();
 		whenInitialiseIsCalled();
+		thenGrleaSimpleLoggerIsRegistered();
 	}
 	
 	@Test
@@ -111,13 +97,13 @@ public class SysOutOverSLF4JInitialiserTests {
 		Logger slf4jSimpleLogger = makeMockLogger("org.slf4j.impl.SimpleLogger");
 		
 		givenLoggerIsA(slf4jSimpleLogger);
-		expectSlf4jSimpleLoggerToBeRegistered();
 		whenInitialiseIsCalled();
+		thenSlf4jSimpleLoggerIsRegistered();
 	}
 	
 	private Logger makeMockLogger(String loggerClassName) throws Exception {
 		Class<Logger> mockLoggerClass = makeMockLoggerClass(loggerClassName);
-		return createStrictMock(mockLoggerClass);
+		return mock(mockLoggerClass);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -133,24 +119,21 @@ public class SysOutOverSLF4JInitialiserTests {
 		initialiser.initialise(loggerImplementation);
 	}
 	
-	private void expectX4juliToBeRegistered() {
-		loggingSystemRegister.registerLoggingSystem("org.x4juli.");
-		replayAll();
+	private void thenX4juliIsRegistered() {
+		verify(loggingSystemRegister).registerLoggingSystem("org.x4juli.");
 	}
 	
-	private void expectGrleaSimpleLoggerToBeRegistered() {
-		loggingSystemRegister.registerLoggingSystem("org.grlea.log.");
-		replayAll();
+	private void thenGrleaSimpleLoggerIsRegistered() {
+		verify(loggingSystemRegister).registerLoggingSystem("org.grlea.log.");
 	}
 	
-	private void expectSlf4jSimpleLoggerToBeRegistered() {
-		loggingSystemRegister.registerLoggingSystem("org.slf4j.impl.SimpleLogger");
-		replayAll();
+	private void thenSlf4jSimpleLoggerIsRegistered() {
+		verify(loggingSystemRegister).registerLoggingSystem("org.slf4j.impl.SimpleLogger");
 	}
 
 	@Test
 	public void initialiseWithLogbackLoggerLogsDebugMessageToSayNoRegistrationNecessary() throws Exception {
-		Logger logbackLogger = createStrictMock(ch.qos.logback.classic.Logger.class);
+		Logger logbackLogger = mock(ch.qos.logback.classic.Logger.class);
 		
 		givenLoggerIsA(logbackLogger);
 		whenInitialiseIsCalled();
@@ -199,7 +182,7 @@ public class SysOutOverSLF4JInitialiserTests {
 
 	@Test
 	public void initialiseWithUnknownLoggingSystemLogsWarnMessage() throws Exception {
-		Logger unknownLogger = createStrictMock(Logger.class);
+		Logger unknownLogger = mock(Logger.class);
 		givenLoggerIsA(unknownLogger);
 		whenInitialiseIsCalled();
 		thenAWarnMessageToSayRegistrationMayBeNecessaryShouldBeLogged(unknownLogger.getClass());

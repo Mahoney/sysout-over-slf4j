@@ -22,7 +22,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.integration.sysoutslf4j;
+package uk.org.lidalia.sysoutslf4j.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -49,7 +49,6 @@ import uk.org.lidalia.sysoutslf4j.context.LogLevel;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 import uk.org.lidalia.testutils.Assert;
-
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -113,9 +112,9 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	@Test
 	public void logBackConsoleAppenderStillLogsToConsole() throws Exception {
 		OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.OUT);
-		configureLogBackConsoleAppender();
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		
+		configureLogBackConsoleAppender();
 		log.info("Should reach the old sysout");
 		
 		assertEquals("[INFO] Should reach the old sysout" + CoreConstants.LINE_SEPARATOR, sysOutMock.toString());
@@ -134,9 +133,9 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	@Test
 	public void juliConsoleAppenderStillLogsToConsole() throws Exception {
 		OutputStream newSysErr = setUpMockSystemOutput(SystemOutput.ERR);
-		java.util.logging.Logger log = configureJuliLoggerToUseConsoleHandler();
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 
+		java.util.logging.Logger log = configureJuliLoggerToUseConsoleHandler();
 		log.info("Should reach the old syserr");
 		
 		assertTrue(newSysErr.toString().contains("INFO: Should reach the old syserr"));
@@ -151,9 +150,9 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	@Test
 	public void log4JConsoleAppenderStillLogsToConsole() throws Exception {
 		OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.OUT);
-		org.apache.log4j.Logger log = configureLog4jLoggerToUseConsoleAppender();
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		
+		org.apache.log4j.Logger log = configureLog4jLoggerToUseConsoleAppender();
 		log.info("Should reach the old sysout");
 		
 		assertEquals("INFO - Should reach the old sysout" + CoreConstants.LINE_SEPARATOR, sysOutMock.toString());
@@ -330,6 +329,19 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 		SysOutOverSLF4J.restoreOriginalSystemOutputs();
 		assertSame(SYS_OUT, System.out);
 		assertSame(SYS_ERR, System.err);
+	}
+	
+	@Test
+	public void nullBehaviour() {
+		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+
+		System.out.print((Object) null);
+		System.out.println((Object) null);
+		System.out.print((String) null);
+		System.out.println((String) null);
+
+		assertExpectedLoggingEvent(appender.list.get(0), "nullnull", Level.INFO);
+		assertExpectedLoggingEvent(appender.list.get(1), "nullnull", Level.INFO);
 	}
 
 	@Test

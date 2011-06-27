@@ -22,10 +22,8 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.integration.sysoutslf4j;
+package uk.org.lidalia.sysoutslf4j.integration;
 
-class SysOutUser implements ISysOutUser {
-	public void useSysOut() {
-		System.out.println("Logged");
-	}
+interface ISysOutUser {
+	void useSysOut();
 }

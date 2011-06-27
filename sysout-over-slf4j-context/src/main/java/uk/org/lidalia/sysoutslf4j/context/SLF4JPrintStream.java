@@ -104,7 +104,7 @@ final class SLF4JPrintStream extends PrintStream { // NOPMD superclass has too m
 
 	@Override
 	public void println(final String string) {
-		delegate.appendAndLog(string);
+		delegate.appendAndLog(String.valueOf(string));
 	}
 
 	@Override
@@ -177,17 +177,17 @@ final class SLF4JPrintStream extends PrintStream { // NOPMD superclass has too m
 
 	@Override
 	protected void setError() {
-		throw new UnsupportedOperationException("Setting an error on a PerContextPrintStream does not make sense");
+		throw new UnsupportedOperationException("Setting an error on an SLF4JPrintStream does not make sense");
 	}
 
 	@Override
 	public void close() {
-		// QUERY what to do with this?
+		// do nothing
 	}
 
 	@Override
 	public void flush() {
-		// QUERY what to do with this?
+		delegate.log();
 	}
 
 	@Override

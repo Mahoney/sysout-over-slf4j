@@ -24,14 +24,14 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
+import static uk.org.lidalia.sysoutslf4j.context.CallOrigin.getCallOrigin;
+
 import java.io.PrintStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
-import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
-import uk.org.lidalia.sysoutslf4j.context.CallOrigin;
 
 class LoggerAppender {
 
@@ -42,12 +42,11 @@ class LoggerAppender {
 	
 	private StringBuilder buffer = new StringBuilder();
 
-	LoggerAppender(final LogLevel level, final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
+	LoggerAppender(final LogLevel level, final ExceptionHandlingStrategy exceptionHandlingStrategy,
 			final PrintStream originalPrintStream, final LoggingSystemRegister loggingSystemRegister) {
 		super();
 		this.level = level;
-		this.exceptionHandlingStrategy =
-				exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(level, originalPrintStream);
+		this.exceptionHandlingStrategy = exceptionHandlingStrategy;
 		this.originalPrintStream = originalPrintStream;
 		this.loggingSystemRegister = loggingSystemRegister;
 	}
@@ -64,6 +63,10 @@ class LoggerAppender {
 
 	void appendAndLog(final String message) {		
 		buffer.append(message);
+		log();
+	}
+
+	void log() {
 		final String logStatement = flushBuffer();
 		logOrPrint(logStatement);
 	}
@@ -81,11 +84,6 @@ class LoggerAppender {
 		} else {
 			log(logStatement, callOrigin.getClassName(), callOrigin.isPrintingStackTrace());
 		}
-	}
-
-	private CallOrigin getCallOrigin() {
-		final CallOrigin callOrigin = CallOrigin.getCallOrigin("uk.org.lidalia.sysoutslf4j");
-		return callOrigin;
 	}
 
 	private void log(final String logStatement, final String className, final boolean isStackTrace) {

@@ -90,7 +90,7 @@ import java.util.Locale;
  *         SLF4J, though a performance hit will occur.
  *         </p>
  */
-final class PerContextPrintStream extends PrintStream { // NOPMD superclass has too many methods
+public final class PerContextPrintStream extends PrintStream { // NOPMD superclass has too many methods
 
 	private final PerContextStore<PrintStream> printStreamStore;
 

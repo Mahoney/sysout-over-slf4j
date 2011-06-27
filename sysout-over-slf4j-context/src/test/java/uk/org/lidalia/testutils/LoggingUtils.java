@@ -28,8 +28,6 @@ import org.powermock.reflect.Whitebox;
 import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.lang.Exceptions;
-
-
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;

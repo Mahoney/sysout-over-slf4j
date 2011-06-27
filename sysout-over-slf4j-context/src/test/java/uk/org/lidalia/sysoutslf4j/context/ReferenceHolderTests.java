@@ -32,8 +32,6 @@ import java.lang.ref.WeakReference;
 
 import org.junit.Test;
 
-import uk.org.lidalia.sysoutslf4j.context.ReferenceHolder;
-
 public class ReferenceHolderTests {
 	
 	@Test

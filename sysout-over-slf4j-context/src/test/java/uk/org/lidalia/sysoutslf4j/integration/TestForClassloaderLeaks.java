@@ -22,7 +22,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.integration.sysoutslf4j;
+package uk.org.lidalia.sysoutslf4j.integration;
 
 import static org.junit.Assert.assertNull;
 

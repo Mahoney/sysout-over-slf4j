@@ -22,7 +22,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.org.lidalia.integration.sysoutslf4j;
+package uk.org.lidalia.sysoutslf4j.integration;
 
 import static org.junit.Assert.assertEquals;
 
@@ -38,12 +38,11 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
+import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
+import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 public class TestSysOutOverSLF4JThreadSafety extends SysOutOverSLF4JTestCase {
 	

@@ -24,14 +24,13 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.expectNew;
-import static org.powermock.api.easymock.PowerMock.mockStatic;
-import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 import static uk.org.lidalia.test.Assert.assertNotInstantiable;
 
 import java.io.PrintStream;
@@ -44,137 +43,150 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.context.LogLevel;
-import uk.org.lidalia.sysoutslf4j.context.LoggingSystemRegister;
-import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
+import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ SysOutOverSLF4J.class, PerContextSystemOutput.class, SLF4JPrintStream.class })
+@PrepareForTest({ LogPerLineExceptionHandlingStrategyFactory.class, LoggingSystemRegister.class, SysOutOverSLF4J.class, PerContextSystemOutput.class, SLF4JPrintStream.class })
 public class SysOutOverSLF4JTests extends SysOutOverSLF4JTestCase {
 
-	private LoggingSystemRegister loggingSystemRegisterMock = createMock(LoggingSystemRegister.class);
-	private PerContextSystemOutput outMock;
-    private PerContextSystemOutput errMock;
+	private final LoggingSystemRegister loggingSystemRegisterMock = mock(LoggingSystemRegister.class);
+	private final PerContextSystemOutput outMock = mock(PerContextSystemOutput.class);
+    private final PerContextSystemOutput errMock = mock(PerContextSystemOutput.class);
+	private final ExceptionHandlingStrategyFactory customExceptionHandlingStrategyFactoryMock = mock(ExceptionHandlingStrategyFactory.class);
+	private final ExceptionHandlingStrategyFactory defaultExceptionHandlingStrategyFactoryMock = mock(ExceptionHandlingStrategyFactory.class);
+
+	private SLF4JPrintStream outContextPrintStream;
+	private SLF4JPrintStream errContextPrintStream;
 
 	@Before
-	public void setStaticMocks() {
+	public void mockLoggingSystemRegister() {
 		Whitebox.setInternalState(SysOutOverSLF4J.class, loggingSystemRegisterMock);
-		
-		outMock = createMock(PerContextSystemOutput.class);
-        errMock = createMock(PerContextSystemOutput.class);
-    	Whitebox.setInternalState(PerContextSystemOutput.class, "OUT", outMock);
+	}
+
+	@Before
+	public void mockLogPerLineExceptionHandlingStrategyFactory() {
+		mockStatic(LogPerLineExceptionHandlingStrategyFactory.class);
+    	when(LogPerLineExceptionHandlingStrategyFactory.getInstance()).thenReturn(defaultExceptionHandlingStrategyFactoryMock);
+	}
+
+	@Before
+	public void mockPerContextSystemOutputEnum() {
+		Whitebox.setInternalState(PerContextSystemOutput.class, "OUT", outMock);
     	Whitebox.setInternalState(PerContextSystemOutput.class, "ERR", errMock);
     	mockStatic(PerContextSystemOutput.class);
-    	expect(PerContextSystemOutput.values()).andStubReturn(new PerContextSystemOutput[]{outMock, errMock});
-
+    	when(PerContextSystemOutput.values()).thenReturn(new PerContextSystemOutput[]{outMock, errMock});
 	}
 	
 	@Test
 	public void sendSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManagerWithDefaultLevelsAndLogPerLineExceptionHandlingStrategy() throws Exception {
 		expectLoggerAppendersToBeRegistered(LogLevel.INFO, LogLevel.ERROR, LogPerLineExceptionHandlingStrategyFactory.getInstance());
-		replayAll();
+
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
-		verifyAll();
+		
+		verify(outMock).registerPrintStreamForThisContext(outContextPrintStream);
+		verify(errMock).registerPrintStreamForThisContext(errContextPrintStream);
 	}
 	
 	@Test
 	public void sendSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManagerWithDefaultLevelsAndGivenExceptionHandlingStrategy() throws Exception {
-		ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory = createMock(ExceptionHandlingStrategyFactory.class);
-		expectLoggerAppendersToBeRegistered(LogLevel.INFO, LogLevel.ERROR, exceptionHandlingStrategyFactory);
-		replayAll();
-		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(exceptionHandlingStrategyFactory);
-		verifyAll();
+		expectLoggerAppendersToBeRegistered(LogLevel.INFO, LogLevel.ERROR, customExceptionHandlingStrategyFactoryMock);
+
+		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(customExceptionHandlingStrategyFactoryMock);
+		
+		verify(outMock).registerPrintStreamForThisContext(outContextPrintStream);
+		verify(errMock).registerPrintStreamForThisContext(errContextPrintStream);
 	}
 	
 	@Test
 	public void sendSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManagerWithCustomLevelsAndLogPerLineExceptionHandlingStrategy() throws Exception {
-		expectLoggerAppendersToBeRegistered(LogLevel.INFO, LogLevel.ERROR, LogPerLineExceptionHandlingStrategyFactory.getInstance());
-		replayAll();
-		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
-		verifyAll();
+		expectLoggerAppendersToBeRegistered(LogLevel.DEBUG, LogLevel.WARN, LogPerLineExceptionHandlingStrategyFactory.getInstance());
+		
+		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(LogLevel.DEBUG, LogLevel.WARN);
+		
+		verify(outMock).registerPrintStreamForThisContext(outContextPrintStream);
+		verify(errMock).registerPrintStreamForThisContext(errContextPrintStream);
 	}
 	
 	@Test
 	public void sendSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManagerWithCustomLevelsAndGivenExceptionHandlingStrategy() throws Exception {
-		ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactoryMock = createMock(ExceptionHandlingStrategyFactory.class);
-		expectLoggerAppendersToBeRegistered(LogLevel.INFO, LogLevel.ERROR, exceptionHandlingStrategyFactoryMock);
-		replayAll();
-		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(exceptionHandlingStrategyFactoryMock);
-		verifyAll();
+		expectLoggerAppendersToBeRegistered(LogLevel.DEBUG, LogLevel.WARN, customExceptionHandlingStrategyFactoryMock);
+
+		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(LogLevel.DEBUG, LogLevel.WARN, customExceptionHandlingStrategyFactoryMock);
+		
+		verify(outMock).registerPrintStreamForThisContext(outContextPrintStream);
+		verify(errMock).registerPrintStreamForThisContext(errContextPrintStream);
 	}
 
 	private void expectLoggerAppendersToBeRegistered(LogLevel outLevel, LogLevel errLevel, ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws Exception {
-    	expectLoggerAppenderToBeRegistered(outMock, outLevel, exceptionHandlingStrategyFactory);
-    	expectLoggerAppenderToBeRegistered(errMock, errLevel, exceptionHandlingStrategyFactory);
+    	outContextPrintStream = expectLoggerAppenderToBeRegistered(outMock, outLevel, exceptionHandlingStrategyFactory);
+    	errContextPrintStream = expectLoggerAppenderToBeRegistered(errMock, errLevel, exceptionHandlingStrategyFactory);
     }
 
-	private void expectLoggerAppenderToBeRegistered(PerContextSystemOutput systemOutputMock, LogLevel logLevel, ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws Exception {
-		PrintStream originalPrintStreamMock = createMock(PrintStream.class);
-        expect(systemOutputMock.getOriginalPrintStream()).andStubReturn(originalPrintStreamMock);
-        LoggerAppender loggerAppenderMock = createMock(LoggerAppender.class);
-        expectNew(LoggerAppender.class, logLevel, exceptionHandlingStrategyFactory, originalPrintStreamMock, loggingSystemRegisterMock).andReturn(loggerAppenderMock);
-        SLF4JPrintStream perContextPrintStream = createMock(SLF4JPrintStream.class);
-        expectNew(SLF4JPrintStream.class, originalPrintStreamMock, loggerAppenderMock).andReturn(perContextPrintStream);
-        systemOutputMock.registerPrintStreamForThisContext(perContextPrintStream);
+	private SLF4JPrintStream expectLoggerAppenderToBeRegistered(PerContextSystemOutput systemOutputMock, LogLevel logLevel, ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws Exception {
+		PrintStream originalPrintStreamMock = mock(PrintStream.class);
+        when(systemOutputMock.getOriginalPrintStream()).thenReturn(originalPrintStreamMock);
+
+        ExceptionHandlingStrategy exceptionHandlingStrategy = mock(ExceptionHandlingStrategy.class);
+		when(exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(logLevel, originalPrintStreamMock)).thenReturn(exceptionHandlingStrategy);
+
+		LoggerAppender loggerAppenderMock = mock(LoggerAppender.class);
+		whenNew(LoggerAppender.class).withArguments(logLevel, exceptionHandlingStrategy, originalPrintStreamMock, loggingSystemRegisterMock).thenReturn(loggerAppenderMock);
+
+        SLF4JPrintStream perContextPrintStream = mock(SLF4JPrintStream.class);
+        whenNew(SLF4JPrintStream.class).withArguments(originalPrintStreamMock, loggerAppenderMock).thenReturn(perContextPrintStream);
+
+        return perContextPrintStream;
 	}
 
 	@Test
 	public void stopSendingSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManager() {
-		outMock.deregisterPrintStreamForThisContext();
-    	errMock.deregisterPrintStreamForThisContext();
-    	replayAll();
-		replayAll();
 		SysOutOverSLF4J.stopSendingSystemOutAndErrToSLF4J();
-		verifyAll();
+		
+		verify(outMock).deregisterPrintStreamForThisContext();
+		verify(errMock).deregisterPrintStreamForThisContext();
 	}
 	
 	@Test
 	public void restoreOriginalSystemOutputsDelegatesToSLF4JPrintStreamManager() {
-		outMock.restoreOriginalPrintStream();
-    	errMock.restoreOriginalPrintStream();
-		replayAll();
 		SysOutOverSLF4J.restoreOriginalSystemOutputs();
-		verifyAll();
+		
+		verify(outMock).restoreOriginalPrintStream();
+		verify(errMock).restoreOriginalPrintStream();
 	}
 	
 	@Test
 	public void registerLoggingSystemDelegatesToLoggingSystemRegister() {
-		loggingSystemRegisterMock.registerLoggingSystem("somePackageName");
-		replayAll();
 		SysOutOverSLF4J.registerLoggingSystem("somePackageName");
-		verifyAll();
+		verify(loggingSystemRegisterMock).registerLoggingSystem("somePackageName");
 	}
 	
 	@Test
 	public void unregisterLoggingSystemDelegatesToLoggingSystemRegister() {
-		loggingSystemRegisterMock.unregisterLoggingSystem("somePackageName");
-		replayAll();
 		SysOutOverSLF4J.unregisterLoggingSystem("somePackageName");
-		verifyAll();
+		verify(loggingSystemRegisterMock).unregisterLoggingSystem("somePackageName");
 	}
 	
 	@Test
 	public void isInLoggingSystemDelegatesToLoggingSystemRegister() {
-		expect(loggingSystemRegisterMock.isInLoggingSystem("somePackageName")).andReturn(true);
-		replayAll();
+		when(loggingSystemRegisterMock.isInLoggingSystem("somePackageName")).thenReturn(true);
 		assertTrue(SysOutOverSLF4J.isInLoggingSystem("somePackageName"));
-		verifyAll();
+		
+		when(loggingSystemRegisterMock.isInLoggingSystem("somePackageName")).thenReturn(false);
+		assertFalse(SysOutOverSLF4J.isInLoggingSystem("somePackageName"));
 	}
-	
+
 	@Test
 	public void isSLF4JPrintStreamReturnsFalseWhenSystemOutIsSLF4JPrintStream() {
-		expect(outMock.isPerContextPrintStream()).andReturn(false);
-		replayAll();
+		when(outMock.isPerContextPrintStream()).thenReturn(false);
 		assertFalse(SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams());
 	}
 
 	@Test
 	public void isSLF4JPrintStreamReturnsTrueWhenSystemOutIsSLF4JPrintStream() {
-		expect(outMock.isPerContextPrintStream()).andReturn(true);
-		replayAll();
+		when(outMock.isPerContextPrintStream()).thenReturn(true);
 		assertTrue(SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams());
 	}
 

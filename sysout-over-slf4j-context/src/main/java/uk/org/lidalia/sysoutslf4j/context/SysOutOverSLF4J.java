@@ -29,6 +29,7 @@ import java.io.PrintStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
@@ -81,9 +82,7 @@ public final class SysOutOverSLF4J {
 	 * @param errLevel The SLF4J {@link LogLevel} at which calls to System.err should be logged
 	 */
 	public static void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel) {
-		final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory =
-			LogPerLineExceptionHandlingStrategyFactory.getInstance();
-		sendSystemOutAndErrToSLF4J(outLevel, errLevel, exceptionHandlingStrategyFactory);
+		sendSystemOutAndErrToSLF4J(outLevel, errLevel, LogPerLineExceptionHandlingStrategyFactory.getInstance());
 	}
 
 	/**
@@ -124,13 +123,15 @@ public final class SysOutOverSLF4J {
 
 	private static void registerNewLoggerAppender(
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
-			final PerContextSystemOutput slf4jSystemOutput, final LogLevel logLevel) {
-		PrintStream originalPrintStream = slf4jSystemOutput.getOriginalPrintStream();
+			final PerContextSystemOutput perContextSystemOutput, final LogLevel logLevel) {
+		final PrintStream originalPrintStream = perContextSystemOutput.getOriginalPrintStream();
+		final ExceptionHandlingStrategy exceptionHandlingStrategy = exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(logLevel, originalPrintStream);
 		final LoggerAppender loggerAppender = new LoggerAppender(
-				logLevel, exceptionHandlingStrategyFactory, originalPrintStream, LOGGING_SYSTEM_REGISTER);
+				logLevel, exceptionHandlingStrategy, originalPrintStream, LOGGING_SYSTEM_REGISTER);
 		final PrintStream slf4jPrintStream = new SLF4JPrintStream(originalPrintStream, loggerAppender);
+//		final PrintStream slf4jPrintStream = new PrintStream(new SLF4JOutputStream(logLevel, exceptionHandlingStrategy), true);
 		ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(slf4jPrintStream);
-		slf4jSystemOutput.registerPrintStreamForThisContext(slf4jPrintStream);
+		perContextSystemOutput.registerPrintStreamForThisContext(slf4jPrintStream);
 	}
 
 	/**
