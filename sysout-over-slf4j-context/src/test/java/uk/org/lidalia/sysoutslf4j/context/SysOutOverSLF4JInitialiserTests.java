@@ -98,9 +98,45 @@ public class SysOutOverSLF4JInitialiserTests {
 		
 		givenLoggerIsA(slf4jSimpleLogger);
 		whenInitialiseIsCalled();
-		thenSlf4jSimpleLoggerIsRegistered();
+		thenSlf4jImplementationIsRegistered();
+	}
+
+	@Test
+	public void initialiseWithLogbackLoggerRegistersLoggingPackageAutomatically() throws Exception {
+		Logger logbackLogger = mock(ch.qos.logback.classic.Logger.class);
+		
+		givenLoggerIsA(logbackLogger);
+		whenInitialiseIsCalled();
+		verify(loggingSystemRegister).registerLoggingSystem("ch.qos.logback.");
 	}
 	
+	@Test
+	public void initialiseWithNLog4JLoggerRegistersLoggingPackageAutomatically() throws Exception {
+		Logger nlog4jLogger = makeMockLogger("org.apache.log4j.NLogger");
+		
+		givenLoggerIsA(nlog4jLogger);
+		whenInitialiseIsCalled();
+		verify(loggingSystemRegister).registerLoggingSystem("org.apache.log4j.");
+	}
+
+	@Test
+	public void initialiseWithLog4JLoggerRegistersLoggingPackageAutomatically() throws Exception {
+		Logger log4jLogger = makeMockLogger("org.slf4j.impl.Log4jLoggerAdapter");
+		
+		givenLoggerIsA(log4jLogger);
+		whenInitialiseIsCalled();
+		thenSlf4jImplementationIsRegistered();
+	}
+
+	@Test
+	public void initialiseWithJDK14LoggerRegistersLoggingPackageAutomatically() throws Exception {
+		Logger jdk14Logger = makeMockLogger("org.slf4j.impl.JDK14LoggerAdapter");
+		
+		givenLoggerIsA(jdk14Logger);
+		whenInitialiseIsCalled();
+		thenSlf4jImplementationIsRegistered();
+	}
+
 	private Logger makeMockLogger(String loggerClassName) throws Exception {
 		Class<Logger> mockLoggerClass = makeMockLoggerClass(loggerClassName);
 		return mock(mockLoggerClass);
@@ -127,49 +163,8 @@ public class SysOutOverSLF4JInitialiserTests {
 		verify(loggingSystemRegister).registerLoggingSystem("org.grlea.log.");
 	}
 	
-	private void thenSlf4jSimpleLoggerIsRegistered() {
-		verify(loggingSystemRegister).registerLoggingSystem("org.slf4j.impl.SimpleLogger");
-	}
-
-	@Test
-	public void initialiseWithLogbackLoggerLogsDebugMessageToSayNoRegistrationNecessary() throws Exception {
-		Logger logbackLogger = mock(ch.qos.logback.classic.Logger.class);
-		
-		givenLoggerIsA(logbackLogger);
-		whenInitialiseIsCalled();
-		thenADebugMessageToSayNoRegistrationNecessaryShouldBeLogged(logbackLogger.getClass());
-	}
-	
-	@Test
-	public void initialiseWithNLog4JLoggerLogsDebugMessageToSayNoRegistrationNecessary() throws Exception {
-		Logger nlog4jLogger = makeMockLogger("org.apache.log4j.NLogger");
-		
-		givenLoggerIsA(nlog4jLogger);
-		whenInitialiseIsCalled();
-		thenADebugMessageToSayNoRegistrationNecessaryShouldBeLogged(nlog4jLogger.getClass());
-	}
-
-	@Test
-	public void initialiseWithLog4JLoggerLogsDebugMessageToSayNoRegistrationNecessary() throws Exception {
-		Logger log4jLogger = makeMockLogger("org.slf4j.impl.Log4jLoggerAdapter");
-		
-		givenLoggerIsA(log4jLogger);
-		whenInitialiseIsCalled();
-		thenADebugMessageToSayNoRegistrationNecessaryShouldBeLogged(log4jLogger.getClass());
-	}
-
-	@Test
-	public void initialiseWithJDK14LoggerLogsDebugMessageToSayNoRegistrationNecessary() throws Exception {
-		Logger jdk14Logger = makeMockLogger("org.slf4j.impl.JDK14LoggerAdapter");
-		
-		givenLoggerIsA(jdk14Logger);
-		whenInitialiseIsCalled();
-		thenADebugMessageToSayNoRegistrationNecessaryShouldBeLogged(jdk14Logger.getClass());
-	}
-
-	private void thenADebugMessageToSayNoRegistrationNecessaryShouldBeLogged(Class<? extends Logger> knownLoggerImplementationClass) {
-		assertSoleLoggingEvent(Level.DEBUG, "Your logging framework {} should not need access to the standard println methods on "
-		+ "the console, so you should not need to register a logging system package.", knownLoggerImplementationClass);
+	private void thenSlf4jImplementationIsRegistered() {
+		verify(loggingSystemRegister).registerLoggingSystem("org.slf4j.impl.");
 	}
 	
 	private void assertSoleLoggingEvent(Level level, String message, Object... args) {
@@ -189,7 +184,7 @@ public class SysOutOverSLF4JInitialiserTests {
 	}
 	
 	private void thenAWarnMessageToSayRegistrationMayBeNecessaryShouldBeLogged(Class<? extends Logger> unknownLoggerClass) {
-		assertSoleLoggingEvent(Level.WARN, "Your logging framework {} is not known - if it needs access to the standard println methods on "
-					+ "the console you will need to register it by calling registerLoggingSystemPackage", unknownLoggerClass);
+		assertSoleLoggingEvent(Level.WARN, "Your logging framework {} is not known - if it needs access to the console you " +
+				"will need to register it by calling SysOutOverSLF4J.registerLoggingSystem", unknownLoggerClass);
 	}
 }

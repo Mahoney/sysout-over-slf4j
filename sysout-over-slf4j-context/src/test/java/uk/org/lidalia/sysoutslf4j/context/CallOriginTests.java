@@ -27,7 +27,7 @@ package uk.org.lidalia.sysoutslf4j.context;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static uk.org.lidalia.test.Assert.shouldThrow;
@@ -42,11 +42,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(CallOrigin.class)
+@PrepareForTest({CallOrigin.class, LoggingSystemRegister.class})
 public class CallOriginTests {
 
+	private final LoggingSystemRegister loggingSystemRegister = mock(LoggingSystemRegister.class);
 	@Test
-	public void testGetCallOriginThrowsIllegalStateExceptionIfNoPerContextPrintStreamStackEntry() throws Throwable {
+	public void getCallOriginThrowsIllegalStateExceptionIfNoPerContextPrintStreamStackEntry() throws Throwable {
 		expectGetStackTraceToReturn(
 				stackTraceElement("org.a.1"),
 				stackTraceElement("org.a.2")
@@ -54,7 +55,7 @@ public class CallOriginTests {
 
 		IllegalStateException exception = shouldThrow(IllegalStateException.class, new Callable<Void>() {
 			public Void call() throws Exception {
-				CallOrigin.getCallOrigin();
+				CallOrigin.getCallOrigin(loggingSystemRegister);
 				return null;
 			}
 		});
@@ -62,41 +63,41 @@ public class CallOriginTests {
 	}
 
 	@Test
-	public void testGetCallOriginReturnsFirstClassName() {
+	public void getCallOriginReturnsFirstClassName() {
 		expectGetStackTraceToReturn(
 				stackTraceElement(PerContextPrintStream.class),
 				stackTraceElement("org.a.ClassName"),
 				stackTraceElement("org.b.ClassName")
 		);
 		
-		CallOrigin callOrigin = CallOrigin.getCallOrigin();
+		CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
 	}
 
 	@Test
-	public void testGetCallOriginIsNotStackTraceIfThrowableNotFirstElement() {
+	public void getCallOriginIsNotStackTraceIfThrowableNotFirstElement() {
 		expectGetStackTraceToReturn(
 				stackTraceElement(PerContextPrintStream.class),
 				stackTraceElement("org.a.ClassName"));
 		
-		CallOrigin callOrigin = CallOrigin.getCallOrigin();
+		CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
 		assertFalse(callOrigin.isPrintingStackTrace());
 	}
 
 	@Test
-	public void testGetCallOriginIsStackTraceIfThrowableIsFirstElement() {
+	public void getCallOriginIsStackTraceIfThrowableIsInStackBeforePerContextPrintStreamElement() {
 		expectGetStackTraceToReturn(
 				stackTraceElement(PerContextPrintStream.class),
 				stackTraceElement("java.lang.Throwable", "printStackTrace"),
 				stackTraceElement("org.a.ClassName")
 		);
 		
-		CallOrigin callOrigin = CallOrigin.getCallOrigin();
+		CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
 		assertTrue(callOrigin.isPrintingStackTrace());
 	}
 
 	@Test
-	public void testGetCallOriginReturnsFirstClassNameOtherThanThrowable() {
+	public void getCallOriginReturnsFirstClassNameOtherThanThrowable() {
 		expectGetStackTraceToReturn(
 				stackTraceElement(PerContextPrintStream.class),
 				stackTraceElement("some.other.ClassName"),
@@ -104,19 +105,32 @@ public class CallOriginTests {
 				stackTraceElement("org.a.ClassName")
 		);
 		
-		CallOrigin callOrigin = CallOrigin.getCallOrigin();
+		CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
 	}
 
 	@Test
-	public void testGetCallOriginReturnsInnerClassesAsTheOuterClass() {
+	public void getCallOriginReturnsInnerClassesAsTheOuterClass() {
 		expectGetStackTraceToReturn(
 				stackTraceElement(PerContextPrintStream.class),
 				stackTraceElement("org.a.ClassName$InnerClass"),
 				stackTraceElement("org.b.ClassName")
 		);
-		CallOrigin callOrigin = CallOrigin.getCallOrigin();
+		CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
+	}
+
+	@Test
+	public void getCallOriginIsInLoggingSystemIfLoggingSystemRegisterSaysItIs() {
+		expectGetStackTraceToReturn(
+				stackTraceElement(PerContextPrintStream.class),
+				stackTraceElement(Throwable.class, "printStackTrace"),
+				stackTraceElement("class.in.logging.system")
+		);
+		when(loggingSystemRegister.isInLoggingSystem("class.in.logging.system")).thenReturn(true);
+		
+		CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
+		assertTrue(callOrigin.isInLoggingSystem());
 	}
 
 	private void expectGetStackTraceToReturn(StackTraceElement... stackTraceElements) {

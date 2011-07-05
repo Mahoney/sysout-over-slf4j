@@ -3,6 +3,8 @@ package uk.org.lidalia.sysoutslf4j.context;
 import static uk.org.lidalia.sysoutslf4j.context.CallOrigin.getCallOrigin;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,31 +15,47 @@ public class SLF4JOutputStream extends ByteArrayOutputStream {
 	
 	private final LogLevel level;
 	private final ExceptionHandlingStrategy exceptionHandlingStrategy;
+	private final PrintStream originalPrintStream;
+	private final LoggingSystemRegister loggingSystemRegister;
 	
-	SLF4JOutputStream(final LogLevel level, final ExceptionHandlingStrategy exceptionHandlingStrategy) {
+	SLF4JOutputStream(final LogLevel level, final ExceptionHandlingStrategy exceptionHandlingStrategy,
+			final PrintStream originalPrintStream, final LoggingSystemRegister loggingSystemRegister) {
 		super();
 		this.level = level;
 		this.exceptionHandlingStrategy = exceptionHandlingStrategy;
+		this.originalPrintStream = originalPrintStream;
+		this.loggingSystemRegister = loggingSystemRegister;
 	}
 
 	@Override
-	public synchronized void flush() {
-		String bufferAsString = new String(toByteArray());
-		if (bufferAsString.endsWith("\n")) {
-			String valueToLog = StringUtils.stripEnd(bufferAsString, "\r\n");
-			log(valueToLog);
-			reset();
+	public synchronized void flush() throws IOException {
+		final CallOrigin callOrigin = getCallOrigin(loggingSystemRegister);
+		if (callOrigin.isInLoggingSystem()) {
+			writeToOriginalPrintStream();
+		} else {
+			String bufferAsString = new String(toByteArray());
+			if (bufferAsString.endsWith("\n")) {
+				log(callOrigin, bufferAsString);
+			}
 		}
 	}
 
-	private void log(final String logStatement) {
-		final CallOrigin callOrigin = getCallOrigin();
+	private void writeToOriginalPrintStream() throws IOException {
+		exceptionHandlingStrategy.notifyNotStackTrace();
+		writeTo(originalPrintStream);
+		originalPrintStream.flush();
+		reset();
+	}
+
+	private void log(final CallOrigin callOrigin, String bufferAsString) {
+		String valueToLog = StringUtils.stripEnd(bufferAsString, "\r\n");
 		final Logger log = LoggerFactory.getLogger(callOrigin.getClassName());
 		if (callOrigin.isPrintingStackTrace()) {
-			exceptionHandlingStrategy.handleExceptionLine(logStatement, log);
+			exceptionHandlingStrategy.handleExceptionLine(valueToLog, log);
 		} else {
 			exceptionHandlingStrategy.notifyNotStackTrace();
-			level.log(log, logStatement);
+			level.log(log, valueToLog);
 		}
+		reset();
 	}
 }

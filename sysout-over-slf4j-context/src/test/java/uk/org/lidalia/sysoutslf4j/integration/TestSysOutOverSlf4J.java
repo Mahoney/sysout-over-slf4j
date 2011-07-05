@@ -33,7 +33,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Locale;
-import java.util.logging.ConsoleHandler;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.SimpleLayout;
@@ -56,6 +55,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.CoreConstants;
+import ch.qos.logback.core.joran.spi.ConsoleTarget;
 import ch.qos.logback.core.layout.EchoLayout;
 
 public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
@@ -128,6 +128,10 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 		app.setLayout(new EchoLayout<ILoggingEvent>());
 		app.start();
 		log.addAppender(app);
+		
+		Logger consoleLogger = lc.getLogger(ConsoleTarget.class);
+		consoleLogger.setLevel(Level.ALL);
+		consoleLogger.addAppender(app);
 	}
 	
 	@Test
@@ -135,16 +139,10 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 		OutputStream newSysErr = setUpMockSystemOutput(SystemOutput.ERR);
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 
-		java.util.logging.Logger log = configureJuliLoggerToUseConsoleHandler();
+		java.util.logging.Logger log = java.util.logging.Logger.getLogger(getClass().getCanonicalName());
 		log.info("Should reach the old syserr");
 		
 		assertTrue(newSysErr.toString().contains("INFO: Should reach the old syserr"));
-	}
-
-	private java.util.logging.Logger configureJuliLoggerToUseConsoleHandler() {
-		java.util.logging.Logger log = java.util.logging.Logger.getLogger(getClass().getCanonicalName());
-		log.addHandler(new ConsoleHandler());
-		return log;
 	}
 	
 	@Test

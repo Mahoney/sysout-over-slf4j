@@ -33,6 +33,7 @@ import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStr
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
+import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 
 /**
  * Public interface to the sysout-over-slf4j module. Provides all methods necessary to manage wrapping the existing
@@ -126,10 +127,7 @@ public final class SysOutOverSLF4J {
 			final PerContextSystemOutput perContextSystemOutput, final LogLevel logLevel) {
 		final PrintStream originalPrintStream = perContextSystemOutput.getOriginalPrintStream();
 		final ExceptionHandlingStrategy exceptionHandlingStrategy = exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(logLevel, originalPrintStream);
-		final LoggerAppender loggerAppender = new LoggerAppender(
-				logLevel, exceptionHandlingStrategy, originalPrintStream, LOGGING_SYSTEM_REGISTER);
-		final PrintStream slf4jPrintStream = new SLF4JPrintStream(originalPrintStream, loggerAppender);
-//		final PrintStream slf4jPrintStream = new PrintStream(new SLF4JOutputStream(logLevel, exceptionHandlingStrategy), true);
+		final PrintStream slf4jPrintStream = new PrintStream(new SLF4JOutputStream(logLevel, exceptionHandlingStrategy, originalPrintStream, LOGGING_SYSTEM_REGISTER), true);
 		ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(slf4jPrintStream);
 		perContextSystemOutput.registerPrintStreamForThisContext(slf4jPrintStream);
 	}

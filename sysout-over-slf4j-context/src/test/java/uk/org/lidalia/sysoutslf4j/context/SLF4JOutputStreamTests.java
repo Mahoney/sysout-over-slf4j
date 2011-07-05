@@ -34,6 +34,7 @@ import static org.powermock.api.mockito.PowerMockito.verifyZeroInteractions;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.io.PrintStream;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +48,7 @@ import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStr
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({LoggerFactory.class, CallOrigin.class, LoggingSystemRegister.class})
-public class LoggerAppenderTests {
+public class SLF4JOutputStreamTests {
 
 	private static final String CLASS_IN_LOGGING_SYSTEM = "org.logging.LoggerClass";
 	private static final String CLASS_NAME = "org.something.SomeClass";
@@ -58,7 +59,7 @@ public class LoggerAppenderTests {
 	private PrintStream origPrintStreamMock = mock(PrintStream.class);
 	private Logger loggerMock = mock(Logger.class);
 	private LoggingSystemRegister loggingSystemRegisterMock = mock(LoggingSystemRegister.class);
-	private LoggerAppender loggerAppenderImplInstance = new LoggerAppender(level, exceptionHandlingStrategyMock, origPrintStreamMock, loggingSystemRegisterMock);
+	private SLF4JOutputStream outputStream = new SLF4JOutputStream(level, exceptionHandlingStrategyMock, origPrintStreamMock, loggingSystemRegisterMock);
 
 	@Before
 	public void setUp() {
@@ -66,58 +67,51 @@ public class LoggerAppenderTests {
 		when(LoggerFactory.getLogger(anyString())).thenReturn(mock(Logger.class));
 		when(LoggerFactory.getLogger(CLASS_NAME)).thenReturn(loggerMock);
 		
-		when(loggingSystemRegisterMock.isInLoggingSystem(CLASS_NAME)).thenReturn(false);
-		when(loggingSystemRegisterMock.isInLoggingSystem(CLASS_IN_LOGGING_SYSTEM)).thenReturn(true);
-		
-		mockGettingCallOrigin(CLASS_NAME, false);
+		mockGettingCallOrigin(false, false, CLASS_NAME);
 	}
 
 	@Test
-	public void appendNotifiesNotStackTrace() {
-		loggerAppenderImplInstance.append("irrelevant");
-		verify(exceptionHandlingStrategyMock).notifyNotStackTrace();
-	}
-
-	@Test
-	public void appendLogsWhenMessageEndsWithUnixLineBreak() {
-		loggerAppenderImplInstance.append("the message\n");
+	public void flushLogsWhenMessageEndsWithUnixLineBreak() throws Exception {
+		outputStream.write("the message\n".getBytes("UTF-8"));
+		outputStream.flush();
 		verify(loggerMock).info("the message");
 	}
 
 	@Test
-	public void delegatePrintCallsLoggerAppenderAppendAndLogWhenMessageEndsWithWindowsLineBreak() {
-		loggerAppenderImplInstance.append("the message\r\n");
+	public void flushLogsWhenMessageEndsWithWindowsLineBreak() throws Exception {
+		outputStream.write("the message\r\n".getBytes("UTF-8"));
+		outputStream.flush();
 		verify(loggerMock).info("the message");
 	}
 
 	@Test
-	public void appendAndLogPrintsToPrintStreamIfInLoggingSystem() {
-		mockGettingCallOrigin(CLASS_IN_LOGGING_SYSTEM, false);
+	public void flushWritesToOriginalPrintStreamIfInLoggingSystem() throws Exception {
+		mockGettingCallOrigin(false, true, CLASS_IN_LOGGING_SYSTEM);
 		
-		loggerAppenderImplInstance.appendAndLog("some text");
+		byte[] bytes = "twelve chars".getBytes("UTF-8");
+		outputStream.write(bytes);
+		outputStream.flush();
 		
-		verify(origPrintStreamMock).println("some text");
-	}
-
-	@Test
-	public void appendAndLogNonStackTraceNotifiesNotStackTrace() {
-		loggerAppenderImplInstance.appendAndLog("some text");
+		byte[] expected = Arrays.copyOf(bytes, 32);
+		verify(origPrintStreamMock).write(expected, 0, 12);
 		verify(exceptionHandlingStrategyMock).notifyNotStackTrace();
-	}
-
-	@Test
-	public void appendAndLogLogs() {
-		loggerAppenderImplInstance.appendAndLog("some text");
-		
-		verify(loggerMock).info("some text");
 		verify(exceptionHandlingStrategyMock, never()).handleExceptionLine(anyString(), any(Logger.class));
 	}
 
 	@Test
-	public void appendAndLogStackTraceCallsExceptionHandlingStrategy() {
-		mockGettingCallOrigin(CLASS_NAME, true);
+	public void flushNonStackTraceNotifiesNotStackTrace() throws Exception {
+		outputStream.write("some text\n".getBytes("UTF-8"));
+		outputStream.flush();
+		verify(exceptionHandlingStrategyMock).notifyNotStackTrace();
+		verify(exceptionHandlingStrategyMock, never()).handleExceptionLine(anyString(), any(Logger.class));
+	}
+
+	@Test
+	public void flushStackTraceCallsExceptionHandlingStrategy() throws Exception {
+		mockGettingCallOrigin(true, false, CLASS_NAME);
 		
-		loggerAppenderImplInstance.appendAndLog("exception line");
+		outputStream.write("exception line\n".getBytes("UTF-8"));
+		outputStream.flush();
 		
 		verify(exceptionHandlingStrategyMock).handleExceptionLine("exception line", loggerMock);
 		verify(exceptionHandlingStrategyMock, never()).notifyNotStackTrace();
@@ -125,24 +119,27 @@ public class LoggerAppenderTests {
 	}
 
 	@Test
-	public void appendAndLogFlushesAndResetsBuffer() {
-		loggerAppenderImplInstance.append("1");
-		loggerAppenderImplInstance.appendAndLog("2");
+	public void flushResetsBuffer() throws Exception {
+		outputStream.write("1".getBytes("UTF-8"));
+		outputStream.write("2\n".getBytes("UTF-8"));
+		outputStream.flush();
 		
 		verify(loggerMock).info("12");
 		
-		loggerAppenderImplInstance.append("3");
-		loggerAppenderImplInstance.appendAndLog("4");
+		outputStream.write("3".getBytes("UTF-8"));
+		outputStream.write("4\n".getBytes("UTF-8"));
+		outputStream.flush();
 		
 		verify(loggerMock).info("34");
 	}
 
-	private void mockGettingCallOrigin(String className, boolean printingStackTrace) {
+	private void mockGettingCallOrigin(boolean isStackTrace, boolean inLoggingSystem, String className) {
 		CallOrigin callOriginMock = mock(CallOrigin.class);
-		when(callOriginMock.isPrintingStackTrace()).thenReturn(printingStackTrace);
+		when(callOriginMock.isPrintingStackTrace()).thenReturn(isStackTrace);
 		when(callOriginMock.getClassName()).thenReturn(className);
+		when(callOriginMock.isInLoggingSystem()).thenReturn(inLoggingSystem);
 
 		mockStatic(CallOrigin.class);
-		when(CallOrigin.getCallOrigin()).thenReturn(callOriginMock);
+		when(CallOrigin.getCallOrigin(loggingSystemRegisterMock)).thenReturn(callOriginMock);
 	}
 }

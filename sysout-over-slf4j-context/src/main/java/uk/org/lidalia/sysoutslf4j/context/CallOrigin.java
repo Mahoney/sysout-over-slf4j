@@ -30,10 +30,12 @@ final class CallOrigin {
 
 	private final boolean printingStackTrace;
 	private final String className;
+	private final boolean inLoggingSystem;
 
-	private CallOrigin(final boolean isStacktrace, final String className) {
+	private CallOrigin(final boolean isStacktrace, final boolean inLoggingSystem, final String className) {
 		this.printingStackTrace = isStacktrace;
 		this.className = className;
+		this.inLoggingSystem = inLoggingSystem;
 	}
 	
 	boolean isPrintingStackTrace() {
@@ -44,17 +46,24 @@ final class CallOrigin {
 		return className;
 	}
 
-	static CallOrigin getCallOrigin() {
+	public boolean isInLoggingSystem() {
+		return inLoggingSystem;
+	}
+
+	static CallOrigin getCallOrigin(LoggingSystemRegister loggingSystemRegister) {
 		Thread currentThread = Thread.currentThread();
 		final StackTraceElement[] stackTraceElements = currentThread.getStackTrace();
 		for (int i = stackTraceElements.length - 1; i >= 0; i--) {
 			StackTraceElement stackTraceElement = stackTraceElements[i];
 			String currentClassName = stackTraceElement.getClassName();
 			if (currentClassName.equals(Throwable.class.getName()) && stackTraceElement.getMethodName().equals("printStackTrace")) {
-				return new CallOrigin(true, getOuterClassName(stackTraceElements[i + 1].getClassName()));
+				return new CallOrigin(true, false, getOuterClassName(stackTraceElements[i + 1].getClassName()));
 			}
 			if (currentClassName.equals(PerContextPrintStream.class.getName())) {
-				return new CallOrigin(false, getOuterClassName(stackTraceElements[i + 1].getClassName()));
+				return new CallOrigin(false, false, getOuterClassName(stackTraceElements[i + 1].getClassName()));
+			}
+			if (loggingSystemRegister.isInLoggingSystem(currentClassName)) {
+				return new CallOrigin(false, true, null);
 			}
 		}
 		throw new IllegalStateException("Must be called from down stack of " + PerContextPrintStream.class.getName());

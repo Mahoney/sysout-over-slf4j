@@ -39,8 +39,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
+import org.slf4j.Logger;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
@@ -49,20 +51,23 @@ import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionH
 import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ LogPerLineExceptionHandlingStrategyFactory.class, LoggingSystemRegister.class, SysOutOverSLF4J.class, PerContextSystemOutput.class, SLF4JPrintStream.class })
+@SuppressStaticInitializationFor("uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J")
+@PrepareForTest({ LogPerLineExceptionHandlingStrategyFactory.class, LoggingSystemRegister.class, SysOutOverSLF4J.class, PerContextSystemOutput.class })
 public class SysOutOverSLF4JTests extends SysOutOverSLF4JTestCase {
 
 	private final LoggingSystemRegister loggingSystemRegisterMock = mock(LoggingSystemRegister.class);
+	private final Logger loggerMock = mock(Logger.class);
 	private final PerContextSystemOutput outMock = mock(PerContextSystemOutput.class);
     private final PerContextSystemOutput errMock = mock(PerContextSystemOutput.class);
 	private final ExceptionHandlingStrategyFactory customExceptionHandlingStrategyFactoryMock = mock(ExceptionHandlingStrategyFactory.class);
 	private final ExceptionHandlingStrategyFactory defaultExceptionHandlingStrategyFactoryMock = mock(ExceptionHandlingStrategyFactory.class);
 
-	private SLF4JPrintStream outContextPrintStream;
-	private SLF4JPrintStream errContextPrintStream;
+	private PrintStream outContextPrintStream;
+	private PrintStream errContextPrintStream;
 
 	@Before
 	public void mockLoggingSystemRegister() {
+		Whitebox.setInternalState(SysOutOverSLF4J.class, loggerMock);
 		Whitebox.setInternalState(SysOutOverSLF4J.class, loggingSystemRegisterMock);
 	}
 
@@ -125,20 +130,20 @@ public class SysOutOverSLF4JTests extends SysOutOverSLF4JTestCase {
     	errContextPrintStream = expectLoggerAppenderToBeRegistered(errMock, errLevel, exceptionHandlingStrategyFactory);
     }
 
-	private SLF4JPrintStream expectLoggerAppenderToBeRegistered(PerContextSystemOutput systemOutputMock, LogLevel logLevel, ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws Exception {
+	private PrintStream expectLoggerAppenderToBeRegistered(PerContextSystemOutput systemOutputMock, LogLevel logLevel, ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws Exception {
 		PrintStream originalPrintStreamMock = mock(PrintStream.class);
         when(systemOutputMock.getOriginalPrintStream()).thenReturn(originalPrintStreamMock);
 
         ExceptionHandlingStrategy exceptionHandlingStrategy = mock(ExceptionHandlingStrategy.class);
 		when(exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(logLevel, originalPrintStreamMock)).thenReturn(exceptionHandlingStrategy);
 
-		LoggerAppender loggerAppenderMock = mock(LoggerAppender.class);
-		whenNew(LoggerAppender.class).withArguments(logLevel, exceptionHandlingStrategy, originalPrintStreamMock, loggingSystemRegisterMock).thenReturn(loggerAppenderMock);
+		SLF4JOutputStream slf4jOutputStreamMock = mock(SLF4JOutputStream.class);
+		whenNew(SLF4JOutputStream.class).withArguments(logLevel, exceptionHandlingStrategy, originalPrintStreamMock, loggingSystemRegisterMock).thenReturn(slf4jOutputStreamMock);
+		
+		PrintStream newPrintStream = mock(PrintStream.class);
+		whenNew(PrintStream.class).withArguments(slf4jOutputStreamMock, true).thenReturn(newPrintStream);
 
-        SLF4JPrintStream perContextPrintStream = mock(SLF4JPrintStream.class);
-        whenNew(SLF4JPrintStream.class).withArguments(originalPrintStreamMock, loggerAppenderMock).thenReturn(perContextPrintStream);
-
-        return perContextPrintStream;
+        return newPrintStream;
 	}
 
 	@Test
