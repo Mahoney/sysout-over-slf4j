@@ -33,7 +33,6 @@ import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStr
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
-import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 
 /**
  * Public interface to the sysout-over-slf4j module. Provides all methods necessary to manage wrapping the existing
