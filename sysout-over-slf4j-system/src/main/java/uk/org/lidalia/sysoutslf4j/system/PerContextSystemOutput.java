@@ -106,4 +106,13 @@ public enum PerContextSystemOutput {
 		final PrintStream originalPrintStream = systemOutput.get();
 		return new PerContextPrintStream(originalPrintStream);
 	}
+
+	public static PerContextSystemOutput findByName(String name) {
+		for (PerContextSystemOutput systemOutput : PerContextSystemOutput.values()) {
+			if (systemOutput.systemOutput.getName().equalsIgnoreCase(name)) {
+				return systemOutput;
+			}
+		}
+		return null;
+	}
 }

@@ -32,6 +32,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Iterator;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
@@ -351,5 +352,18 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	public void isSLF4JPrintStreamReturnsTrueWhenSystemOutIsSLF4JPrintStream() {
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		assertTrue(SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams());
+	}
+	
+	@Test
+	public void bufferDoesNotGrowForever() {
+		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+		
+		for (int i = 1; i <= 5000; i++) {
+			System.out.print("message\nprompt>");
+		}
+		assertEquals(5000, appender.list.size());
+		for (ILoggingEvent loggingEvent : appender.list) {
+			assertExpectedLoggingEvent(loggingEvent, "message\nprompt>", Level.INFO);
+		}
 	}
 }

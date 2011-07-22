@@ -52,7 +52,7 @@ public final class SysOutOverSLF4J {
 	private static final LoggingSystemRegister LOGGING_SYSTEM_REGISTER = new LoggingSystemRegister();
 
 	static {
-		final SysOutOverSLF4JInitialiser sysOutOverSLF4JInitialiser = new SysOutOverSLF4JInitialiser(LOGGING_SYSTEM_REGISTER);
+		final Initialiser sysOutOverSLF4JInitialiser = new Initialiser(LOGGING_SYSTEM_REGISTER);
 		final Logger loggerImplementation = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 		sysOutOverSLF4JInitialiser.initialise(loggerImplementation);
 	}
@@ -115,20 +115,30 @@ public final class SysOutOverSLF4J {
 	public static void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel,
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
 		synchronized (System.class) {
-			registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.OUT, outLevel);
-			registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.ERR, errLevel);
-			LOG.info("Redirected System.out and System.err to SLF4J for this context");
+			try {
+				registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.OUT, outLevel);
+				registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.ERR, errLevel);
+				LOG.info("Redirected System.out and System.err to SLF4J for this context");
+			} catch (NoClassDefFoundError error) {
+				LOG.error("You do not have sysout-over-slf4j-system on your classpath - it is required.");
+			}
 		}
 	}
 
 	private static void registerNewLoggerAppender(
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
 			final PerContextSystemOutput perContextSystemOutput, final LogLevel logLevel) {
-		final PrintStream originalPrintStream = perContextSystemOutput.getOriginalPrintStream();
-		final ExceptionHandlingStrategy exceptionHandlingStrategy = exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(logLevel, originalPrintStream);
-		final PrintStream slf4jPrintStream = new PrintStream(new SLF4JOutputStream(logLevel, exceptionHandlingStrategy, originalPrintStream, LOGGING_SYSTEM_REGISTER), true);
+		final PrintStream slf4jPrintStream = buildPrintStream(exceptionHandlingStrategyFactory, perContextSystemOutput, logLevel);
 		ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(slf4jPrintStream);
 		perContextSystemOutput.registerPrintStreamForThisContext(slf4jPrintStream);
+	}
+
+	private static PrintStream buildPrintStream(
+			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
+			final PerContextSystemOutput perContextSystemOutput, final LogLevel logLevel) {
+		final PrintStream originalPrintStream = perContextSystemOutput.getOriginalPrintStream();
+		final ExceptionHandlingStrategy exceptionHandlingStrategy = exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(logLevel, originalPrintStream);
+		return new PrintStream(new LoggingOutputStream(logLevel, exceptionHandlingStrategy, originalPrintStream, LOGGING_SYSTEM_REGISTER), true);
 	}
 
 	/**

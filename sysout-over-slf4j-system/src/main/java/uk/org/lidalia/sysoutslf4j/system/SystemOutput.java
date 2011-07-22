@@ -76,11 +76,11 @@ public enum SystemOutput {
 	public abstract PrintStream get();
 	public abstract void set(PrintStream newPrintStream);
 
-	private final String friendlyName;
+	private final String name;
 	private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
 	private SystemOutput(final String name) {
-		this.friendlyName = name;
+		this.name = name;
 	}
 	
 	public ReadWriteLock getLock() {
@@ -89,6 +89,19 @@ public enum SystemOutput {
 
 	@Override
 	public String toString() {
-		return friendlyName;
+		return name;
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public static SystemOutput findByName(String name) {
+		for (SystemOutput systemOutput : SystemOutput.values()) {
+			if (systemOutput.name.equalsIgnoreCase(name)) {
+				return systemOutput;
+			}
+		}
+		return null;
 	}
 }

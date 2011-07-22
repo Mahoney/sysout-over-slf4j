@@ -48,7 +48,7 @@ import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStr
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({LoggerFactory.class, CallOrigin.class, LoggingSystemRegister.class})
-public class SLF4JOutputStreamTests {
+public class LoggingOutputStreamTests {
 
 	private static final String CLASS_IN_LOGGING_SYSTEM = "org.logging.LoggerClass";
 	private static final String CLASS_NAME = "org.something.SomeClass";
@@ -59,7 +59,7 @@ public class SLF4JOutputStreamTests {
 	private PrintStream origPrintStreamMock = mock(PrintStream.class);
 	private Logger loggerMock = mock(Logger.class);
 	private LoggingSystemRegister loggingSystemRegisterMock = mock(LoggingSystemRegister.class);
-	private SLF4JOutputStream outputStream = new SLF4JOutputStream(level, exceptionHandlingStrategyMock, origPrintStreamMock, loggingSystemRegisterMock);
+	private LoggingOutputStream outputStream = new LoggingOutputStream(level, exceptionHandlingStrategyMock, origPrintStreamMock, loggingSystemRegisterMock);
 
 	@Before
 	public void setUp() {

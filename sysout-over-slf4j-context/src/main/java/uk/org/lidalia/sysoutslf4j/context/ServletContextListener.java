@@ -24,39 +24,15 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import javax.servlet.ServletContextEvent;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+public class ServletContextListener implements javax.servlet.ServletContextListener {
 
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ SysOutOverSLF4J.class })
-public class SysOutOverSLF4JServletContextListenerTests extends SysOutOverSLF4JTestCase {
-	
-	private SysOutOverSLF4JServletContextListener servletContextListener = new SysOutOverSLF4JServletContextListener();
-	
-	@Test
-	public void testContextInitializedCallsSendSystemOutAndErrToSLF4J() {
-		mockStatic(SysOutOverSLF4J.class);
-		
-		servletContextListener.contextInitialized(null);
-		
-		verifyStatic();
+	public final void contextInitialized(final ServletContextEvent servletContextEvent) {
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 	}
 
-	@Test
-	public void testContextDestroyedDoesNothing() {
-		mockStatic(SysOutOverSLF4J.class);
-		
-		servletContextListener.contextDestroyed(null);
-		
-		verifyStatic();
+	public void contextDestroyed(final ServletContextEvent servletContextEvent) {
 		SysOutOverSLF4J.stopSendingSystemOutAndErrToSLF4J();
 	}
 }

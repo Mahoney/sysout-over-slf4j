@@ -16,6 +16,7 @@
 		<module>parent</module>
 		<module>sysout-over-slf4j-context</module>
 		<module>sysout-over-slf4j-system</module>
+		<module>functional-tests</module>
 	</modules>
 
 	<issueManagement>

@@ -27,9 +27,9 @@ package uk.org.lidalia.sysoutslf4j.context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class SysOutOverSLF4JInitialiser {
+class Initialiser {
 	
-	private static final Logger LOG = LoggerFactory.getLogger(SysOutOverSLF4JInitialiser.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Initialiser.class);
 	
 	private static final String UNKNOWN_LOGGING_SYSTEM_MESSAGE =
 		"Your logging framework {} is not known - if it needs access to the console you will need to register it " +
@@ -40,7 +40,7 @@ class SysOutOverSLF4JInitialiser {
 	
 	private final LoggingSystemRegister loggingSystemRegister;
 	
-	SysOutOverSLF4JInitialiser(final LoggingSystemRegister loggingSystemRegister) {
+	Initialiser(final LoggingSystemRegister loggingSystemRegister) {
 		this.loggingSystemRegister = loggingSystemRegister;
 	}
 

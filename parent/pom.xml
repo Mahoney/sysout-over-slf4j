@@ -238,4 +238,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<modules>
+		<module>webapp-with-jdk14</module>
+	</modules>
 </project>

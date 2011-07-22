@@ -33,12 +33,14 @@
 			<version>2.0.0-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		
-		<!-- TEST -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
+			<scope>compile</scope>
+			<optional>true</optional>
 		</dependency>
+		
+		<!-- TEST -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>

@@ -45,27 +45,27 @@ import ch.qos.logback.core.read.ListAppender;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ LoggingSystemRegister.class, ch.qos.logback.classic.Logger.class })
-public class SysOutOverSLF4JInitialiserTests {
+public class InitialiserTests {
 	
 	static {
 		LoggingUtils.turnOffRootLogging();
 	}
 	
-	private SysOutOverSLF4JInitialiser initialiser;
+	private Initialiser initialiser;
 	private LoggingSystemRegister loggingSystemRegister;
 	private Logger loggerImplementation;
 	private ch.qos.logback.classic.Logger initialiserLogger;
 	private ListAppender<ILoggingEvent> appender;
 	
-	public SysOutOverSLF4JInitialiserTests() {
+	public InitialiserTests() {
 		setUpLogger();
 		loggingSystemRegister = mock(LoggingSystemRegister.class);
-		initialiser = new SysOutOverSLF4JInitialiser(loggingSystemRegister);
+		initialiser = new Initialiser(loggingSystemRegister);
 	}
 	
 	private void setUpLogger() {
 		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-		initialiserLogger = lc.getLogger(SysOutOverSLF4JInitialiser.class);
+		initialiserLogger = lc.getLogger(Initialiser.class);
 		initialiserLogger.setLevel(Level.DEBUG);
 		initialiserLogger.detachAndStopAllAppenders();
 		appender = new ListAppender<ILoggingEvent>();

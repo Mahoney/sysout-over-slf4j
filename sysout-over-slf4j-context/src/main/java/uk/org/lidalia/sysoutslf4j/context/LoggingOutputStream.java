@@ -11,14 +11,14 @@ import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 
-public class SLF4JOutputStream extends ByteArrayOutputStream {
+public class LoggingOutputStream extends ByteArrayOutputStream {
 	
 	private final LogLevel level;
 	private final ExceptionHandlingStrategy exceptionHandlingStrategy;
 	private final PrintStream originalPrintStream;
 	private final LoggingSystemRegister loggingSystemRegister;
 	
-	SLF4JOutputStream(final LogLevel level, final ExceptionHandlingStrategy exceptionHandlingStrategy,
+	LoggingOutputStream(final LogLevel level, final ExceptionHandlingStrategy exceptionHandlingStrategy,
 			final PrintStream originalPrintStream, final LoggingSystemRegister loggingSystemRegister) {
 		super();
 		this.level = level;
@@ -34,7 +34,7 @@ public class SLF4JOutputStream extends ByteArrayOutputStream {
 			writeToOriginalPrintStream();
 		} else {
 			String bufferAsString = new String(toByteArray());
-			if (bufferAsString.endsWith("\n")) {
+			if (bufferAsString.contains("\n")) {
 				log(callOrigin, bufferAsString);
 			}
 		}

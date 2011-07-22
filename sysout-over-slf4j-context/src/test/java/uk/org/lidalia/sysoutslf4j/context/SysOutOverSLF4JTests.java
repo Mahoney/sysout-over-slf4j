@@ -137,8 +137,8 @@ public class SysOutOverSLF4JTests extends SysOutOverSLF4JTestCase {
         ExceptionHandlingStrategy exceptionHandlingStrategy = mock(ExceptionHandlingStrategy.class);
 		when(exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(logLevel, originalPrintStreamMock)).thenReturn(exceptionHandlingStrategy);
 
-		SLF4JOutputStream slf4jOutputStreamMock = mock(SLF4JOutputStream.class);
-		whenNew(SLF4JOutputStream.class).withArguments(logLevel, exceptionHandlingStrategy, originalPrintStreamMock, loggingSystemRegisterMock).thenReturn(slf4jOutputStreamMock);
+		LoggingOutputStream slf4jOutputStreamMock = mock(LoggingOutputStream.class);
+		whenNew(LoggingOutputStream.class).withArguments(logLevel, exceptionHandlingStrategy, originalPrintStreamMock, loggingSystemRegisterMock).thenReturn(slf4jOutputStreamMock);
 		
 		PrintStream newPrintStream = mock(PrintStream.class);
 		whenNew(PrintStream.class).withArguments(slf4jOutputStreamMock, true).thenReturn(newPrintStream);
