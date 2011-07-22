@@ -46,7 +46,7 @@ final class CallOrigin {
 		return className;
 	}
 
-	public boolean isInLoggingSystem() {
+	boolean isInLoggingSystem() {
 		return inLoggingSystem;
 	}
 

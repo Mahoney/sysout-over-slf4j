@@ -55,7 +55,7 @@ class LoggingSystemRegister {
 		}
 	}
 
-	public boolean isInLoggingSystem(final String className) {
+	boolean isInLoggingSystem(final String className) {
 		for (String packageName : loggingSystemNameFragments) {
 			if (className.startsWith(packageName)) {
 				return true;
