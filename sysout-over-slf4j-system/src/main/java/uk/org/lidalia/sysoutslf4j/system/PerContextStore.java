@@ -32,7 +32,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
-public class PerContextStore<T> {
+class PerContextStore<T> {
 
 	private final Map<ClassLoader, WeakReference<T>> loggerAppenderMap =
 		new WeakHashMap<ClassLoader, WeakReference<T>>();
@@ -42,15 +42,15 @@ public class PerContextStore<T> {
 	private final Lock readLock = lock.readLock();
 	private final Lock writeLock = lock.writeLock();
 
-	public PerContextStore() {
+	PerContextStore() {
 		this(null);
 	}
 
-	public PerContextStore(final T defaultValue) {
+	PerContextStore(final T defaultValue) {
 		this.defaultValue = defaultValue; 
 	}
 
-	public T get() {
+	T get() {
 		readLock.lock();
 		try {
 			return get(contextClassLoader());
@@ -59,7 +59,7 @@ public class PerContextStore<T> {
 		}
 	}
 
-	public final T getDefaultValue() {
+	T getDefaultValue() {
 		return defaultValue;
 	}
 
@@ -79,7 +79,7 @@ public class PerContextStore<T> {
 		return result;
 	}
 
-	public void put(final T loggerAppender) {
+	void put(final T loggerAppender) {
 		writeLock.lock();
 		try {
 			loggerAppenderMap.put(contextClassLoader(), new WeakReference<T>(loggerAppender));
@@ -88,7 +88,7 @@ public class PerContextStore<T> {
 		}
 	}
 
-	public void remove() {
+	void remove() {
 		writeLock.lock();
 		try {
 			loggerAppenderMap.remove(contextClassLoader());

@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 
-public class LoggingOutputStream extends ByteArrayOutputStream {
+class LoggingOutputStream extends ByteArrayOutputStream {
 	
 	private final LogLevel level;
 	private final ExceptionHandlingStrategy exceptionHandlingStrategy;

@@ -24,6 +24,7 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -37,9 +38,7 @@ class LoggingSystemRegister {
 	{
 		String[] LOGGING_SYSTEMS_THAT_MIGHT_ACCESS_CONSOLE =
 		{ "org.x4juli.", "org.grlea.log.", "org.slf4j.impl.SimpleLogger", "ch.qos.logback.", "org.slf4j.impl.Log4jLoggerAdapter", "org.slf4j.impl.JDK14LoggerAdapter", "org.apache.log4j.", "java.util.logging." };
-		for (String loggingSystem : LOGGING_SYSTEMS_THAT_MIGHT_ACCESS_CONSOLE) {
-			loggingSystemNameFragments.add(loggingSystem);
-		}
+        Collections.addAll(loggingSystemNameFragments, LOGGING_SYSTEMS_THAT_MIGHT_ACCESS_CONSOLE);
 	}
 	
 	void registerLoggingSystem(final String packageName) {
@@ -55,7 +54,7 @@ class LoggingSystemRegister {
 		}
 	}
 
-	public boolean isInLoggingSystem(final String className) {
+	boolean isInLoggingSystem(final String className) {
 		for (String packageName : loggingSystemNameFragments) {
 			if (className.startsWith(packageName)) {
 				return true;
