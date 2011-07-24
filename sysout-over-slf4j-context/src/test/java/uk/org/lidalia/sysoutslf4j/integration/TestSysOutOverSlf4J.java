@@ -32,7 +32,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Iterator;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
