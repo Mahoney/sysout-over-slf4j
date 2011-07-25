@@ -73,7 +73,7 @@ class LoggingOutputStream extends ByteArrayOutputStream {
 
     protected void finalize() throws Throwable {
         super.finalize();
-        String bufferAsString = new String(toByteArray()).trim();
+        String bufferAsString = StringUtils.stripEnd(new String(toByteArray()), " \r\n");
         if (bufferAsString.length() > 0) {
             level.log(LoggerFactory.getLogger(SysOutOverSLF4J.class), bufferAsString);
         }
