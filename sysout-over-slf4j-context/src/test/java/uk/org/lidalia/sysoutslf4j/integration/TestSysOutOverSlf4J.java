@@ -357,12 +357,12 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 	public void bufferDoesNotGrowForever() {
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 		
-		for (int i = 1; i <= 5000; i++) {
+		for (int i = 1; i <= 3; i++) {
 			System.out.print("message\nprompt>");
 		}
-		assertEquals(5000, appender.list.size());
-		for (ILoggingEvent loggingEvent : appender.list) {
-			assertExpectedLoggingEvent(loggingEvent, "message\nprompt>", Level.INFO);
-		}
+		assertEquals(3, appender.list.size());
+        assertExpectedLoggingEvent(appender.list.get(0), "message", Level.INFO);
+        assertExpectedLoggingEvent(appender.list.get(1), "prompt>message", Level.INFO);
+        assertExpectedLoggingEvent(appender.list.get(2), "prompt>message", Level.INFO);
 	}
 }

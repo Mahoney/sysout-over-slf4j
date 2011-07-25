@@ -5,6 +5,8 @@ import static uk.org.lidalia.sysoutslf4j.context.CallOrigin.getCallOrigin;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +36,16 @@ class LoggingOutputStream extends ByteArrayOutputStream {
 			writeToOriginalPrintStream();
 		} else {
 			String bufferAsString = new String(toByteArray());
-			if (bufferAsString.contains("\n")) {
+            if (bufferAsString.endsWith("\n")) {
 				log(callOrigin, bufferAsString);
+			} else if (bufferAsString.contains("\n")) {
+                List<String> messages = Arrays.asList(bufferAsString.split("\n"));
+                List<String> messagesToLog = messages.subList(0, messages.size() - 1);
+                for (String messageToLog : messagesToLog) {
+                    log(callOrigin, messageToLog);
+                }
+                String lastMessage = messages.get(messages.size() - 1);
+				write(lastMessage.getBytes());
 			}
 		}
 	}
@@ -48,14 +58,25 @@ class LoggingOutputStream extends ByteArrayOutputStream {
 	}
 
 	private void log(final CallOrigin callOrigin, String bufferAsString) {
-		String valueToLog = StringUtils.stripEnd(bufferAsString, "\r\n");
-		final Logger log = LoggerFactory.getLogger(callOrigin.getClassName());
-		if (callOrigin.isPrintingStackTrace()) {
-			exceptionHandlingStrategy.handleExceptionLine(valueToLog, log);
-		} else {
-			exceptionHandlingStrategy.notifyNotStackTrace();
-			level.log(log, valueToLog);
-		}
+		String valueToLog = StringUtils.stripEnd(bufferAsString, " \r\n");
+        if (valueToLog.length() > 0) {
+            final Logger log = LoggerFactory.getLogger(callOrigin.getClassName());
+            if (callOrigin.isPrintingStackTrace()) {
+                exceptionHandlingStrategy.handleExceptionLine(valueToLog, log);
+            } else {
+                exceptionHandlingStrategy.notifyNotStackTrace();
+                level.log(log, valueToLog);
+            }
+        }
 		reset();
 	}
+
+    protected void finalize() throws Throwable {
+        super.finalize();
+        String bufferAsString = new String(toByteArray()).trim();
+        if (bufferAsString.length() > 0) {
+            level.log(LoggerFactory.getLogger(SysOutOverSLF4J.class), bufferAsString);
+        }
+        reset();
+    }
 }
