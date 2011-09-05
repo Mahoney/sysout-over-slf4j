@@ -37,7 +37,7 @@ import org.apache.commons.lang.SerializationUtils;
 
 import uk.org.lidalia.lang.Exceptions;
 
-public class CrossClassLoaderTestUtils {
+class CrossClassLoaderTestUtils {
 
 	private static class ReflectionInvocationHandler implements MethodHandler, InvocationHandler {
 		

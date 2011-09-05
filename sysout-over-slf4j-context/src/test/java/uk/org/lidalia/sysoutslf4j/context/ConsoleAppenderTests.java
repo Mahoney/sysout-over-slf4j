@@ -41,7 +41,7 @@ public class ConsoleAppenderTests extends SysOutOverSLF4JTestCase {
 		assertTrue(outString.contains("some log text"));
 	}
 
-	public ConsoleAppender<ILoggingEvent> initialiseConsoleAppender(LoggerContext lc) {
+	ConsoleAppender<ILoggingEvent> initialiseConsoleAppender(LoggerContext lc) {
 		Encoder<ILoggingEvent> encoder = new EchoEncoder<ILoggingEvent>();
 		encoder.start();
 		ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<ILoggingEvent>();
@@ -51,7 +51,7 @@ public class ConsoleAppenderTests extends SysOutOverSLF4JTestCase {
 		return appender;
 	}
 
-	public ByteArrayOutputStream systemOutOutputStream() {
+	ByteArrayOutputStream systemOutOutputStream() {
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		PrintStream newSystemOut = new PrintStream(bytes, true);
 		SystemOutput.OUT.set(newSystemOut);
