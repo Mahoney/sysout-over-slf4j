@@ -56,7 +56,7 @@ public class TestSysOutOverSLF4JThreadSafety extends SysOutOverSLF4JTestCase {
 		final CountDownLatch start = new CountDownLatch(1);
 		
 		ExecutorService executor = Executors.newFixedThreadPool(60);
-		int numberOfTimesToPrint = 10000;
+		int numberOfTimesToPrint = 100;
 		for (int i = 1; i <= numberOfTimesToPrint; i++) {
 			final int count = i;
 			executor.submit(new Callable<Void>() {
