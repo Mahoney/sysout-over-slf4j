@@ -31,8 +31,8 @@ import java.lang.ref.WeakReference;
 
 import org.junit.Test;
 
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
+import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.testutils.LoggingUtils;
 import uk.org.lidalia.testutils.SimpleClassloader;
 

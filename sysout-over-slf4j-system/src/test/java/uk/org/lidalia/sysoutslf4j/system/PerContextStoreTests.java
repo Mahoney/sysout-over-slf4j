@@ -31,7 +31,6 @@ import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.system.PerContextStore;
 
 public class PerContextStoreTests extends SysOutOverSLF4JTestCase {

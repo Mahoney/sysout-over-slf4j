@@ -31,7 +31,6 @@ import java.io.PrintStream;
 
 import org.junit.Test;
 
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 
 public class SystemOutputTests extends SysOutOverSLF4JTestCase {

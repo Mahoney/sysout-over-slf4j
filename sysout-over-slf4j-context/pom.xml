@@ -5,20 +5,12 @@
 	
 	<parent>
 		<groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
-		<artifactId>parent</artifactId>
+		<artifactId>sysout-over-slf4j-parent</artifactId>
 		<version>2.0.0-SNAPSHOT</version>
 		<relativePath>../parent</relativePath>
 	</parent>
 	<artifactId>sysout-over-slf4j-context</artifactId>
-	<packaging>jar</packaging>
 	<dependencies>
-		<!-- COMPILE -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-
 		<!-- PROVIDED -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -28,14 +20,15 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
-			<artifactId>sysout-over-slf4j-system</artifactId>
-			<version>2.0.0-SNAPSHOT</version>
+			<groupId>${project.groupId}</groupId>
+      <artifactId>sysout-over-slf4j-system</artifactId>
+			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
+      <version>${logback.version}</version>
 			<scope>compile</scope>
 			<optional>true</optional>
 		</dependency>
@@ -46,20 +39,10 @@
 			<artifactId>logback-classic</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-module-junit4</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-api-mockito</artifactId>
+      <version>1.2.13</version>
+      <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -68,10 +51,12 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+      <version>${commons-io.version}</version>
+      <scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>uk.org.lidalia</groupId>

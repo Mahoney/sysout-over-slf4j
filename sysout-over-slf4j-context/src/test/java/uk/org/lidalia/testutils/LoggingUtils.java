@@ -46,7 +46,7 @@ public class LoggingUtils {
 			Class<?> loggingUtils = classLoader.loadClass(LoggingUtils.class.getName());
 			Whitebox.invokeMethod(loggingUtils, "turnOffRootLogging");
 		} catch (Exception e) {
-			throw Exceptions.asRuntimeException(e);
+			Exceptions.throwUnchecked(e);
 		}
 	}
 	

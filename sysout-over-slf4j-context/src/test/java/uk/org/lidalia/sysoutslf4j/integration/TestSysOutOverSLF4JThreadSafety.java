@@ -38,8 +38,8 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
+import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;

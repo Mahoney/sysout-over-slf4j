@@ -31,7 +31,6 @@ import java.lang.ref.WeakReference;
 
 import org.junit.Test;
 
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.system.PerContextStore;
 
 public class PerContextStoreMemoryManagementTests extends SysOutOverSLF4JTestCase {

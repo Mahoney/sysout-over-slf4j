@@ -39,7 +39,6 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({PerContextPrintStream.class, PerContextSystemOutput.class})

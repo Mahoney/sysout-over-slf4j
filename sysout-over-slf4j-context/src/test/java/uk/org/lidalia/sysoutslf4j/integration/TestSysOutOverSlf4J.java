@@ -34,7 +34,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.SimpleLayout;
 import org.junit.After;
 import org.junit.Before;
@@ -43,9 +43,9 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.context.LogLevel;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
+import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 import uk.org.lidalia.testutils.Assert;
 import ch.qos.logback.classic.Level;

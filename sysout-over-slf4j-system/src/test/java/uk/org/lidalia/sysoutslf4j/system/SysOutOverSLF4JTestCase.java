@@ -1,11 +1,9 @@
-package uk.org.lidalia.sysoutslf4j;
+package uk.org.lidalia.sysoutslf4j.system;
 
 import java.io.PrintStream;
 
 import org.junit.After;
 import org.junit.Before;
-
-import uk.org.lidalia.testutils.SLF4JTestCase;
 
 /* 
  * Copyright (c) 2009-2010 Robert Elliot
@@ -31,7 +29,7 @@ import uk.org.lidalia.testutils.SLF4JTestCase;
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-public abstract class SysOutOverSLF4JTestCase extends SLF4JTestCase {
+public abstract class SysOutOverSLF4JTestCase {
 	
 	protected ClassLoader originalContextClassLoader;
 	protected PrintStream SYS_OUT;
