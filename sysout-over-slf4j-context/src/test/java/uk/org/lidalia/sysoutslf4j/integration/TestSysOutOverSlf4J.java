@@ -33,6 +33,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Locale;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.SimpleLayout;
@@ -139,7 +141,11 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 		OutputStream newSysErr = setUpMockSystemOutput(SystemOutput.ERR);
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 
-		java.util.logging.Logger log = java.util.logging.Logger.getLogger(getClass().getCanonicalName());
+		java.util.logging.Logger log = java.util.logging.Logger.getLogger("");
+        for (Handler handler : log.getHandlers()) {
+            log.removeHandler(handler);
+        }
+        log.addHandler(new ConsoleHandler());
 		log.info("Should reach the old syserr");
 		
 		assertTrue(newSysErr.toString().contains("INFO: Should reach the old syserr"));

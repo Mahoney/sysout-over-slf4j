@@ -26,8 +26,7 @@ package uk.org.lidalia.sysoutslf4j.context;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyZeroInteractions;
@@ -41,13 +40,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({LoggerFactory.class, CallOrigin.class, LoggingSystemRegister.class})
+@PrepareForTest({LoggerFactory.class, CallOrigin.class, LoggingSystemRegister.class, LoggingOutputStream.class})
 public class LoggingOutputStreamTests {
 
 	private static final String CLASS_IN_LOGGING_SYSTEM = "org.logging.LoggerClass";
@@ -61,8 +61,11 @@ public class LoggingOutputStreamTests {
 	private LoggingSystemRegister loggingSystemRegisterMock = mock(LoggingSystemRegister.class);
 	private LoggingOutputStream outputStream = new LoggingOutputStream(level, exceptionHandlingStrategyMock, origPrintStreamMock, loggingSystemRegisterMock);
 
+    private final Logger loggingOutputStreamLoggerMock = mock(Logger.class);
+
 	@Before
 	public void setUp() {
+        Whitebox.setInternalState(LoggingOutputStream.class, loggingOutputStreamLoggerMock);
 		mockStatic(LoggerFactory.class);
 		when(LoggerFactory.getLogger(anyString())).thenReturn(mock(Logger.class));
 		when(LoggerFactory.getLogger(CLASS_NAME)).thenReturn(loggerMock);
@@ -97,6 +100,20 @@ public class LoggingOutputStreamTests {
 		verify(exceptionHandlingStrategyMock).notifyNotStackTrace();
 		verify(exceptionHandlingStrategyMock, never()).handleExceptionLine(anyString(), any(Logger.class));
 	}
+
+    @Test
+    public void flushWarnsOnceIfInLoggingSystem() throws Exception {
+        mockGettingCallOrigin(false, true, CLASS_IN_LOGGING_SYSTEM);
+
+        byte[] bytes = "twelve chars".getBytes("UTF-8");
+        outputStream.write(bytes);
+        outputStream.flush();
+        outputStream.write(bytes);
+        outputStream.flush();
+
+        verify(loggingOutputStreamLoggerMock, times(1)).warn("A logging system is sending data to the console. This will work but with a significant performance hit ." +
+                "Visit http://projects.lidalia.org.uk/sysout-over-slf4j/performance.html for details of how to avoid this.");
+    }
 
 	@Test
 	public void flushNonStackTraceNotifiesNotStackTrace() throws Exception {

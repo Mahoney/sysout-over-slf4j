@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,11 @@ import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStr
 
 class LoggingOutputStream extends ByteArrayOutputStream {
 	
-	private final LogLevel level;
+    private static final Logger log = LoggerFactory.getLogger(LoggingOutputStream.class);
+    private static final String PERFORMANCE_WARNING = "A logging system is sending data to the console. This will work but with a significant performance hit ." +
+            "Visit http://projects.lidalia.org.uk/sysout-over-slf4j/performance.html for details of how to avoid this.";
+
+    private final LogLevel level;
 	private final ExceptionHandlingStrategy exceptionHandlingStrategy;
 	private final PrintStream originalPrintStream;
 	private final LoggingSystemRegister loggingSystemRegister;
@@ -52,12 +57,21 @@ class LoggingOutputStream extends ByteArrayOutputStream {
 
 	private void writeToOriginalPrintStream() throws IOException {
 		exceptionHandlingStrategy.notifyNotStackTrace();
+        warnAboutPerformance();
 		writeTo(originalPrintStream);
 		originalPrintStream.flush();
 		reset();
 	}
 
-	private void log(final CallOrigin callOrigin, String bufferAsString) {
+    private final AtomicBoolean warned = new AtomicBoolean(false);
+
+    private void warnAboutPerformance() {
+        if (warned.compareAndSet(false, true)) {
+            log.warn(PERFORMANCE_WARNING);
+        }
+    }
+
+    private void log(final CallOrigin callOrigin, String bufferAsString) {
 		String valueToLog = StringUtils.stripEnd(bufferAsString, " \r\n");
         if (valueToLog.length() > 0) {
             final Logger log = LoggerFactory.getLogger(callOrigin.getClassName());

@@ -1,4 +1,4 @@
-package uk.org.lidalia.sysoutslf4j.context;
+package uk.org.lidalia.sysoutslf4j.context.logback;
 
 import java.util.Arrays;
 
