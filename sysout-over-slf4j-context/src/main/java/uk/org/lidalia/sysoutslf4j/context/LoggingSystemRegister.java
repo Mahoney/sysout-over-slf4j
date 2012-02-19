@@ -36,9 +36,10 @@ class LoggingSystemRegister {
 	private static final Logger LOG = LoggerFactory.getLogger(SysOutOverSLF4J.class);
 	private final Set<String> loggingSystemNameFragments = new CopyOnWriteArraySet<String>();
 	{
-		String[] LOGGING_SYSTEMS_THAT_MIGHT_ACCESS_CONSOLE =
-		{ "org.x4juli.", "org.grlea.log.", "org.slf4j.impl.SimpleLogger", "ch.qos.logback.", "org.slf4j.impl.Log4jLoggerAdapter", "org.slf4j.impl.JDK14LoggerAdapter", "org.apache.log4j.", "java.util.logging." };
-        Collections.addAll(loggingSystemNameFragments, LOGGING_SYSTEMS_THAT_MIGHT_ACCESS_CONSOLE);
+        Collections.addAll(loggingSystemNameFragments,
+                "org.x4juli.", "org.grlea.log.", "org.slf4j.impl.SimpleLogger", "ch.qos.logback.",
+                "org.slf4j.impl.Log4jLoggerAdapter", "org.slf4j.impl.JDK14LoggerAdapter", "org.apache.log4j.",
+                "java.util.logging.");
 	}
 	
 	void registerLoggingSystem(final String packageName) {
