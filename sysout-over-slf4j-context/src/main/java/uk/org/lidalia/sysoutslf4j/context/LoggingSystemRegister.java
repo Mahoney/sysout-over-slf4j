@@ -24,24 +24,27 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
-import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Arrays.asList;
+
 class LoggingSystemRegister {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SysOutOverSLF4J.class);
-	private final Set<String> loggingSystemNameFragments = new CopyOnWriteArraySet<String>();
-	{
-        Collections.addAll(loggingSystemNameFragments,
-                "org.x4juli.", "org.grlea.log.", "org.slf4j.impl.SimpleLogger", "ch.qos.logback.",
-                "org.slf4j.impl.Log4jLoggerAdapter", "org.slf4j.impl.JDK14LoggerAdapter", "org.apache.log4j.",
-                "java.util.logging.");
-	}
-	
+	private final Set<String> loggingSystemNameFragments = new CopyOnWriteArraySet<String>(asList(
+            "org.x4juli.",
+            "org.grlea.log.",
+            "org.slf4j.impl.SimpleLogger",
+            "ch.qos.logback.",
+            "org.slf4j.impl.Log4jLoggerAdapter",
+            "org.slf4j.impl.JDK14LoggerAdapter",
+            "org.apache.log4j.",
+            "java.util.logging."));
+
 	void registerLoggingSystem(final String packageName) {
 		loggingSystemNameFragments.add(packageName);
 		LOG.info("Package {} registered; all classes within it or subpackages of it will " +

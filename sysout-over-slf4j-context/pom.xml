@@ -43,6 +43,7 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
+      <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -57,10 +58,12 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
+      <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>uk.org.lidalia</groupId>
 			<artifactId>lidalia-lang</artifactId>
+      <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>uk.org.lidalia</groupId>
