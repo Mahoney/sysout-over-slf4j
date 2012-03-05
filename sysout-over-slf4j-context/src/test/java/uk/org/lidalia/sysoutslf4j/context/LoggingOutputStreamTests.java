@@ -111,8 +111,7 @@ public class LoggingOutputStreamTests {
         outputStream.write(bytes);
         outputStream.flush();
 
-        verify(loggingOutputStreamLoggerMock, times(1)).warn("A logging system is sending data to the console. This will work but with a significant performance hit ." +
-                "Visit http://projects.lidalia.org.uk/sysout-over-slf4j/performance.html for details of how to avoid this.");
+        verify(loggingOutputStreamLoggerMock, times(1)).warn(LoggingMessages.PERFORMANCE_WARNING);
     }
 
 	@Test

@@ -17,8 +17,6 @@ import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStr
 class LoggingOutputStream extends ByteArrayOutputStream {
 	
     private static final Logger log = LoggerFactory.getLogger(LoggingOutputStream.class);
-    private static final String PERFORMANCE_WARNING = "A logging system is sending data to the console. This will work but with a significant performance hit ." +
-            "Visit http://projects.lidalia.org.uk/sysout-over-slf4j/performance.html for details of how to avoid this.";
 
     private final LogLevel level;
 	private final ExceptionHandlingStrategy exceptionHandlingStrategy;
@@ -67,7 +65,7 @@ class LoggingOutputStream extends ByteArrayOutputStream {
 
     private void warnAboutPerformance() {
         if (warned.compareAndSet(false, true)) {
-            log.warn(PERFORMANCE_WARNING);
+            log.warn(LoggingMessages.PERFORMANCE_WARNING);
         }
     }
 

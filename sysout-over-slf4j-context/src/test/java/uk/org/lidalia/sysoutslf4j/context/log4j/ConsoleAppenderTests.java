@@ -33,6 +33,7 @@ import org.apache.log4j.SimpleLayout;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
+import uk.org.lidalia.sysoutslf4j.context.LoggingMessages;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 
@@ -68,7 +69,7 @@ public class ConsoleAppenderTests extends SysOutOverSLF4JTestCase {
         assertFalse(any(appender.list, new Predicate<ILoggingEvent>() {
             @Override
             public boolean apply(ILoggingEvent iLoggingEvent) {
-                return iLoggingEvent.getMessage().contains("A logging system is sending data to the console");
+                return iLoggingEvent.getMessage().contains(LoggingMessages.PERFORMANCE_WARNING);
             }
         }));
 	}
