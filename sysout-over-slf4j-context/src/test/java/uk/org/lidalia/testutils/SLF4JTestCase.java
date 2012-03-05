@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) 2009-2010 Robert Elliot
+ * Copyright (c) 2009-2012 Robert Elliot
  * All rights reserved.
  * 
  * Permission is hereby granted, free  of charge, to any person obtaining
@@ -24,7 +24,6 @@
 
 package uk.org.lidalia.testutils;
 
-import ch.qos.logback.classic.Level;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.slf4j.LoggerFactory;

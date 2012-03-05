@@ -11,7 +11,6 @@ import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 

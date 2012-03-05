@@ -1,5 +1,5 @@
 /* 
- * Copyright (c) 2009-2010 Robert Elliot
+ * Copyright (c) 2009-2012 Robert Elliot
  * All rights reserved.
  * 
  * Permission is hereby granted, free  of charge, to any person obtaining
@@ -98,7 +98,7 @@ class CrossClassLoaderTestUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static Object getLocalEnumInstance(Enum<?> enumInstance, @SuppressWarnings("rawtypes") Class destinationClass) {
+	private static Object getLocalEnumInstance(Enum<?> enumInstance, Class destinationClass) {
 		try {
 			return Enum.valueOf(destinationClass, enumInstance.name());
 		} catch (Exception e) {
@@ -127,8 +127,7 @@ class CrossClassLoaderTestUtils {
 	private static Object moveToCurrentClassLoaderViaSerialization(Serializable objectFromOtherClassLoader) {
 		try {
 			byte[] objectAsBytes = SerializationUtils.serialize(objectFromOtherClassLoader);
-			Object object = SerializationUtils.deserialize(objectAsBytes);
-			return object;
+            return SerializationUtils.deserialize(objectAsBytes);
 		} catch (Exception e) {
 			Exceptions.throwUnchecked(e);
 			throw new AssertionError("Unreachable");
