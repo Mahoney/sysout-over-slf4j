@@ -25,6 +25,7 @@
 package uk.org.lidalia.sysoutslf4j.system;
 
 import java.io.PrintStream;
+import java.util.Iterator;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -102,6 +103,19 @@ public enum SystemOutput {
 				return systemOutput;
 			}
 		}
-		return null;
+		throw new IllegalArgumentException("No system output [" + name + "]; valid values are " + names());
 	}
+
+    private static String names() {
+        StringBuilder builder = new StringBuilder("[");
+        SystemOutput[] values = values();
+        for (int i = 0; i < values.length; i++) {
+            builder.append(values[i].getName());
+            if (i < values.length - 1) {
+                builder.append(",");
+            }
+        }
+        builder.append("]");
+        return builder.toString();
+    }
 }

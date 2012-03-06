@@ -6,5 +6,6 @@
   <packaging>pom</packaging>
   <modules>
   	<module>no-system-jar-on-classpath</module>
+    <module>sysout-over-slf4j-webapps</module>
   </modules>
 </project>

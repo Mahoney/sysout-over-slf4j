@@ -113,6 +113,19 @@ public enum PerContextSystemOutput {
 				return systemOutput;
 			}
 		}
-		return null;
+        throw new IllegalArgumentException("No system output [" + name + "]; valid values are " + names());
 	}
+
+    private static String names() {
+        StringBuilder builder = new StringBuilder("[");
+        PerContextSystemOutput[] values = values();
+        for (int i = 0; i < values.length; i++) {
+            builder.append(values[i].systemOutput.getName());
+            if (i < values.length - 1) {
+                builder.append(",");
+            }
+        }
+        builder.append("]");
+        return builder.toString();
+    }
 }

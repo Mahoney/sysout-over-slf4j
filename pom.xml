@@ -19,7 +19,6 @@
 	<description>Library to send raw System.out and System.err output to SLF4J for proper logging control</description>
 
 	<modules>
-		<module>sysout-over-slf4j-webapps</module>
 		<module>sysout-over-slf4j-context</module>
 		<module>sysout-over-slf4j-system</module>
 		<module>functional-tests</module>
