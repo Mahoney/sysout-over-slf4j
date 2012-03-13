@@ -17,4 +17,8 @@ public class PrinterServlet extends HttpServlet {
         SystemOutput output = SystemOutput.findByName(name);
         output.get().println(request.getParameter("message"));
     }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    }
 }
