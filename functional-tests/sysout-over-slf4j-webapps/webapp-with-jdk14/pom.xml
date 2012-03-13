@@ -5,7 +5,6 @@
     <artifactId>sysout-over-slf4j-webapps</artifactId>
     <version>2.0.0-SNAPSHOT</version>
   </parent>
-  <groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
   <artifactId>webapp-with-jdk14</artifactId>
   <packaging>war</packaging>
   <dependencies>
