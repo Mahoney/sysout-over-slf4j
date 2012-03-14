@@ -41,18 +41,7 @@
       <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
-        <version>1.2.0</version>
         <configuration>
-          <container>
-            <containerId>jetty8x</containerId>
-            <type>embedded</type>
-            <dependencies>
-              <dependency>
-                <groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
-                <artifactId>sysout-over-slf4j-system</artifactId>
-              </dependency>
-            </dependencies>
-          </container>
           <configuration>
             <properties>
               <cargo.servlet.port>8090</cargo.servlet.port>
