@@ -25,7 +25,6 @@
 package uk.org.lidalia.sysoutslf4j.system;
 
 import java.io.PrintStream;
-import java.util.Iterator;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;

@@ -13,6 +13,8 @@ import static com.google.common.base.Optional.fromNullable;
 
 public class LoggerServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1;
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String loggerName = fromNullable(request.getParameter("logger")).or(Logger.ROOT_LOGGER_NAME);

@@ -12,6 +12,8 @@ import static com.google.common.base.Optional.fromNullable;
 
 public class PrinterServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 1;
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name = fromNullable(request.getParameter("output")).or("System.out");
         SystemOutput output = SystemOutput.findByName(name);
