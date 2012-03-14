@@ -53,6 +53,9 @@
             </dependencies>
           </container>
           <configuration>
+            <properties>
+              <cargo.servlet.port>8090</cargo.servlet.port>
+            </properties>
             <deployables>
               <deployable>
                 <groupId>${project.groupId}</groupId>
