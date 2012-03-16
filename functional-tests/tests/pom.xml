@@ -21,8 +21,10 @@
     <dependency>
       <groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
       <artifactId>sysout-over-slf4j-system</artifactId>
-      <version>${sysout-over-slf4j.version}</version>
-      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
     </dependency>
   </dependencies>
   <build>
