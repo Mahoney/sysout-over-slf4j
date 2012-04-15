@@ -1,7 +1,7 @@
-/* 
+/*
  * Copyright (c) 2009-2012 Robert Elliot
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free  of charge, to any person obtaining
  * a  copy  of this  software  and  associated  documentation files  (the
  * "Software"), to  deal in  the Software without  restriction, including
@@ -9,10 +9,10 @@
  * distribute,  sublicense, and/or sell  copies of  the Software,  and to
  * permit persons to whom the Software  is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The  above  copyright  notice  and  this permission  notice  shall  be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE  SOFTWARE IS  PROVIDED  "AS  IS", WITHOUT  WARRANTY  OF ANY  KIND,
  * EXPRESS OR  IMPLIED, INCLUDING  BUT NOT LIMITED  TO THE  WARRANTIES OF
  * MERCHANTABILITY,    FITNESS    FOR    A   PARTICULAR    PURPOSE    AND
@@ -69,7 +69,7 @@ public final class SysOutOverSLF4J {
 	public static void sendSystemOutAndErrToSLF4J() {
 		sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.ERROR);
 	}
-	
+
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
 	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream} and registers
@@ -77,7 +77,7 @@ public final class SysOutOverSLF4J {
 	 * Can be called any number of times, and is synchronized on System.class.<br/>
 	 * Uses the LogPerLineExceptionHandlingStrategy for handling printlns coming from
 	 * Throwable.printStackTrace().
-	 * 
+	 *
 	 * @param outLevel The SLF4J {@link LogLevel} at which calls to System.out should be logged
 	 * @param errLevel The SLF4J {@link LogLevel} at which calls to System.err should be logged
 	 */
@@ -105,7 +105,7 @@ public final class SysOutOverSLF4J {
 	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream} and registers
 	 * SLF4J for the current context's classloader.<br/>
 	 * Can be called any number of times, and is synchronized on System.class.<br/>
-	 * 
+	 *
 	 * @param outLevel The SLF4J {@link LogLevel} at which calls to System.out should be logged
 	 * @param errLevel The SLF4J {@link LogLevel} at which calls to System.err should be logged
 	 * @param exceptionHandlingStrategyFactory
@@ -115,13 +115,14 @@ public final class SysOutOverSLF4J {
 	public static void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel,
 			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
 		synchronized (System.class) {
-			try {
-				registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.OUT, outLevel);
-				registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.ERR, errLevel);
-				LOG.info("Redirected System.out and System.err to SLF4J for this context");
-			} catch (NoClassDefFoundError error) {
-				LOG.error("You do not have sysout-over-slf4j-system on your classpath - it is required.");
-			}
+            doWithSystemClasses(new Runnable() {
+                @Override
+                public void run() {
+                    registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.OUT, outLevel);
+                    registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.ERR, errLevel);
+                    LOG.info("Redirected System.out and System.err to SLF4J for this context");
+                }
+            });
 		}
 	}
 
@@ -148,9 +149,14 @@ public final class SysOutOverSLF4J {
 	 */
 	public static void stopSendingSystemOutAndErrToSLF4J() {
 		synchronized (System.class) {
-			for (PerContextSystemOutput systemOutput : PerContextSystemOutput.values()) {
-				systemOutput.deregisterPrintStreamForThisContext();
-			}
+            doWithSystemClasses(new Runnable() {
+                @Override
+                public void run() {
+                    for (PerContextSystemOutput systemOutput : PerContextSystemOutput.values()) {
+                        systemOutput.deregisterPrintStreamForThisContext();
+                    }
+                }
+            });
 		}
 	}
 
@@ -163,11 +169,28 @@ public final class SysOutOverSLF4J {
 	 */
 	public static void restoreOriginalSystemOutputs() {
 		synchronized (System.class) {
-			for (PerContextSystemOutput systemOutput : PerContextSystemOutput.values()) {
-				systemOutput.restoreOriginalPrintStream();
-			}
+            doWithSystemClasses(new Runnable() {
+                @Override
+                public void run() {
+                    for (PerContextSystemOutput systemOutput : PerContextSystemOutput.values()) {
+                        systemOutput.restoreOriginalPrintStream();
+                    }
+                }
+            });
 		}
 	}
+
+    private static void doWithSystemClasses(Runnable runnable) {
+        try {
+            runnable.run();
+        } catch (NoClassDefFoundError error) {
+            if (error.getMessage().contains("PerContextSystemOutput")) {
+                LOG.error("You do not have sysout-over-slf4j-system on your classpath - it is required.");
+            } else {
+                throw error;
+            }
+        }
+    }
 
 	/**
 	 * Registers a package as being a logging system and hence any calls to

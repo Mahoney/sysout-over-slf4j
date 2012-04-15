@@ -22,10 +22,6 @@
       <groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
       <artifactId>sysout-over-slf4j-system</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -45,9 +41,6 @@
         <artifactId>cargo-maven2-plugin</artifactId>
         <configuration>
           <configuration>
-            <properties>
-              <cargo.servlet.port>8090</cargo.servlet.port>
-            </properties>
             <deployables>
               <deployable>
                 <groupId>${project.groupId}</groupId>
