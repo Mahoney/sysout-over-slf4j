@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
 		<artifactId>sysout-over-slf4j-parent</artifactId>
@@ -38,7 +38,7 @@
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
-		
+
 		<!-- TEST -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -66,5 +66,10 @@
       <artifactId>guava</artifactId>
       <scope>test</scope>
     </dependency>
-	</dependencies>
+    <dependency>
+      <groupId>uk.org.lidalia</groupId>
+      <artifactId>lidalia-lang</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
 </project>

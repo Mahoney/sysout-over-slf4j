@@ -1,7 +1,7 @@
-/* 
+/*
  * Copyright (c) 2009-2012 Robert Elliot
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free  of charge, to any person obtaining
  * a  copy  of this  software  and  associated  documentation files  (the
  * "Software"), to  deal in  the Software without  restriction, including
@@ -9,10 +9,10 @@
  * distribute,  sublicense, and/or sell  copies of  the Software,  and to
  * permit persons to whom the Software  is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The  above  copyright  notice  and  this permission  notice  shall  be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE  SOFTWARE IS  PROVIDED  "AS  IS", WITHOUT  WARRANTY  OF ANY  KIND,
  * EXPRESS OR  IMPLIED, INCLUDING  BUT NOT LIMITED  TO THE  WARRANTIES OF
  * MERCHANTABILITY,    FITNESS    FOR    A   PARTICULAR    PURPOSE    AND
@@ -51,12 +51,12 @@ import uk.org.lidalia.lang.Classes;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(PerContextPrintStream.class)
 public class PerContextPrintStreamTests {
-	
+
 	private PrintStream originalPrintStreamMock;
 	private PerContextStore<PrintStream> perContextStoreMock;
 	private PrintStream contextPrintStreamMock;
 	private PerContextPrintStream perContextPrintStream;
-	
+
 	@SuppressWarnings("unchecked")
 	public void setUpMocks() throws Exception {
 		originalPrintStreamMock = mock(PrintStream.class);
@@ -66,12 +66,12 @@ public class PerContextPrintStreamTests {
 		whenNew(PerContextStore.class).withArguments(originalPrintStreamMock).thenReturn(perContextStoreMock);
 		perContextPrintStream = new PerContextPrintStream(originalPrintStreamMock);
 	}
-	
+
 	@Test
 	public void allPublicPrintStreamMethodsOnPerContextPrintStreamDelegateToTheSameMethodOnAPrintStreamRetrievedFromTheStore() throws Exception {
 		List<Method> printStreamMethods = new ArrayList<Method>(Arrays.asList(PrintStream.class.getMethods()));
 		printStreamMethods.removeAll(Arrays.asList(Object.class.getMethods()));
-		
+
 		for (Method method : printStreamMethods) {
 			setUpMocks();
 			Object[] args = getParameterValuesFor(method);
@@ -86,7 +86,7 @@ public class PerContextPrintStreamTests {
 	private void assertMethodDelegatesToContextPrintStreamAndReturnsResult(Method method, Object[] args) throws Exception {
 		Object result = getValueFor(method.getReturnType());
 		when(method.invoke(contextPrintStreamMock, args)).thenReturn(result);
-		
+
 		Object actualResult = method.invoke(perContextPrintStream, args);
 
 		assertEquals(method + " on " + PerContextPrintStream.class +  " return value: ",
@@ -97,27 +97,26 @@ public class PerContextPrintStreamTests {
 		method.invoke(perContextPrintStream, args);
 		method.invoke(verify(contextPrintStreamMock), args);
 	}
-	
+
 	@Test
 	public void setErrorThrowsUnsupportedOperationException() throws Throwable {
 		setUpMocks();
-		UnsupportedOperationException exception = shouldThrow(UnsupportedOperationException.class, new Callable<Void>() {
+		UnsupportedOperationException exception = shouldThrow(UnsupportedOperationException.class, new Runnable() {
 			@Override
-			public Void call() throws Exception {
+			public void run() {
 				perContextPrintStream.setError();
-				return null;
 			}
 		});
 		assertEquals("Setting an error on a PerContextPrintStream does not make sense", exception.getMessage());
 	}
-	
+
 	@Test
 	public void registerPrintStreamForThisContextDelgatesToStore() throws Throwable {
 		setUpMocks();
 		perContextPrintStream.registerPrintStreamForThisContext(contextPrintStreamMock);
 		verify(perContextStoreMock).put(contextPrintStreamMock);
 	}
-	
+
 	@Test
 	public void deregisterPrintStreamForThisContextDelegatesToStore() throws Throwable {
 		setUpMocks();

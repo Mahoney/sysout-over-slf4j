@@ -25,14 +25,18 @@
 package uk.org.lidalia.sysoutslf4j.context;
 
 import java.io.PrintStream;
+import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.org.lidalia.lang.RunnableCallable;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
+
+import static uk.org.lidalia.lang.Exceptions.throwUnchecked;
 
 /**
  * Public interface to the sysout-over-slf4j module. Provides all methods necessary to manage wrapping the existing
@@ -66,7 +70,7 @@ public final class SysOutOverSLF4J {
 	 * for handling printlns coming from Throwable.printStackTrace().<br/>
 	 * Logs at info level for System.out and at error level for System.err.
 	 */
-	public static void sendSystemOutAndErrToSLF4J() {
+	public static void sendSystemOutAndErrToSLF4J() throws SysOutOverSLF4JSystemNotPresentException {
 		sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.ERROR);
 	}
 
@@ -81,7 +85,7 @@ public final class SysOutOverSLF4J {
 	 * @param outLevel The SLF4J {@link LogLevel} at which calls to System.out should be logged
 	 * @param errLevel The SLF4J {@link LogLevel} at which calls to System.err should be logged
 	 */
-	public static void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel) {
+	public static void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel) throws SysOutOverSLF4JSystemNotPresentException {
 		sendSystemOutAndErrToSLF4J(outLevel, errLevel, LogPerLineExceptionHandlingStrategyFactory.getInstance());
 	}
 
@@ -96,7 +100,7 @@ public final class SysOutOverSLF4J {
 	 * 			The {@link uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory}
 	 * 			for creating strategies for handling printlns coming from Throwable.printStackTrace()
 	 */
-	public static void sendSystemOutAndErrToSLF4J(final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
+	public static void sendSystemOutAndErrToSLF4J(final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws SysOutOverSLF4JSystemNotPresentException {
 		sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.ERROR, exceptionHandlingStrategyFactory);
 	}
 
@@ -113,11 +117,11 @@ public final class SysOutOverSLF4J {
 	 * 			for creating strategies for handling printlns coming from Throwable.printStackTrace()
 	 */
 	public static void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel,
-			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) {
+			final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws SysOutOverSLF4JSystemNotPresentException {
 		synchronized (System.class) {
-            doWithSystemClasses(new Runnable() {
+            doWithSystemClasses(new RunnableCallable() {
                 @Override
-                public void run() {
+                public void run2() {
                     registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.OUT, outLevel);
                     registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.ERR, errLevel);
                     LOG.info("Redirected System.out and System.err to SLF4J for this context");
@@ -147,11 +151,11 @@ public final class SysOutOverSLF4J {
 	 * Has no effect on any other contexts that may be using sysout-over-slf4j.<br/>
 	 * Can be called any number of times, and is synchronized on System.class.
 	 */
-	public static void stopSendingSystemOutAndErrToSLF4J() {
+	public static void stopSendingSystemOutAndErrToSLF4J() throws SysOutOverSLF4JSystemNotPresentException {
 		synchronized (System.class) {
-            doWithSystemClasses(new Runnable() {
+            doWithSystemClasses(new RunnableCallable() {
                 @Override
-                public void run() {
+                public void run2() {
                     for (PerContextSystemOutput systemOutput : PerContextSystemOutput.values()) {
                         systemOutput.deregisterPrintStreamForThisContext();
                     }
@@ -167,11 +171,11 @@ public final class SysOutOverSLF4J {
 	 * {@link SysOutOverSLF4J#stopSendingSystemOutAndErrToSLF4J} as well as this method.
 	 * Can be called any number of times, and is synchronized on System.class.
 	 */
-	public static void restoreOriginalSystemOutputs() {
+	public static void restoreOriginalSystemOutputs() throws SysOutOverSLF4JSystemNotPresentException {
 		synchronized (System.class) {
-            doWithSystemClasses(new Runnable() {
+            doWithSystemClasses(new RunnableCallable() {
                 @Override
-                public void run() {
+                public void run2() {
                     for (PerContextSystemOutput systemOutput : PerContextSystemOutput.values()) {
                         systemOutput.restoreOriginalPrintStream();
                     }
@@ -180,15 +184,27 @@ public final class SysOutOverSLF4J {
 		}
 	}
 
-    private static void doWithSystemClasses(Runnable runnable) {
+    public static boolean systemOutputsAreSLF4JPrintStreams() throws SysOutOverSLF4JSystemNotPresentException {
+        return doWithSystemClasses(new Callable<Boolean>() {
+            @Override
+            public Boolean call() {
+                return PerContextSystemOutput.OUT.isPerContextPrintStream();
+            }
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T doWithSystemClasses(Callable<T> callable) throws SysOutOverSLF4JSystemNotPresentException {
         try {
-            runnable.run();
+            return callable.call();
         } catch (NoClassDefFoundError error) {
-            if (error.getMessage().contains("PerContextSystemOutput")) {
-                LOG.error("You do not have sysout-over-slf4j-system on your classpath - it is required.");
+            if (error.getMessage().contains("sysoutslf4j/system")) {
+                throw new SysOutOverSLF4JSystemNotPresentException(error);
             } else {
                 throw error;
             }
+        } catch (Exception e) {
+            return throwUnchecked(e, (T) null);
         }
     }
 
@@ -228,9 +244,5 @@ public final class SysOutOverSLF4J {
 
 	private SysOutOverSLF4J() {
 		throw new UnsupportedOperationException("Not instantiable");
-	}
-
-	public static boolean systemOutputsAreSLF4JPrintStreams() {
-		return PerContextSystemOutput.OUT.isPerContextPrintStream();
 	}
 }

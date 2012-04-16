@@ -45,12 +45,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ConsoleAppenderTests extends SysOutOverSLF4JTestCase {
-	
+
 	@Test
 	public void appenderStillPrintsToSystemOut() {
-		
+
 		ByteArrayOutputStream outputStreamBytes = systemOutOutputStream();
-		
+
 		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
         lc.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME).setLevel(ch.qos.logback.classic.Level.WARN);
@@ -59,11 +59,11 @@ public class ConsoleAppenderTests extends SysOutOverSLF4JTestCase {
 		log.setLevel(Level.INFO);
 		log.removeAllAppenders();
         log.addAppender(new ConsoleAppender(new SimpleLayout()));
-		
+
 		log.info("some log text");
-		
+
 		String outString = new String(outputStreamBytes.toByteArray());
-		
+
 		assertTrue(outString.contains("some log text"));
 
         assertFalse(any(appender.list, new Predicate<ILoggingEvent>() {

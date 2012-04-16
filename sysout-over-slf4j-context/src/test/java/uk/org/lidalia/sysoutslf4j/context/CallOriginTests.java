@@ -1,7 +1,7 @@
-/* 
+/*
  * Copyright (c) 2009-2012 Robert Elliot
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free  of charge, to any person obtaining
  * a  copy  of this  software  and  associated  documentation files  (the
  * "Software"), to  deal in  the Software without  restriction, including
@@ -9,10 +9,10 @@
  * distribute,  sublicense, and/or sell  copies of  the Software,  and to
  * permit persons to whom the Software  is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The  above  copyright  notice  and  this permission  notice  shall  be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE  SOFTWARE IS  PROVIDED  "AS  IS", WITHOUT  WARRANTY  OF ANY  KIND,
  * EXPRESS OR  IMPLIED, INCLUDING  BUT NOT LIMITED  TO THE  WARRANTIES OF
  * MERCHANTABILITY,    FITNESS    FOR    A   PARTICULAR    PURPOSE    AND
@@ -53,10 +53,9 @@ public class CallOriginTests {
 				stackTraceElement("org.a.2")
 		);
 
-		IllegalStateException exception = shouldThrow(IllegalStateException.class, new Callable<Void>() {
-			public Void call() throws Exception {
+		IllegalStateException exception = shouldThrow(IllegalStateException.class, new Runnable() {
+			public void run() {
 				CallOrigin.getCallOrigin(loggingSystemRegister);
-				return null;
 			}
 		});
 		assertEquals("Must be called from down stack of uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream", exception.getMessage());
@@ -69,7 +68,7 @@ public class CallOriginTests {
 				stackTraceElement("org.a.ClassName"),
 				stackTraceElement("org.b.ClassName")
 		);
-		
+
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
 	}
@@ -79,7 +78,7 @@ public class CallOriginTests {
 		expectGetStackTraceToReturn(
 				stackTraceElement(PerContextPrintStream.class),
 				stackTraceElement("org.a.ClassName"));
-		
+
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
 		assertFalse(callOrigin.isPrintingStackTrace());
 	}
@@ -91,7 +90,7 @@ public class CallOriginTests {
 				stackTraceElement("java.lang.Throwable", "printStackTrace"),
 				stackTraceElement("org.a.ClassName")
 		);
-		
+
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
 		assertTrue(callOrigin.isPrintingStackTrace());
 	}
@@ -104,7 +103,7 @@ public class CallOriginTests {
 				stackTraceElement(Throwable.class, "printStackTrace"),
 				stackTraceElement("org.a.ClassName")
 		);
-		
+
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
 		assertEquals("org.a.ClassName", callOrigin.getClassName());
 	}
@@ -128,7 +127,7 @@ public class CallOriginTests {
 				stackTraceElement("class.in.logging.system")
 		);
 		when(loggingSystemRegister.isInLoggingSystem("class.in.logging.system")).thenReturn(true);
-		
+
 		CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
 		assertTrue(callOrigin.isInLoggingSystem());
 	}
