@@ -47,63 +47,63 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 
 public class TestSysOutOverSLF4JThreadSafety extends SysOutOverSLF4JTestCase {
 
-	private Logger log = (Logger) LoggerFactory.getLogger(TestSysOutOverSLF4JThreadSafety.class);
+    private Logger log = (Logger) LoggerFactory.getLogger(TestSysOutOverSLF4JThreadSafety.class);
 
-	@Test
-	public void sysoutOverSLF4JLogsCorrectlyInMultipleThreads() throws InterruptedException {
+    @Test
+    public void sysoutOverSLF4JLogsCorrectlyInMultipleThreads() throws InterruptedException {
 
-		log.setLevel(Level.INFO);
-		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
-		final CountDownLatch start = new CountDownLatch(1);
+        log.setLevel(Level.INFO);
+        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+        final CountDownLatch start = new CountDownLatch(1);
 
-		ExecutorService executor = Executors.newFixedThreadPool(60);
-		int numberOfTimesToPrint = 100;
-		for (int i = 1; i <= numberOfTimesToPrint; i++) {
-			final int count = i;
-			executor.submit((Runnable) new RunnableCallable() {
-				@Override
-				public void run2() throws Exception {
-					start.await();
-					System.out.println("logging " + count);
-				}
-			});
-		}
+        ExecutorService executor = Executors.newFixedThreadPool(60);
+        int numberOfTimesToPrint = 100;
+        for (int i = 1; i <= numberOfTimesToPrint; i++) {
+            final int count = i;
+            executor.submit((Runnable) new RunnableCallable() {
+                @Override
+                public void run2() throws Exception {
+                    start.await();
+                    System.out.println("logging " + count);
+                }
+            });
+        }
 
-		for (int i = 1; i <= numberOfTimesToPrint; i++) {
-			final int count = i;
-			executor.submit((Runnable) new RunnableCallable() {
-				@Override
-				public void run2() throws Exception {
-					start.await();
-					synchronized(System.out) {
-						System.out.print("append1 ");
-						System.out.print("append2 " + count);
-						System.out.println();
-					}
-				}
-			});
-		}
+        for (int i = 1; i <= numberOfTimesToPrint; i++) {
+            final int count = i;
+            executor.submit((Runnable) new RunnableCallable() {
+                @Override
+                public void run2() throws Exception {
+                    start.await();
+                    synchronized(System.out) {
+                        System.out.print("append1 ");
+                        System.out.print("append2 " + count);
+                        System.out.println();
+                    }
+                }
+            });
+        }
 
-		start.countDown();
-		executor.shutdown();
-		executor.awaitTermination(30, TimeUnit.SECONDS);
-		assertEquals(numberOfTimesToPrint * 2, appender.list.size());
+        start.countDown();
+        executor.shutdown();
+        executor.awaitTermination(30, TimeUnit.SECONDS);
+        assertEquals(numberOfTimesToPrint * 2, appender.list.size());
 
-		List<String> messages = new ArrayList<String>();
-		for (ILoggingEvent loggingEvent : appender.list) {
-			messages.add(loggingEvent.getMessage());
-		}
-		Collections.sort(messages);
+        List<String> messages = new ArrayList<String>();
+        for (ILoggingEvent loggingEvent : appender.list) {
+            messages.add(loggingEvent.getMessage());
+        }
+        Collections.sort(messages);
 
-		List<String> expectedMessages = new ArrayList<String>();
-		for (int i = 1; i <= numberOfTimesToPrint; i++) {
-			expectedMessages.add("append1 append2 " + i);
-		}
-		for (int i = numberOfTimesToPrint + 1; i <= (numberOfTimesToPrint * 2); i++) {
-			expectedMessages.add("logging " + (i - numberOfTimesToPrint));
-		}
-		Collections.sort(expectedMessages);
-		assertEquals(expectedMessages, messages);
+        List<String> expectedMessages = new ArrayList<String>();
+        for (int i = 1; i <= numberOfTimesToPrint; i++) {
+            expectedMessages.add("append1 append2 " + i);
+        }
+        for (int i = numberOfTimesToPrint + 1; i <= (numberOfTimesToPrint * 2); i++) {
+            expectedMessages.add("logging " + (i - numberOfTimesToPrint));
+        }
+        Collections.sort(expectedMessages);
+        assertEquals(expectedMessages, messages);
 
-	}
+    }
 }

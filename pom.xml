@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>uk.org.lidalia</groupId>
@@ -9,71 +9,71 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-	<groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
-	<artifactId>sysout-over-slf4j-parent</artifactId>
-	<version>2.0.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
+  <groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
+  <artifactId>sysout-over-slf4j-parent</artifactId>
+  <version>2.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
-	<name>System Out and Err redirected to SLF4J</name>
-	<url>http://projects.lidalia.org.uk/sysout-over-slf4j/</url>
-	<description>Library to send raw System.out and System.err output to SLF4J for proper logging control</description>
+  <name>System Out and Err redirected to SLF4J</name>
+  <url>http://projects.lidalia.org.uk/sysout-over-slf4j/</url>
+  <description>Library to send raw System.out and System.err output to SLF4J for proper logging control</description>
 
-	<modules>
-		<module>sysout-over-slf4j-context</module>
-		<module>sysout-over-slf4j-system</module>
-		<module>functional-tests</module>
-	</modules>
+  <modules>
+    <module>sysout-over-slf4j-context</module>
+    <module>sysout-over-slf4j-system</module>
+    <module>functional-tests</module>
+  </modules>
 
-	<issueManagement>
-		<system>GitHub Issues</system>
-		<url>http://github.com/Mahoney/sysout-over-slf4j/issues</url>
-	</issueManagement>
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>http://github.com/Mahoney/sysout-over-slf4j/issues</url>
+  </issueManagement>
 
-	<developers>
-		<developer>
-			<name>Robert Elliot</name>
-			<email>rob@lidalia.org.uk</email>
-		</developer>
-	</developers>
+  <developers>
+    <developer>
+      <name>Robert Elliot</name>
+      <email>rob@lidalia.org.uk</email>
+    </developer>
+  </developers>
 
-	<licenses>
-		<license>
-			<name>MIT X11 License</name>
-			<url>file://${project.basedir}/LICENSE.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
+  <licenses>
+    <license>
+      <name>MIT X11 License</name>
+      <url>file://${project.basedir}/LICENSE.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
-	<scm>
-		<connection>scm:git:git@github.com:Mahoney/sysout-over-slf4j.git</connection>
-		<developerConnection>scm:git:git@github.com:Mahoney/sysout-over-slf4j.git</developerConnection>
-		<url>http://github.com/Mahoney/sysout-over-slf4j</url>
-	</scm>
+  <scm>
+    <connection>scm:git:git@github.com:Mahoney/sysout-over-slf4j.git</connection>
+    <developerConnection>scm:git:git@github.com:Mahoney/sysout-over-slf4j.git</developerConnection>
+    <url>http://github.com/Mahoney/sysout-over-slf4j</url>
+  </scm>
 
-	<mailingLists>
-		<mailingList>
-			<name>slf4j-announcements list</name>
-			<subscribe>http://www.qos.ch/mailman/listinfo/announce</subscribe>
-			<unsubscribe>http://www.qos.ch/mailman/options/announce</unsubscribe>
-			<archive>http://www.qos.ch/pipermail/announce/</archive>
-			<otherArchives>
-				<otherArchive>http://marc.theaimsgroup.com/?l=slf4j-announce</otherArchive>
-			</otherArchives>
-		</mailingList>
-		<mailingList>
-			<name>slf4j-user list</name>
-			<subscribe>http://www.qos.ch/mailman/listinfo/slf4j-user</subscribe>
-			<unsubscribe>http://www.qos.ch/mailman/options/slf4j-user</unsubscribe>
-			<post>slf4j-user@qos.ch</post>
-			<archive>http://www.qos.ch/pipermail/slf4j-user/</archive>
-			<otherArchives>
-				<otherArchive>http://news.gmane.org/gmane.comp.java.slf4j.user</otherArchive>
-				<otherArchive>http://marc.theaimsgroup.com/?l=slf4j-user</otherArchive>
-				<otherArchive>http://www.nabble.com/Slf4J---user-f13203.html</otherArchive>
-				<otherArchive>http://www.mail-archive.com/user%40slf4j.org/</otherArchive>
-			</otherArchives>
-		</mailingList>
-	</mailingLists>
+  <mailingLists>
+    <mailingList>
+      <name>slf4j-announcements list</name>
+      <subscribe>http://www.qos.ch/mailman/listinfo/announce</subscribe>
+      <unsubscribe>http://www.qos.ch/mailman/options/announce</unsubscribe>
+      <archive>http://www.qos.ch/pipermail/announce/</archive>
+      <otherArchives>
+        <otherArchive>http://marc.theaimsgroup.com/?l=slf4j-announce</otherArchive>
+      </otherArchives>
+    </mailingList>
+    <mailingList>
+      <name>slf4j-user list</name>
+      <subscribe>http://www.qos.ch/mailman/listinfo/slf4j-user</subscribe>
+      <unsubscribe>http://www.qos.ch/mailman/options/slf4j-user</unsubscribe>
+      <post>slf4j-user@qos.ch</post>
+      <archive>http://www.qos.ch/pipermail/slf4j-user/</archive>
+      <otherArchives>
+        <otherArchive>http://news.gmane.org/gmane.comp.java.slf4j.user</otherArchive>
+        <otherArchive>http://marc.theaimsgroup.com/?l=slf4j-user</otherArchive>
+        <otherArchive>http://www.nabble.com/Slf4J---user-f13203.html</otherArchive>
+        <otherArchive>http://www.mail-archive.com/user%40slf4j.org/</otherArchive>
+      </otherArchives>
+    </mailingList>
+  </mailingLists>
   <build>
     <plugins>
       <plugin>

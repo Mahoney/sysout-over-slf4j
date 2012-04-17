@@ -8,14 +8,14 @@
   </parent>
   <artifactId>no-system-jar-on-classpath</artifactId>
   <dependencies>
-  	<dependency>
-  		<artifactId>sysout-over-slf4j-context</artifactId>
-  		<groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
-  		<scope>test</scope>
-  	</dependency>
-	<dependency>
-		<groupId>ch.qos.logback</groupId>
-		<artifactId>logback-classic</artifactId>
-	</dependency>
+    <dependency>
+      <artifactId>sysout-over-slf4j-context</artifactId>
+      <groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
   </dependencies>
 </project>

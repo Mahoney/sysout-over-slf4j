@@ -49,19 +49,19 @@ import ch.qos.logback.core.encoder.Encoder;
 
 public class ConsoleAppenderTests extends SysOutOverSLF4JTestCase {
 
-	@Test
-	public void appenderStillPrintsToSystemOut() {
+    @Test
+    public void appenderStillPrintsToSystemOut() {
 
-		ByteArrayOutputStream outputStreamBytes = systemOutOutputStream();
+        ByteArrayOutputStream outputStreamBytes = systemOutOutputStream();
 
-		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 
         Logger log = initialiseALogbackLogger();
-		log.info("some log text");
+        log.info("some log text");
 
-		String outString = new String(outputStreamBytes.toByteArray());
+        String outString = new String(outputStreamBytes.toByteArray());
 
-		assertTrue(outString.contains("some log text"));
+        assertTrue(outString.contains("some log text"));
 
         assertFalse(any(appender.list, new Predicate<ILoggingEvent>() {
             @Override
@@ -69,7 +69,7 @@ public class ConsoleAppenderTests extends SysOutOverSLF4JTestCase {
                 return iLoggingEvent.getMessage().contains(LoggingMessages.PERFORMANCE_WARNING);
             }
         }));
-	}
+    }
 
     private Logger initialiseALogbackLogger() {
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -81,19 +81,19 @@ public class ConsoleAppenderTests extends SysOutOverSLF4JTestCase {
     }
 
     ConsoleAppender<ILoggingEvent> initialiseConsoleAppender(LoggerContext lc) {
-		Encoder<ILoggingEvent> encoder = new EchoEncoder<ILoggingEvent>();
-		encoder.start();
+        Encoder<ILoggingEvent> encoder = new EchoEncoder<ILoggingEvent>();
+        encoder.start();
         ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<ILoggingEvent>();
-		appender.setContext(lc);
-		appender.setEncoder(encoder);
-		appender.start();
-		return appender;
-	}
+        appender.setContext(lc);
+        appender.setEncoder(encoder);
+        appender.start();
+        return appender;
+    }
 
-	ByteArrayOutputStream systemOutOutputStream() {
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		PrintStream newSystemOut = new PrintStream(bytes, true);
-		SystemOutput.OUT.set(newSystemOut);
-		return bytes;
-	}
+    ByteArrayOutputStream systemOutOutputStream() {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        PrintStream newSystemOut = new PrintStream(bytes, true);
+        SystemOutput.OUT.set(newSystemOut);
+        return bytes;
+    }
 }

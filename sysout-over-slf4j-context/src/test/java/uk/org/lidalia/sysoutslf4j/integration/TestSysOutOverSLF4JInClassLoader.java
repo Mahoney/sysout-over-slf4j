@@ -1,7 +1,7 @@
-/* 
+/*
  * Copyright (c) 2009-2012 Robert Elliot
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free  of charge, to any person obtaining
  * a  copy  of this  software  and  associated  documentation files  (the
  * "Software"), to  deal in  the Software without  restriction, including
@@ -9,10 +9,10 @@
  * distribute,  sublicense, and/or sell  copies of  the Software,  and to
  * permit persons to whom the Software  is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The  above  copyright  notice  and  this permission  notice  shall  be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE  SOFTWARE IS  PROVIDED  "AS  IS", WITHOUT  WARRANTY  OF ANY  KIND,
  * EXPRESS OR  IMPLIED, INCLUDING  BUT NOT LIMITED  TO THE  WARRANTIES OF
  * MERCHANTABILITY,    FITNESS    FOR    A   PARTICULAR    PURPOSE    AND
@@ -51,96 +51,96 @@ import ch.qos.logback.core.read.ListAppender;
 
 public class TestSysOutOverSLF4JInClassLoader extends SysOutOverSLF4JTestCase {
 
-	private final ClassLoader app1ClassLoader = SimpleClassloader.make();
-	
-	@Before
-	public void prepareLogging() throws Exception {
-		LoggingUtils.turnOffRootLogging(app1ClassLoader);
-		resetSysOutUserAppender(app1ClassLoader);
-	}
-	
-	@Test
-	public void sysOutOverSLF4JWorksInsideAnotherClassLoader() throws Exception {
-		callSendSystemOutAndErrToSLF4JInClassLoader(app1ClassLoader);
-		
-		ISysOutUser sysOutUser1 = newInstanceInClassLoader(ISysOutUser.class, app1ClassLoader, SysOutUser.class, new Class[]{});
-		
-		Thread.currentThread().setContextClassLoader(app1ClassLoader);
-		sysOutUser1.useSysOut();
-		
-		List<?> list1 = getRootAppender(app1ClassLoader);
-		assertEquals(1, list1.size());
-		ILoggingEvent loggingEvent = CrossClassLoaderTestUtils.moveToCurrentClassLoader(ILoggingEvent.class, list1.get(0));
-		Assert.assertExpectedLoggingEvent(loggingEvent, "Logged", Level.INFO, null, SysOutUser.class.getName());
-	}
+    private final ClassLoader app1ClassLoader = SimpleClassloader.make();
 
-	private <E> E newInstanceInClassLoader(
-			Class<E> classToReturn, ClassLoader classLoader, Class<? extends E> classToGetInstanceOf,
-			Class<?>[] constructorArgTypes, Object... constructorArgs) throws Exception {
-		Class<?> class1 = classLoader.loadClass(classToGetInstanceOf.getName());
-		Object newInstance = Whitebox.invokeConstructor(class1, constructorArgTypes, constructorArgs);
-		return CrossClassLoaderTestUtils.moveToCurrentClassLoader(classToReturn, newInstance);
-	}
-	
-	static void resetSysOutUserAppender(ClassLoader classLoader) throws Exception {
-		Class<?> clazz = classLoader.loadClass(TestSysOutOverSLF4JInClassLoader.class.getName());
-		clazz.getDeclaredMethod("resetSysOutUserAppender").invoke(clazz);
-	}
-	
-	public static void resetSysOutUserAppender() {
-		LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-		Logger sysOutUserLogger = loggerContext.getLogger(SysOutUser.class.getName());
-		sysOutUserLogger.detachAndStopAllAppenders();
-		ListAppender<ILoggingEvent> appender = new ListAppender<ILoggingEvent>();
-		appender.setName("list");
-		appender.setContext(loggerContext);
-		appender.start();
-		sysOutUserLogger.addAppender(appender);
-		sysOutUserLogger.setLevel(Level.INFO);
-	}
-	
-	static List<?> getRootAppender(ClassLoader classLoader) throws Exception {
-		Class<?> clazz = classLoader.loadClass(TestSysOutOverSLF4JInClassLoader.class.getName());
-		Object listAppender = clazz.getDeclaredMethod("getRootAppender").invoke(clazz);
-		Class<?> listAppenderClass = classLoader.loadClass(ListAppender.class.getName());
-		Field listField = listAppenderClass.getField("list");
-		Object list = listField.get(listAppender);
-		return CrossClassLoaderTestUtils.moveToCurrentClassLoader(List.class, list);
-	}
-	
-	public static ListAppender<ILoggingEvent> getRootAppender() {
-		LoggerContext LC = (LoggerContext) LoggerFactory.getILoggerFactory();
-		Logger sysOutLogger = LC.getLogger(SysOutUser.class.getName());
-		return (ListAppender<ILoggingEvent>) sysOutLogger.getAppender("list");
-	}
-	
-	@Test
-	public void systemOutStillGoesToSystemOutInClassLoaderThatHasNotSentSysOutToLSF4J() throws Exception {
-		OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.OUT);
-		callSendSystemOutAndErrToSLF4JInClassLoader(app1ClassLoader);
-		
-		System.out.println("Hello again");
-		
-		assertEquals("Hello again" + System.getProperty("line.separator"), sysOutMock.toString());
-	}
+    @Before
+    public void prepareLogging() throws Exception {
+        LoggingUtils.turnOffRootLogging(app1ClassLoader);
+        resetSysOutUserAppender(app1ClassLoader);
+    }
 
-	private OutputStream setUpMockSystemOutput(SystemOutput systemOutput) {
-		OutputStream sysOutMock = new ByteArrayOutputStream();
-		systemOutput.set(new PrintStream(sysOutMock));
-		return sysOutMock;
-	}
-	
-	protected void callSendSystemOutAndErrToSLF4JInClassLoader(ClassLoader classLoader) throws Exception {
-		Class<?> sysOutOverSLF4JClass = classLoader.loadClass(SysOutOverSLF4J.class.getName());
-		Thread.currentThread().setContextClassLoader(classLoader);
-		sysOutOverSLF4JClass.getMethod("sendSystemOutAndErrToSLF4J").invoke(sysOutOverSLF4JClass);
-		Thread.currentThread().setContextClassLoader(originalContextClassLoader);
-	}
+    @Test
+    public void sysOutOverSLF4JWorksInsideAnotherClassLoader() throws Exception {
+        callSendSystemOutAndErrToSLF4JInClassLoader(app1ClassLoader);
 
-	protected void callStopSendingSystemOutAndErrToSLF4JInClassLoader(ClassLoader classLoader) throws Exception {
-		Class<?> sysOutOverSLF4JClass = classLoader.loadClass(SysOutOverSLF4J.class.getName());
-		Thread.currentThread().setContextClassLoader(classLoader);
-		sysOutOverSLF4JClass.getMethod("stopSendingSystemOutAndErrToSLF4J").invoke(sysOutOverSLF4JClass);
-		Thread.currentThread().setContextClassLoader(originalContextClassLoader);
-	}
+        ISysOutUser sysOutUser1 = newInstanceInClassLoader(ISysOutUser.class, app1ClassLoader, SysOutUser.class, new Class[]{});
+
+        Thread.currentThread().setContextClassLoader(app1ClassLoader);
+        sysOutUser1.useSysOut();
+
+        List<?> list1 = getRootAppender(app1ClassLoader);
+        assertEquals(1, list1.size());
+        ILoggingEvent loggingEvent = CrossClassLoaderTestUtils.moveToCurrentClassLoader(ILoggingEvent.class, list1.get(0));
+        Assert.assertExpectedLoggingEvent(loggingEvent, "Logged", Level.INFO, null, SysOutUser.class.getName());
+    }
+
+    private <E> E newInstanceInClassLoader(
+            Class<E> classToReturn, ClassLoader classLoader, Class<? extends E> classToGetInstanceOf,
+            Class<?>[] constructorArgTypes, Object... constructorArgs) throws Exception {
+        Class<?> class1 = classLoader.loadClass(classToGetInstanceOf.getName());
+        Object newInstance = Whitebox.invokeConstructor(class1, constructorArgTypes, constructorArgs);
+        return CrossClassLoaderTestUtils.moveToCurrentClassLoader(classToReturn, newInstance);
+    }
+
+    static void resetSysOutUserAppender(ClassLoader classLoader) throws Exception {
+        Class<?> clazz = classLoader.loadClass(TestSysOutOverSLF4JInClassLoader.class.getName());
+        clazz.getDeclaredMethod("resetSysOutUserAppender").invoke(clazz);
+    }
+
+    public static void resetSysOutUserAppender() {
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        Logger sysOutUserLogger = loggerContext.getLogger(SysOutUser.class.getName());
+        sysOutUserLogger.detachAndStopAllAppenders();
+        ListAppender<ILoggingEvent> appender = new ListAppender<ILoggingEvent>();
+        appender.setName("list");
+        appender.setContext(loggerContext);
+        appender.start();
+        sysOutUserLogger.addAppender(appender);
+        sysOutUserLogger.setLevel(Level.INFO);
+    }
+
+    static List<?> getRootAppender(ClassLoader classLoader) throws Exception {
+        Class<?> clazz = classLoader.loadClass(TestSysOutOverSLF4JInClassLoader.class.getName());
+        Object listAppender = clazz.getDeclaredMethod("getRootAppender").invoke(clazz);
+        Class<?> listAppenderClass = classLoader.loadClass(ListAppender.class.getName());
+        Field listField = listAppenderClass.getField("list");
+        Object list = listField.get(listAppender);
+        return CrossClassLoaderTestUtils.moveToCurrentClassLoader(List.class, list);
+    }
+
+    public static ListAppender<ILoggingEvent> getRootAppender() {
+        LoggerContext LC = (LoggerContext) LoggerFactory.getILoggerFactory();
+        Logger sysOutLogger = LC.getLogger(SysOutUser.class.getName());
+        return (ListAppender<ILoggingEvent>) sysOutLogger.getAppender("list");
+    }
+
+    @Test
+    public void systemOutStillGoesToSystemOutInClassLoaderThatHasNotSentSysOutToLSF4J() throws Exception {
+        OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.OUT);
+        callSendSystemOutAndErrToSLF4JInClassLoader(app1ClassLoader);
+
+        System.out.println("Hello again");
+
+        assertEquals("Hello again" + System.getProperty("line.separator"), sysOutMock.toString());
+    }
+
+    private OutputStream setUpMockSystemOutput(SystemOutput systemOutput) {
+        OutputStream sysOutMock = new ByteArrayOutputStream();
+        systemOutput.set(new PrintStream(sysOutMock));
+        return sysOutMock;
+    }
+
+    protected void callSendSystemOutAndErrToSLF4JInClassLoader(ClassLoader classLoader) throws Exception {
+        Class<?> sysOutOverSLF4JClass = classLoader.loadClass(SysOutOverSLF4J.class.getName());
+        Thread.currentThread().setContextClassLoader(classLoader);
+        sysOutOverSLF4JClass.getMethod("sendSystemOutAndErrToSLF4J").invoke(sysOutOverSLF4JClass);
+        Thread.currentThread().setContextClassLoader(originalContextClassLoader);
+    }
+
+    protected void callStopSendingSystemOutAndErrToSLF4JInClassLoader(ClassLoader classLoader) throws Exception {
+        Class<?> sysOutOverSLF4JClass = classLoader.loadClass(SysOutOverSLF4J.class.getName());
+        Thread.currentThread().setContextClassLoader(classLoader);
+        sysOutOverSLF4JClass.getMethod("stopSendingSystemOutAndErrToSLF4J").invoke(sysOutOverSLF4JClass);
+        Thread.currentThread().setContextClassLoader(originalContextClassLoader);
+    }
 }

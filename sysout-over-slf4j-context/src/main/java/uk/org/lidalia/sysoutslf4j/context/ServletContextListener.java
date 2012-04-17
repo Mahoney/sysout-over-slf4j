@@ -41,7 +41,7 @@ public class ServletContextListener implements javax.servlet.ServletContextListe
         }
     }
 
-	public void contextDestroyed(final ServletContextEvent servletContextEvent) {
+    public void contextDestroyed(final ServletContextEvent servletContextEvent) {
         try {
             SysOutOverSLF4J.stopSendingSystemOutAndErrToSLF4J();
         } catch (SysOutOverSLF4JSystemNotPresentException e) {

@@ -10,7 +10,7 @@
     <version>2.0.0-SNAPSHOT</version>
   </parent>
   <modules>
-  	<module>no-system-jar-on-classpath</module>
+    <module>no-system-jar-on-classpath</module>
     <module>sysout-over-slf4j-webapps</module>
     <module>tests</module>
   </modules>

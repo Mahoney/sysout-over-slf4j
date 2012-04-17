@@ -1,7 +1,7 @@
-/* 
+/*
  * Copyright (c) 2009-2012 Robert Elliot
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free  of charge, to any person obtaining
  * a  copy  of this  software  and  associated  documentation files  (the
  * "Software"), to  deal in  the Software without  restriction, including
@@ -9,10 +9,10 @@
  * distribute,  sublicense, and/or sell  copies of  the Software,  and to
  * permit persons to whom the Software  is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The  above  copyright  notice  and  this permission  notice  shall  be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE  SOFTWARE IS  PROVIDED  "AS  IS", WITHOUT  WARRANTY  OF ANY  KIND,
  * EXPRESS OR  IMPLIED, INCLUDING  BUT NOT LIMITED  TO THE  WARRANTIES OF
  * MERCHANTABILITY,    FITNESS    FOR    A   PARTICULAR    PURPOSE    AND
@@ -38,41 +38,41 @@ import uk.org.lidalia.sysoutslf4j.context.LogLevel;
  */
 public final class LogPerLineExceptionHandlingStrategyFactory implements ExceptionHandlingStrategyFactory {
 
-	private static final ExceptionHandlingStrategyFactory INSTANCE = new LogPerLineExceptionHandlingStrategyFactory();
-	public static ExceptionHandlingStrategyFactory getInstance() {
-		return INSTANCE;
-	}
+    private static final ExceptionHandlingStrategyFactory INSTANCE = new LogPerLineExceptionHandlingStrategyFactory();
+    public static ExceptionHandlingStrategyFactory getInstance() {
+        return INSTANCE;
+    }
 
-	private LogPerLineExceptionHandlingStrategyFactory() {
-		super();
-	}
-	
-	public ExceptionHandlingStrategy makeExceptionHandlingStrategy(
-			final LogLevel logLevel, final PrintStream originalPrintStream) {
-		return new LogPerLineExceptionHandlingStrategy(logLevel);
-	}
+    private LogPerLineExceptionHandlingStrategyFactory() {
+        super();
+    }
 
-	private static final class LogPerLineExceptionHandlingStrategy implements ExceptionHandlingStrategy {
+    public ExceptionHandlingStrategy makeExceptionHandlingStrategy(
+            final LogLevel logLevel, final PrintStream originalPrintStream) {
+        return new LogPerLineExceptionHandlingStrategy(logLevel);
+    }
 
-		private static final Marker MARKER = MarkerFactory.getMarker("stacktrace");
-		
-		private final LogLevel logLevel;
+    private static final class LogPerLineExceptionHandlingStrategy implements ExceptionHandlingStrategy {
 
-		LogPerLineExceptionHandlingStrategy(final LogLevel logLevel) {
-			super();
-			this.logLevel = logLevel;
-		}
+        private static final Marker MARKER = MarkerFactory.getMarker("stacktrace");
 
-		/**
-		 * This method is not used since nothing is buffered.
-		 */
-		public void notifyNotStackTrace() {
-			// Do nothing
-		}
+        private final LogLevel logLevel;
 
-		public void handleExceptionLine(final String line, final Logger log) {
-			logLevel.log(log, MARKER, line);
-		}
+        LogPerLineExceptionHandlingStrategy(final LogLevel logLevel) {
+            super();
+            this.logLevel = logLevel;
+        }
 
-	}
+        /**
+         * This method is not used since nothing is buffered.
+         */
+        public void notifyNotStackTrace() {
+            // Do nothing
+        }
+
+        public void handleExceptionLine(final String line, final Logger log) {
+            logLevel.log(log, MARKER, line);
+        }
+
+    }
 }

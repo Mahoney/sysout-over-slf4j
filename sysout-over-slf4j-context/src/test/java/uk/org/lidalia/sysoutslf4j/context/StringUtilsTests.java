@@ -36,41 +36,41 @@ import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 
 public class StringUtilsTests extends SysOutOverSLF4JTestCase {
 
-	@Test
-	public void stripEndStripsEnd() {
-		assertEquals("hello wo", StringUtils.stripEnd("hello world", "elders"));
-	}
+    @Test
+    public void stripEndStripsEnd() {
+        assertEquals("hello wo", StringUtils.stripEnd("hello world", "elders"));
+    }
 
-	@Test
-	public void stripEndReturnsEmptyStringIfEmptyStringPassedIn() {
-		assertEquals("", StringUtils.stripEnd("", "irrelevant"));
-	}
+    @Test
+    public void stripEndReturnsEmptyStringIfEmptyStringPassedIn() {
+        assertEquals("", StringUtils.stripEnd("", "irrelevant"));
+    }
 
-	@Test
-	public void stripEndReturnsInputIfEmptyStripCharsPassedIn() {
-		assertEquals("hello", StringUtils.stripEnd("hello", ""));
-	}
+    @Test
+    public void stripEndReturnsInputIfEmptyStripCharsPassedIn() {
+        assertEquals("hello", StringUtils.stripEnd("hello", ""));
+    }
 
-	@Test
-	public void stripEndThrowsNullPointerExceptionIfInputIsNull() throws Throwable {
-		shouldThrow(NullPointerException.class, new Runnable() {
-			public void run() {
-				StringUtils.stripEnd(null, "irrelevant");
-			}
-		});
-	}
-
-	@Test
-	public void stripEndThrowsNullPointerExceptionIfStripCharsIsNull() throws Throwable {
-		shouldThrow(NullPointerException.class, new Runnable() {
+    @Test
+    public void stripEndThrowsNullPointerExceptionIfInputIsNull() throws Throwable {
+        shouldThrow(NullPointerException.class, new Runnable() {
             public void run() {
-				StringUtils.stripEnd("irrelevant", null);
-			}
-		});
-	}
+                StringUtils.stripEnd(null, "irrelevant");
+            }
+        });
+    }
 
-	@Test
-	public void notInstantiable() throws Throwable {
-		assertNotInstantiable(StringUtils.class);
-	}
+    @Test
+    public void stripEndThrowsNullPointerExceptionIfStripCharsIsNull() throws Throwable {
+        shouldThrow(NullPointerException.class, new Runnable() {
+            public void run() {
+                StringUtils.stripEnd("irrelevant", null);
+            }
+        });
+    }
+
+    @Test
+    public void notInstantiable() throws Throwable {
+        assertNotInstantiable(StringUtils.class);
+    }
 }

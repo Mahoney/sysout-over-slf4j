@@ -33,8 +33,8 @@ import static uk.org.lidalia.test.Assert.shouldThrow;
 
 public class SysoutOverSlf4jWithNoSystemJarOnClasspathTests {
 
-	@Test
-	public void sendSystemOutAndErrToSLF4JWithoutSystemJarOnClasspath() throws Throwable {
+    @Test
+    public void sendSystemOutAndErrToSLF4JWithoutSystemJarOnClasspath() throws Throwable {
         SysOutOverSLF4JSystemNotPresentException exception = shouldThrow(SysOutOverSLF4JSystemNotPresentException.class, new Runnable() {
             @Override
             public void run() {
@@ -43,7 +43,7 @@ public class SysoutOverSlf4jWithNoSystemJarOnClasspathTests {
         });
 
         assertEquals(SysOutOverSLF4JSystemNotPresentException.MESSAGE, exception.getMessage());
-	}
+    }
 
     @Test
     public void stopSendingSystemOutAndErrToSLF4JWithoutSystemJarOnClasspath() throws Throwable {

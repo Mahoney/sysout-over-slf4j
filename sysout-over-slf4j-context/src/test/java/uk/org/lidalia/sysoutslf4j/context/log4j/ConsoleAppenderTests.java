@@ -46,25 +46,25 @@ import static org.junit.Assert.assertTrue;
 
 public class ConsoleAppenderTests extends SysOutOverSLF4JTestCase {
 
-	@Test
-	public void appenderStillPrintsToSystemOut() {
+    @Test
+    public void appenderStillPrintsToSystemOut() {
 
-		ByteArrayOutputStream outputStreamBytes = systemOutOutputStream();
+        ByteArrayOutputStream outputStreamBytes = systemOutOutputStream();
 
-		SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
         lc.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME).setLevel(ch.qos.logback.classic.Level.WARN);
 
-		Logger log = Logger.getRootLogger();
-		log.setLevel(Level.INFO);
-		log.removeAllAppenders();
+        Logger log = Logger.getRootLogger();
+        log.setLevel(Level.INFO);
+        log.removeAllAppenders();
         log.addAppender(new ConsoleAppender(new SimpleLayout()));
 
-		log.info("some log text");
+        log.info("some log text");
 
-		String outString = new String(outputStreamBytes.toByteArray());
+        String outString = new String(outputStreamBytes.toByteArray());
 
-		assertTrue(outString.contains("some log text"));
+        assertTrue(outString.contains("some log text"));
 
         assertFalse(any(appender.list, new Predicate<ILoggingEvent>() {
             @Override
@@ -72,12 +72,12 @@ public class ConsoleAppenderTests extends SysOutOverSLF4JTestCase {
                 return iLoggingEvent.getMessage().contains(LoggingMessages.PERFORMANCE_WARNING);
             }
         }));
-	}
+    }
 
-	ByteArrayOutputStream systemOutOutputStream() {
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		PrintStream newSystemOut = new PrintStream(bytes, true);
-		SystemOutput.OUT.set(newSystemOut);
-		return bytes;
-	}
+    ByteArrayOutputStream systemOutOutputStream() {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        PrintStream newSystemOut = new PrintStream(bytes, true);
+        SystemOutput.OUT.set(newSystemOut);
+        return bytes;
+    }
 }

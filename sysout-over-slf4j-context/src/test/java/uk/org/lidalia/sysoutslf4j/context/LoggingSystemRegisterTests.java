@@ -1,7 +1,7 @@
-/* 
+/*
  * Copyright (c) 2009-2012 Robert Elliot
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free  of charge, to any person obtaining
  * a  copy  of this  software  and  associated  documentation files  (the
  * "Software"), to  deal in  the Software without  restriction, including
@@ -9,10 +9,10 @@
  * distribute,  sublicense, and/or sell  copies of  the Software,  and to
  * permit persons to whom the Software  is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The  above  copyright  notice  and  this permission  notice  shall  be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE  SOFTWARE IS  PROVIDED  "AS  IS", WITHOUT  WARRANTY  OF ANY  KIND,
  * EXPRESS OR  IMPLIED, INCLUDING  BUT NOT LIMITED  TO THE  WARRANTIES OF
  * MERCHANTABILITY,    FITNESS    FOR    A   PARTICULAR    PURPOSE    AND
@@ -49,58 +49,58 @@ import uk.org.lidalia.testutils.LoggingUtils;
 @SuppressStaticInitializationFor("uk.org.lidalia.sysoutslf4j.context.LoggingSystemRegister")
 public class LoggingSystemRegisterTests {
 
-	private LoggingSystemRegister loggingSystemRegister = new LoggingSystemRegister();
-	private Logger loggerMock = mock(Logger.class);
+    private LoggingSystemRegister loggingSystemRegister = new LoggingSystemRegister();
+    private Logger loggerMock = mock(Logger.class);
 
-	@BeforeClass
-	public static void turnOffRootLogging() {
-		LoggingUtils.turnOffRootLogging();
-	}
-	
-	@Before
-	public void setStaticMocks() {
-		Whitebox.setInternalState(LoggingSystemRegister.class, loggerMock);
-	}
-	
-	@Test
-	public void isInLoggingSystemReturnsFalseWhenLoggingSystemNotRegistered() {
-		assertFalse(loggingSystemRegister.isInLoggingSystem("some.package.SomeClass"));
-	}
+    @BeforeClass
+    public static void turnOffRootLogging() {
+        LoggingUtils.turnOffRootLogging();
+    }
 
-	@Test
-	public void registerLoggingSystemRegistersALoggingSystem() {
-		loggingSystemRegister.registerLoggingSystem("some.package");
-		assertTrue(loggingSystemRegister.isInLoggingSystem("some.package.SomeClass"));
-	}
-	
-	@Test
-	public void unregisterLoggingSystemUnregistersALoggingSystem() {
-		loggingSystemRegister.registerLoggingSystem("some.package");
-		loggingSystemRegister.unregisterLoggingSystem("some.package");
-		assertFalse(loggingSystemRegister.isInLoggingSystem("some.package.SomeClass"));
-	}
-	
-	@Test
-	public void registerLoggingSystemLogsThatItWasRegistered() {
-		loggingSystemRegister.registerLoggingSystem("some.package");
-		verify(loggerMock).info("Package {} registered; all classes within it or subpackages of it will "
-				+ "be allowed to print to System.out and System.err", "some.package");
-	}
+    @Before
+    public void setStaticMocks() {
+        Whitebox.setInternalState(LoggingSystemRegister.class, loggerMock);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void unregisterLoggingSystemLogsThatItWasUnregisteredIfLoggingSystemRegistered() {
-		Whitebox.getInternalState(loggingSystemRegister, Set.class).add("some.package");
+    @Test
+    public void isInLoggingSystemReturnsFalseWhenLoggingSystemNotRegistered() {
+        assertFalse(loggingSystemRegister.isInLoggingSystem("some.package.SomeClass"));
+    }
 
-		loggingSystemRegister.unregisterLoggingSystem("some.package");
+    @Test
+    public void registerLoggingSystemRegistersALoggingSystem() {
+        loggingSystemRegister.registerLoggingSystem("some.package");
+        assertTrue(loggingSystemRegister.isInLoggingSystem("some.package.SomeClass"));
+    }
 
-		verify(loggerMock).info("Package {} unregistered; all classes within it or subpackages of it will "
-				+ "have System.out and System.err redirected to SLF4J", "some.package");
-	}
+    @Test
+    public void unregisterLoggingSystemUnregistersALoggingSystem() {
+        loggingSystemRegister.registerLoggingSystem("some.package");
+        loggingSystemRegister.unregisterLoggingSystem("some.package");
+        assertFalse(loggingSystemRegister.isInLoggingSystem("some.package.SomeClass"));
+    }
 
-	@Test
-	public void unregisterLoggingSystemDoesNotLogIfLoggingSystemNotRegisterdPresent() {
-		loggingSystemRegister.unregisterLoggingSystem("some.package");
-		verifyZeroInteractions(loggerMock);
-	}
+    @Test
+    public void registerLoggingSystemLogsThatItWasRegistered() {
+        loggingSystemRegister.registerLoggingSystem("some.package");
+        verify(loggerMock).info("Package {} registered; all classes within it or subpackages of it will "
+                + "be allowed to print to System.out and System.err", "some.package");
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void unregisterLoggingSystemLogsThatItWasUnregisteredIfLoggingSystemRegistered() {
+        Whitebox.getInternalState(loggingSystemRegister, Set.class).add("some.package");
+
+        loggingSystemRegister.unregisterLoggingSystem("some.package");
+
+        verify(loggerMock).info("Package {} unregistered; all classes within it or subpackages of it will "
+                + "have System.out and System.err redirected to SLF4J", "some.package");
+    }
+
+    @Test
+    public void unregisterLoggingSystemDoesNotLogIfLoggingSystemNotRegisterdPresent() {
+        loggingSystemRegister.unregisterLoggingSystem("some.package");
+        verifyZeroInteractions(loggerMock);
+    }
 }
