@@ -41,6 +41,9 @@
         <artifactId>cargo-maven2-plugin</artifactId>
         <configuration>
           <configuration>
+            <properties>
+              <cargo.servlet.port>8081</cargo.servlet.port>
+            </properties>
             <deployables>
               <deployable>
                 <groupId>${project.groupId}</groupId>

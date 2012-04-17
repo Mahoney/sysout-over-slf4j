@@ -193,7 +193,6 @@ public final class SysOutOverSLF4J {
         });
     }
 
-    @SuppressWarnings("unchecked")
     private static <T> T doWithSystemClasses(Callable<T> callable) throws SysOutOverSLF4JSystemNotPresentException {
         try {
             return callable.call();

@@ -21,13 +21,13 @@
 
         <p>${project.artifactId} will then recognise all attempts to write to system out or err from your logging system and will
         delegate them to the original system out or err PrintStream.</p>
-        
+
         <p>Note that you should ONLY register a logging system if you need to - many logging systems (including Logback, Log4J and
         JULI) use the write methods on PrintStream, which always delegate directly to the original PrintStream, and so do not have
         this problem.</p>
       </answer>
     </faq>
-    
+
     <faq id="logLevels">
     	<question>
     		What if I want System.out calls to log as debug rather than info?
@@ -41,7 +41,7 @@
     		second argument represents the level of calls to System.err.</p>
     	</answer>
     </faq>
-    
+
     <faq id="stackTraces">
     	<question>
     		Why does ${project.artifactId} log a separate log statement for every element in the stack in a stacktrace?
@@ -49,7 +49,7 @@
     	<answer>
     		<p>When Throwable.printStackTrace() is called it iterates over the frames in the Throwable's stack trace and
     		prints each to the System.err as a separate method call.  This leaves no reliable means of reconstituting the
-    		original Throwable, or recognising the last frame of the stack trace.  Whilst logging each frame seperately is
+    		original Throwable, or recognising the last frame of the stack trace.  Whilst logging each frame separately is
     		clearly sub-optimal, it is at present the only known way of reliably retaining all the information from a
     		printStackTrace call and maintaining its ordering.</p>
     		<p>In recognition that this is unsatisfactory ${project.artifactId} allows you to substitute in your own exception
@@ -78,17 +78,17 @@ SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(factory);</source>
         console should be minimal, because SLF4J simply proxies calls to
         the write methods through to the original PrintStreams without
         doing any work.</p>
-        
-        <p>The overhead for some other SLF4J implementation that does not usethe PrintStream write methods, and so needs to be 
-        registered, will be greater; on every attempt by it to print to the console its fully qualified classname has to be
+
+        <p>The overhead for some other SLF4J implementation that does not use the PrintStream write methods, and so needs to be
+        registered, will be greater; on every attempt by it to print to the console its fully qualified class name has to be
         matched against registered package names in order to determine whether it should be permitted direct access.</p>
-  
+
 		<p>Finally, the overhead of actual System.out and System.err calls will be much greater, due to the expense of generating
 		the thread's stacktrace and examining it to determine the origin of the call. It would be much better
 		if all logging were done via SLF4J directly and this module were not necessary.</p>
       </answer>
     </faq>
-    
+
     <faq id="workings">
     	<question>
     		How does it work?
@@ -101,13 +101,13 @@ SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(factory);</source>
   that class's fully qualified name is retrieved and the message
   logged at the configured level on that logger (by default info for
   System.out calls and error for System.err calls).</p>
-  
+
   <p>Calls to Throwable.printStackTrace() are likewise logged at
   the configured level for each System output. By default there
   will be a message logged for every line of the stack trace; this
   is an unfortunate side effect of not being able to
   retrieve the original exception that is being printed reliably.</p>
-  
+
   <p>A servlet container may contain multiple web applications.
   If it has child first class loading and these applications
   package SLF4J in the web-app/lib directory then there will be
@@ -118,15 +118,15 @@ SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(factory);</source>
   SLF4J instances are mapped against the context
   class loader to ensure that the same SLF4J instance used in
   "normal" logging is also used when calling System.out.println.</p>
-  
-  <p>In order to prevent classloader leaks when contexts
+
+  <p>In order to prevent class loader leaks when contexts
   are reloaded the new PrintStreams are created by a special
-  classloader so that they do not themselves maintain a reference
-  to the context classloader. The PrintStreams only maintain a weak
-  reference to the classloaders and their SLF4J instances, so that
-  no classloader leak occurs if the classloader is discarded.</p>
+  class loader so that they do not themselves maintain a reference
+  to the context class loader. The PrintStreams only maintain a weak
+  reference to the class loaders and their SLF4J instances, so that
+  no class loader leak occurs if the class loader is discarded.</p>
     	</answer>
     </faq>
-    
+
   </part>
 </faqs>
