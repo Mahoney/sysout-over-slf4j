@@ -24,11 +24,6 @@
 
 package uk.org.lidalia.sysoutslf4j.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -45,11 +40,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import uk.org.lidalia.sysoutslf4j.context.LogLevel;
-import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
-import uk.org.lidalia.testutils.Assert;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -59,6 +49,17 @@ import ch.qos.logback.core.Context;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.joran.spi.ConsoleTarget;
 import ch.qos.logback.core.layout.EchoLayout;
+
+import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
+import uk.org.lidalia.sysoutslf4j.context.LogLevel;
+import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
+import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
+import uk.org.lidalia.testutils.Assert;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 

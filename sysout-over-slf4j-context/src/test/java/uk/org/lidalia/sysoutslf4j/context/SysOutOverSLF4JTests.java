@@ -24,15 +24,6 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
-import static uk.org.lidalia.test.Assert.assertNotInstantiable;
-
 import java.io.PrintStream;
 
 import org.junit.Before;
@@ -44,11 +35,20 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 
+import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
+import static uk.org.lidalia.test.Assert.assertNotInstantiable;
 
 @RunWith(PowerMockRunner.class)
 @SuppressStaticInitializationFor("uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J")

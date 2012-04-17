@@ -24,14 +24,6 @@
 
 package uk.org.lidalia.sysoutslf4j.system;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
-import static uk.org.lidalia.test.Assert.shouldThrow;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Array;
@@ -39,7 +31,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +38,14 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import uk.org.lidalia.lang.Classes;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
+import static uk.org.lidalia.test.Assert.shouldThrow;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(PerContextPrintStream.class)

@@ -24,14 +24,12 @@
 
 package uk.org.lidalia.sysoutslf4j.system;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import org.junit.Test;
 
-import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
+import static org.junit.Assert.assertEquals;
 
 public class SystemOutputTests extends SysOutOverSLF4JTestCase {
 

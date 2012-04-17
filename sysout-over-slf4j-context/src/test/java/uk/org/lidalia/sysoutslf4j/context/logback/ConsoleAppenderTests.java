@@ -24,21 +24,11 @@
 
 package uk.org.lidalia.sysoutslf4j.context.logback;
 
-import static com.google.common.collect.Iterables.any;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import com.google.common.base.Predicate;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
-
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.context.LoggingMessages;
-import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
-import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -46,6 +36,16 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.encoder.EchoEncoder;
 import ch.qos.logback.core.encoder.Encoder;
+import com.google.common.base.Predicate;
+
+import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
+import uk.org.lidalia.sysoutslf4j.context.LoggingMessages;
+import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
+import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
+
+import static com.google.common.collect.Iterables.any;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ConsoleAppenderTests extends SysOutOverSLF4JTestCase {
 

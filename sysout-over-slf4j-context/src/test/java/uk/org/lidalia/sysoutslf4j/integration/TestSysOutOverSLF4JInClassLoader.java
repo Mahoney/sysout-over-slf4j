@@ -24,8 +24,6 @@
 
 package uk.org.lidalia.sysoutslf4j.integration;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -37,17 +35,20 @@ import org.junit.Test;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.LoggerFactory;
 
-import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
-import uk.org.lidalia.testutils.Assert;
-import uk.org.lidalia.testutils.LoggingUtils;
-import uk.org.lidalia.testutils.SimpleClassloader;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+
+import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
+import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
+import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
+import uk.org.lidalia.testutils.Assert;
+import uk.org.lidalia.testutils.LoggingUtils;
+import uk.org.lidalia.testutils.SimpleClassloader;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestSysOutOverSLF4JInClassLoader extends SysOutOverSLF4JTestCase {
 

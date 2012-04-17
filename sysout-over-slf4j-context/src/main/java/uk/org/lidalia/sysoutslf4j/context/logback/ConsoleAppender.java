@@ -2,12 +2,12 @@ package uk.org.lidalia.sysoutslf4j.context.logback;
 
 import java.util.Arrays;
 
-import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
-import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
-
 import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.status.Status;
 import ch.qos.logback.core.status.WarnStatus;
+
+import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
+import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 
 public final class ConsoleAppender<E> extends OutputStreamAppender<E> {
 

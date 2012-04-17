@@ -3,6 +3,7 @@ package uk.org.lidalia.sysoutslf4j.context.log4j;
 import org.apache.log4j.Layout;
 import org.apache.log4j.WriterAppender;
 import org.apache.log4j.helpers.LogLog;
+
 import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
 
 public class ConsoleAppender extends WriterAppender {

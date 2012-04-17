@@ -24,17 +24,17 @@
 
 package uk.org.lidalia.sysoutslf4j.integration;
 
-import static org.junit.Assert.assertNull;
-
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
 import org.junit.Test;
 
-import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
+import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.testutils.LoggingUtils;
 import uk.org.lidalia.testutils.SimpleClassloader;
+
+import static org.junit.Assert.assertNull;
 
 public class TestForClassloaderLeaks extends SysOutOverSLF4JTestCase {
     private static final int NUMBER_OF_CLASSLOADERS = 3;

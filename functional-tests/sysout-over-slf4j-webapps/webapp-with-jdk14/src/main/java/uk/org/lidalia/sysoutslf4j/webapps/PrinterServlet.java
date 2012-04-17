@@ -1,12 +1,13 @@
 package uk.org.lidalia.sysoutslf4j.webapps;
 
-import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
+import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 
 import static com.google.common.base.Optional.fromNullable;
 

@@ -24,14 +24,12 @@
 
 package uk.org.lidalia.sysoutslf4j.system;
 
-import static org.junit.Assert.assertNull;
-
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
 import org.junit.Test;
 
-import uk.org.lidalia.sysoutslf4j.system.PerContextStore;
+import static org.junit.Assert.assertNull;
 
 public class PerContextStoreMemoryManagementTests extends SysOutOverSLF4JTestCase {
 

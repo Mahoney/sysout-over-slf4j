@@ -24,6 +24,13 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -31,15 +38,6 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static uk.org.lidalia.test.Assert.shouldThrow;
-
-import java.util.concurrent.Callable;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-
-import uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CallOrigin.class, LoggingSystemRegister.class})

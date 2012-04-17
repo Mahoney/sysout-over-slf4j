@@ -1,7 +1,5 @@
 package uk.org.lidalia.sysoutslf4j.context;
 
-import static uk.org.lidalia.sysoutslf4j.context.CallOrigin.getCallOrigin;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -13,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
+
+import static uk.org.lidalia.sysoutslf4j.context.CallOrigin.getCallOrigin;
 
 class LoggingOutputStream extends ByteArrayOutputStream {
 

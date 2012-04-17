@@ -24,10 +24,10 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
+import javax.servlet.ServletContextEvent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletContextEvent;
 
 public class ServletContextListener implements javax.servlet.ServletContextListener {
 

@@ -1,19 +1,21 @@
 package uk.org.lidalia.sysoutslf4j.context.jul;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import com.google.common.base.Predicate;
-import org.junit.Test;
-import org.slf4j.LoggerFactory;
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.context.LoggingMessages;
-import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
-import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
+
+import org.junit.Test;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.google.common.base.Predicate;
+
+import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
+import uk.org.lidalia.sysoutslf4j.context.LoggingMessages;
+import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
+import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 
 import static com.google.common.collect.Iterables.any;
 import static org.junit.Assert.assertFalse;

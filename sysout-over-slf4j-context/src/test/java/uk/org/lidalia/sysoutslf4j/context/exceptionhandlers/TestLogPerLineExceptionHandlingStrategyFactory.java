@@ -24,16 +24,17 @@
 
 package uk.org.lidalia.sysoutslf4j.context.exceptionhandlers;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
-import uk.org.lidalia.sysoutslf4j.context.LogLevel;
-import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+
+import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
+import uk.org.lidalia.sysoutslf4j.context.LogLevel;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestLogPerLineExceptionHandlingStrategyFactory extends SysOutOverSLF4JTestCase {
 

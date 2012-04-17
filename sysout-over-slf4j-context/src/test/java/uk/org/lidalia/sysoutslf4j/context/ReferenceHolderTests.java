@@ -24,13 +24,13 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static uk.org.lidalia.test.Assert.assertNotInstantiable;
-
 import java.lang.ref.WeakReference;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static uk.org.lidalia.test.Assert.assertNotInstantiable;
 
 public class ReferenceHolderTests {
 

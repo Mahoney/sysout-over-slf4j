@@ -24,14 +24,12 @@
 
 package uk.org.lidalia.sysoutslf4j.system;
 
+import org.junit.Test;
+
 import static java.lang.Thread.currentThread;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-
-import org.junit.Test;
-
-import uk.org.lidalia.sysoutslf4j.system.PerContextStore;
 
 public class PerContextStoreTests extends SysOutOverSLF4JTestCase {
 

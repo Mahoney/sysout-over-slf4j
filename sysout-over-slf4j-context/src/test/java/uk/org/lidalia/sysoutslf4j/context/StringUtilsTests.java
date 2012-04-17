@@ -24,15 +24,13 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
-import static org.junit.Assert.assertEquals;
-import static uk.org.lidalia.test.Assert.assertNotInstantiable;
-import static uk.org.lidalia.test.Assert.shouldThrow;
-
-import java.util.concurrent.Callable;
-
 import org.junit.Test;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
+
+import static org.junit.Assert.assertEquals;
+import static uk.org.lidalia.test.Assert.assertNotInstantiable;
+import static uk.org.lidalia.test.Assert.shouldThrow;
 
 public class StringUtilsTests extends SysOutOverSLF4JTestCase {
 

@@ -24,12 +24,6 @@
 
 package uk.org.lidalia.sysoutslf4j.context;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.verifyZeroInteractions;
-
 import java.util.Set;
 
 import org.junit.Before;
@@ -43,6 +37,12 @@ import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 
 import uk.org.lidalia.testutils.LoggingUtils;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.verifyZeroInteractions;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ LoggingSystemRegister.class })

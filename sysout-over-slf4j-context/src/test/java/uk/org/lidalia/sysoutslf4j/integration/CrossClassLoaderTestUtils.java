@@ -30,10 +30,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
 
+import org.apache.commons.lang3.SerializationUtils;
+
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
-
-import org.apache.commons.lang3.SerializationUtils;
 
 import uk.org.lidalia.lang.Exceptions;
 

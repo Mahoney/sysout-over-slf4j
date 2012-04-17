@@ -25,6 +25,7 @@
 package uk.org.lidalia.sysoutslf4j;
 
 import org.junit.Test;
+
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4JSystemNotPresentException;
 

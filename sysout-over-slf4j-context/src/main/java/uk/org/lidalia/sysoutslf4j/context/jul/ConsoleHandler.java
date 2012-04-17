@@ -1,8 +1,9 @@
 package uk.org.lidalia.sysoutslf4j.context.jul;
 
-import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
+import java.util.logging.LogRecord;
+import java.util.logging.StreamHandler;
 
-import java.util.logging.*;
+import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
 
 public class ConsoleHandler extends StreamHandler {
 

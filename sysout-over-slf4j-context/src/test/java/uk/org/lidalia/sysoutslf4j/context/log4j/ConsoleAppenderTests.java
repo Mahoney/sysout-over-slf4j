@@ -24,21 +24,23 @@
 
 package uk.org.lidalia.sysoutslf4j.context.log4j;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import com.google.common.base.Predicate;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.SimpleLayout;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.google.common.base.Predicate;
+
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.context.LoggingMessages;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 
 import static com.google.common.collect.Iterables.any;
 import static org.junit.Assert.assertFalse;
