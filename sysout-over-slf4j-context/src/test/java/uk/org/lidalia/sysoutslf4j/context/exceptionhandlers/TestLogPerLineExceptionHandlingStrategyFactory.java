@@ -24,48 +24,40 @@
 
 package uk.org.lidalia.sysoutslf4j.context.exceptionhandlers;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-
+import uk.org.lidalia.slf4jtest.TestLogger;
+import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.context.LogLevel;
+import uk.org.lidalia.slf4jutils.Level;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static uk.org.lidalia.slf4jtest.LoggingEvent.error;
+import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
 
 public class TestLogPerLineExceptionHandlingStrategyFactory extends SysOutOverSLF4JTestCase {
 
     private static final ExceptionHandlingStrategyFactory STRATEGY_FACTORY =
         LogPerLineExceptionHandlingStrategyFactory.getInstance();
     private static final String EXCEPTION_LINE = "Hello World";
+    private static final Marker STACKTRACE = MarkerFactory.getMarker("stacktrace");
 
-    private Logger log = (Logger) LoggerFactory.getLogger(TestLogPerLineExceptionHandlingStrategyFactory.class);
-
-    @Before
-    public void setUp() {
-        log.setLevel(Level.INFO);
-    }
+    private TestLogger log = TestLoggerFactory.getTestLogger(TestLogPerLineExceptionHandlingStrategyFactory.class);
 
     @Test
     public void testHandleExceptionLineDelegatesToLoggerAtInfoLevel() {
-        ExceptionHandlingStrategy strategy = STRATEGY_FACTORY.makeExceptionHandlingStrategy(LogLevel.INFO, null);
+        ExceptionHandlingStrategy strategy = STRATEGY_FACTORY.makeExceptionHandlingStrategy(Level.INFO, null);
         strategy.handleExceptionLine(EXCEPTION_LINE, log);
-        assertCorrectLoggingEvent(Level.INFO);
+        assertEquals(asList(info(STACKTRACE, EXCEPTION_LINE)), log.getLoggingEvents());
     }
 
     @Test
     public void testHandleExceptionLineDelegatesToLoggerAtErrorLevel() {
-        ExceptionHandlingStrategy strategy = STRATEGY_FACTORY.makeExceptionHandlingStrategy(LogLevel.ERROR, null);
+        ExceptionHandlingStrategy strategy = STRATEGY_FACTORY.makeExceptionHandlingStrategy(Level.ERROR, null);
         strategy.handleExceptionLine(EXCEPTION_LINE, log);
-        assertCorrectLoggingEvent(Level.ERROR);
-    }
-
-    private void assertCorrectLoggingEvent(Level logbackLevel) {
-        assertEquals(1, appender.list.size());
-        assertEquals(logbackLevel, appender.list.get(0).getLevel());
-        assertEquals(EXCEPTION_LINE, appender.list.get(0).getMessage());
+        assertEquals(asList(error(STACKTRACE, EXCEPTION_LINE)), log.getLoggingEvents());
     }
 }

@@ -27,38 +27,25 @@ package uk.org.lidalia.sysoutslf4j.integration;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Field;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
-import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.read.ListAppender;
-
+import uk.org.lidalia.slf4jtest.LoggingEvent;
+import uk.org.lidalia.slf4jtest.TestLogger;
+import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
-import uk.org.lidalia.testutils.Assert;
-import uk.org.lidalia.testutils.LoggingUtils;
 import uk.org.lidalia.testutils.SimpleClassloader;
 
 import static org.junit.Assert.assertEquals;
+import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
 
 public class TestSysOutOverSLF4JInClassLoader extends SysOutOverSLF4JTestCase {
 
     private final ClassLoader app1ClassLoader = SimpleClassloader.make();
-
-    @Before
-    public void prepareLogging() throws Exception {
-        LoggingUtils.turnOffRootLogging(app1ClassLoader);
-        resetSysOutUserAppender(app1ClassLoader);
-    }
 
     @Test
     public void sysOutOverSLF4JWorksInsideAnotherClassLoader() throws Exception {
@@ -69,10 +56,10 @@ public class TestSysOutOverSLF4JInClassLoader extends SysOutOverSLF4JTestCase {
         Thread.currentThread().setContextClassLoader(app1ClassLoader);
         sysOutUser1.useSysOut();
 
-        List<?> list1 = getRootAppender(app1ClassLoader);
+        List<?> list1 = getLoggingEvents(app1ClassLoader);
         assertEquals(1, list1.size());
-        ILoggingEvent loggingEvent = CrossClassLoaderTestUtils.moveToCurrentClassLoader(ILoggingEvent.class, list1.get(0));
-        Assert.assertExpectedLoggingEvent(loggingEvent, "Logged", Level.INFO, null, SysOutUser.class.getName());
+        Class<?> loggingEventClass = app1ClassLoader.loadClass(LoggingEvent.class.getName());
+        assertEquals("Logged", loggingEventClass.getDeclaredMethod("getMessage").invoke(list1.get(0)));
     }
 
     private <E> E newInstanceInClassLoader(
@@ -83,36 +70,21 @@ public class TestSysOutOverSLF4JInClassLoader extends SysOutOverSLF4JTestCase {
         return CrossClassLoaderTestUtils.moveToCurrentClassLoader(classToReturn, newInstance);
     }
 
-    static void resetSysOutUserAppender(ClassLoader classLoader) throws Exception {
+    static void clearTestLoggerFactory(ClassLoader classLoader) throws Exception {
         Class<?> clazz = classLoader.loadClass(TestSysOutOverSLF4JInClassLoader.class.getName());
-        clazz.getDeclaredMethod("resetSysOutUserAppender").invoke(clazz);
+        clazz.getDeclaredMethod("clearTestLoggerFactory").invoke(clazz);
     }
 
-    public static void resetSysOutUserAppender() {
-        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        Logger sysOutUserLogger = loggerContext.getLogger(SysOutUser.class.getName());
-        sysOutUserLogger.detachAndStopAllAppenders();
-        ListAppender<ILoggingEvent> appender = new ListAppender<ILoggingEvent>();
-        appender.setName("list");
-        appender.setContext(loggerContext);
-        appender.start();
-        sysOutUserLogger.addAppender(appender);
-        sysOutUserLogger.setLevel(Level.INFO);
+    public static void clearTestLoggerFactory() {
+        TestLoggerFactory.clear();
     }
 
-    static List<?> getRootAppender(ClassLoader classLoader) throws Exception {
-        Class<?> clazz = classLoader.loadClass(TestSysOutOverSLF4JInClassLoader.class.getName());
-        Object listAppender = clazz.getDeclaredMethod("getRootAppender").invoke(clazz);
-        Class<?> listAppenderClass = classLoader.loadClass(ListAppender.class.getName());
-        Field listField = listAppenderClass.getField("list");
-        Object list = listField.get(listAppender);
-        return CrossClassLoaderTestUtils.moveToCurrentClassLoader(List.class, list);
-    }
-
-    public static ListAppender<ILoggingEvent> getRootAppender() {
-        LoggerContext LC = (LoggerContext) LoggerFactory.getILoggerFactory();
-        Logger sysOutLogger = LC.getLogger(SysOutUser.class.getName());
-        return (ListAppender<ILoggingEvent>) sysOutLogger.getAppender("list");
+    static List<?> getLoggingEvents(ClassLoader classLoader) throws Exception {
+        Class<?> testLoggerFactoryClass = classLoader.loadClass(TestLoggerFactory.class.getName());
+        Object sysOutUserLogger = testLoggerFactoryClass.getDeclaredMethod("getTestLogger", String.class).invoke(testLoggerFactoryClass, SysOutUser.class.getName());
+        Class<?> testLoggerClass = classLoader.loadClass(TestLogger.class.getName());
+        Object loggingEvents = testLoggerClass.getDeclaredMethod("getLoggingEvents").invoke(sysOutUserLogger);
+        return CrossClassLoaderTestUtils.moveToCurrentClassLoader(List.class, loggingEvents);
     }
 
     @Test

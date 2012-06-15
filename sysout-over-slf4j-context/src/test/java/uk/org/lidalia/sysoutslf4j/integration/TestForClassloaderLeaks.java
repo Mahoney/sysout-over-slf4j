@@ -31,7 +31,6 @@ import org.junit.Test;
 
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
-import uk.org.lidalia.testutils.LoggingUtils;
 import uk.org.lidalia.testutils.SimpleClassloader;
 
 import static org.junit.Assert.assertNull;
@@ -111,7 +110,6 @@ public class TestForClassloaderLeaks extends SysOutOverSLF4JTestCase {
 
         private ClassLoaderHolder(int number) {
             this.number = number;
-            LoggingUtils.turnOffRootLogging(classLoader);
         }
     }
 

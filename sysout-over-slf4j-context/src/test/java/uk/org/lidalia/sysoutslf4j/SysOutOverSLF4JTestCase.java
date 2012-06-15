@@ -5,7 +5,7 @@ import java.io.PrintStream;
 import org.junit.After;
 import org.junit.Before;
 
-import uk.org.lidalia.testutils.SLF4JTestCase;
+import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 
 /*
  * Copyright (c) 2009-2012 Robert Elliot
@@ -31,11 +31,16 @@ import uk.org.lidalia.testutils.SLF4JTestCase;
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-public abstract class SysOutOverSLF4JTestCase extends SLF4JTestCase {
+public abstract class SysOutOverSLF4JTestCase {
 
     protected ClassLoader originalContextClassLoader;
     protected PrintStream SYS_OUT;
     protected PrintStream SYS_ERR;
+
+    @Before
+    public void resetLoggers() {
+        TestLoggerFactory.clear();
+    }
 
     @Before
     public void storeOriginalSystemOutAndErr() {

@@ -2,16 +2,18 @@ package uk.org.lidalia.sysoutslf4j.context.jul;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.google.common.base.Predicate;
 
+import uk.org.lidalia.slf4jtest.LoggingEvent;
+import uk.org.lidalia.slf4jtest.TestLogger;
+import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.context.LoggingMessages;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
@@ -29,8 +31,6 @@ public class ConsoleHandlerTests extends SysOutOverSLF4JTestCase {
         ByteArrayOutputStream outputStreamBytes = systemOutOutputStream();
 
         SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
-        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-        lc.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME).setLevel(ch.qos.logback.classic.Level.WARN);
 
         Logger log = Logger.getLogger("");
         for (Handler handler : log.getHandlers()) {
@@ -43,10 +43,16 @@ public class ConsoleHandlerTests extends SysOutOverSLF4JTestCase {
 
         assertTrue(outString.contains("some log text"));
 
-        assertFalse(any(appender.list, new Predicate<ILoggingEvent>() {
+        Collection<TestLogger> allLoggers = TestLoggerFactory.getAllTestLoggers().values();
+        assertFalse(any(allLoggers, new Predicate<TestLogger>() {
             @Override
-            public boolean apply(ILoggingEvent iLoggingEvent) {
-                return iLoggingEvent.getMessage().contains(LoggingMessages.PERFORMANCE_WARNING);
+            public boolean apply(TestLogger testLogger) {
+                return any(testLogger.getLoggingEvents(), new Predicate<LoggingEvent>() {
+                    @Override
+                    public boolean apply(LoggingEvent loggingEvent) {
+                        return loggingEvent.getMessage().contains(LoggingMessages.PERFORMANCE_WARNING);
+                    }
+                });
             }
         }));
     }

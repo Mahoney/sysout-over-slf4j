@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.org.lidalia.lang.RunnableCallable;
+import uk.org.lidalia.slf4jutils.Level;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory;
@@ -71,7 +72,7 @@ public final class SysOutOverSLF4J {
      * Logs at info level for System.out and at error level for System.err.
      */
     public static void sendSystemOutAndErrToSLF4J() throws SysOutOverSLF4JSystemNotPresentException {
-        sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.ERROR);
+        sendSystemOutAndErrToSLF4J(Level.INFO, Level.ERROR);
     }
 
     /**
@@ -82,10 +83,10 @@ public final class SysOutOverSLF4J {
      * Uses the LogPerLineExceptionHandlingStrategy for handling printlns coming from
      * Throwable.printStackTrace().
      *
-     * @param outLevel The SLF4J {@link LogLevel} at which calls to System.out should be logged
-     * @param errLevel The SLF4J {@link LogLevel} at which calls to System.err should be logged
+     * @param outLevel The SLF4J {@link Level} at which calls to System.out should be logged
+     * @param errLevel The SLF4J {@link Level} at which calls to System.err should be logged
      */
-    public static void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel) throws SysOutOverSLF4JSystemNotPresentException {
+    public static void sendSystemOutAndErrToSLF4J(final Level outLevel, final Level errLevel) throws SysOutOverSLF4JSystemNotPresentException {
         sendSystemOutAndErrToSLF4J(outLevel, errLevel, LogPerLineExceptionHandlingStrategyFactory.getInstance());
     }
 
@@ -101,7 +102,7 @@ public final class SysOutOverSLF4J {
      *             for creating strategies for handling printlns coming from Throwable.printStackTrace()
      */
     public static void sendSystemOutAndErrToSLF4J(final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws SysOutOverSLF4JSystemNotPresentException {
-        sendSystemOutAndErrToSLF4J(LogLevel.INFO, LogLevel.ERROR, exceptionHandlingStrategyFactory);
+        sendSystemOutAndErrToSLF4J(Level.INFO, Level.ERROR, exceptionHandlingStrategyFactory);
     }
 
     /**
@@ -110,13 +111,13 @@ public final class SysOutOverSLF4J {
      * SLF4J for the current context's classloader.<br/>
      * Can be called any number of times, and is synchronized on System.class.<br/>
      *
-     * @param outLevel The SLF4J {@link LogLevel} at which calls to System.out should be logged
-     * @param errLevel The SLF4J {@link LogLevel} at which calls to System.err should be logged
+     * @param outLevel The SLF4J {@link Level} at which calls to System.out should be logged
+     * @param errLevel The SLF4J {@link Level} at which calls to System.err should be logged
      * @param exceptionHandlingStrategyFactory
      *             The {@link uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory}
      *             for creating strategies for handling printlns coming from Throwable.printStackTrace()
      */
-    public static void sendSystemOutAndErrToSLF4J(final LogLevel outLevel, final LogLevel errLevel,
+    public static void sendSystemOutAndErrToSLF4J(final Level outLevel, final Level errLevel,
             final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws SysOutOverSLF4JSystemNotPresentException {
         synchronized (System.class) {
             doWithSystemClasses(new RunnableCallable() {
@@ -132,7 +133,7 @@ public final class SysOutOverSLF4J {
 
     private static void registerNewLoggerAppender(
             final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
-            final PerContextSystemOutput perContextSystemOutput, final LogLevel logLevel) {
+            final PerContextSystemOutput perContextSystemOutput, final Level logLevel) {
         final PrintStream slf4jPrintStream = buildPrintStream(exceptionHandlingStrategyFactory, perContextSystemOutput, logLevel);
         ReferenceHolder.preventGarbageCollectionForLifeOfClassLoader(slf4jPrintStream);
         perContextSystemOutput.registerPrintStreamForThisContext(slf4jPrintStream);
@@ -140,7 +141,7 @@ public final class SysOutOverSLF4J {
 
     private static PrintStream buildPrintStream(
             final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory,
-            final PerContextSystemOutput perContextSystemOutput, final LogLevel logLevel) {
+            final PerContextSystemOutput perContextSystemOutput, final Level logLevel) {
         final PrintStream originalPrintStream = perContextSystemOutput.getOriginalPrintStream();
         final ExceptionHandlingStrategy exceptionHandlingStrategy = exceptionHandlingStrategyFactory.makeExceptionHandlingStrategy(logLevel, originalPrintStream);
         return new PrintStream(new LoggingOutputStream(logLevel, exceptionHandlingStrategy, originalPrintStream, LOGGING_SYSTEM_REGISTER), true);

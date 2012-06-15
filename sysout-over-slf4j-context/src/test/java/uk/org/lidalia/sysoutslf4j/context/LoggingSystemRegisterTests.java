@@ -36,8 +36,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 
-import uk.org.lidalia.testutils.LoggingUtils;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
@@ -51,11 +49,6 @@ public class LoggingSystemRegisterTests {
 
     private LoggingSystemRegister loggingSystemRegister = new LoggingSystemRegister();
     private Logger loggerMock = mock(Logger.class);
-
-    @BeforeClass
-    public static void turnOffRootLogging() {
-        LoggingUtils.turnOffRootLogging();
-    }
 
     @Before
     public void setStaticMocks() {

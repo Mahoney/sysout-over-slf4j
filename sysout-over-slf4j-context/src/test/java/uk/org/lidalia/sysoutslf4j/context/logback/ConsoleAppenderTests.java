@@ -26,24 +26,27 @@ package uk.org.lidalia.sysoutslf4j.context.logback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Collection;
 
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.ContextBase;
+import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.encoder.EchoEncoder;
 import ch.qos.logback.core.encoder.Encoder;
 import com.google.common.base.Predicate;
 
+import uk.org.lidalia.slf4jtest.LoggingEvent;
+import uk.org.lidalia.slf4jtest.TestLogger;
+import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.context.LoggingMessages;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 
 import static com.google.common.collect.Iterables.any;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -56,41 +59,37 @@ public class ConsoleAppenderTests extends SysOutOverSLF4JTestCase {
 
         SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 
-        Logger log = initialiseALogbackLogger();
-        log.info("some log text");
+        ConsoleAppender<String> consoleAppender = buildConsoleAppender();
+        consoleAppender.doAppend("some log text");
 
         String outString = new String(outputStreamBytes.toByteArray());
 
-        assertTrue(outString.contains("some log text"));
+        assertEquals("some log text" + CoreConstants.LINE_SEPARATOR, outString);
 
-        assertFalse(any(appender.list, new Predicate<ILoggingEvent>() {
+        Collection<TestLogger> allLoggers = TestLoggerFactory.getAllTestLoggers().values();
+        assertFalse(any(allLoggers, new Predicate<TestLogger>() {
             @Override
-            public boolean apply(ILoggingEvent iLoggingEvent) {
-                return iLoggingEvent.getMessage().contains(LoggingMessages.PERFORMANCE_WARNING);
+            public boolean apply(TestLogger testLogger) {
+                return any(testLogger.getLoggingEvents(), new Predicate<LoggingEvent>() {
+                    @Override
+                    public boolean apply(LoggingEvent loggingEvent) {
+                        return loggingEvent.getMessage().contains(LoggingMessages.PERFORMANCE_WARNING);
+                    }
+                });
             }
         }));
     }
 
-    private Logger initialiseALogbackLogger() {
-        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-        Logger log = lc.getLogger(Logger.ROOT_LOGGER_NAME);
-        log.setLevel(Level.INFO);
-        ConsoleAppender<ILoggingEvent> appender = initialiseConsoleAppender(lc);
-        log.addAppender(appender);
-        return log;
+    private ConsoleAppender<String> buildConsoleAppender() {
+        ConsoleAppender<String> consoleAppender = new ConsoleAppender<String>();
+        Encoder<String> encoder = new EchoEncoder<String>();
+        consoleAppender.setContext(new ContextBase());
+        consoleAppender.setEncoder(encoder);
+        consoleAppender.start();
+        return consoleAppender;
     }
 
-    ConsoleAppender<ILoggingEvent> initialiseConsoleAppender(LoggerContext lc) {
-        Encoder<ILoggingEvent> encoder = new EchoEncoder<ILoggingEvent>();
-        encoder.start();
-        ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<ILoggingEvent>();
-        appender.setContext(lc);
-        appender.setEncoder(encoder);
-        appender.start();
-        return appender;
-    }
-
-    ByteArrayOutputStream systemOutOutputStream() {
+    private ByteArrayOutputStream systemOutOutputStream() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         PrintStream newSystemOut = new PrintStream(bytes, true);
         SystemOutput.OUT.set(newSystemOut);

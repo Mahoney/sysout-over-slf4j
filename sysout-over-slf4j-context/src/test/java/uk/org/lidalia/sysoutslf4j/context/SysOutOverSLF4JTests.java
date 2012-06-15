@@ -35,6 +35,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 
+import uk.org.lidalia.slf4jutils.Level;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
@@ -48,11 +49,10 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
-import static uk.org.lidalia.test.Assert.assertNotInstantiable;
 
 @RunWith(PowerMockRunner.class)
 @SuppressStaticInitializationFor("uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J")
-@PrepareForTest({ LogPerLineExceptionHandlingStrategyFactory.class, LoggingSystemRegister.class, SysOutOverSLF4J.class, PerContextSystemOutput.class })
+@PrepareForTest({ LogPerLineExceptionHandlingStrategyFactory.class, LoggingSystemRegister.class, PerContextSystemOutput.class })
 public class SysOutOverSLF4JTests extends SysOutOverSLF4JTestCase {
 
     private final LoggingSystemRegister loggingSystemRegisterMock = mock(LoggingSystemRegister.class);
@@ -87,7 +87,7 @@ public class SysOutOverSLF4JTests extends SysOutOverSLF4JTestCase {
 
     @Test
     public void sendSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManagerWithDefaultLevelsAndLogPerLineExceptionHandlingStrategy() throws Exception {
-        expectLoggerAppendersToBeRegistered(LogLevel.INFO, LogLevel.ERROR, LogPerLineExceptionHandlingStrategyFactory.getInstance());
+        expectLoggerAppendersToBeRegistered(Level.INFO, Level.ERROR, LogPerLineExceptionHandlingStrategyFactory.getInstance());
 
         SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
 
@@ -97,7 +97,7 @@ public class SysOutOverSLF4JTests extends SysOutOverSLF4JTestCase {
 
     @Test
     public void sendSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManagerWithDefaultLevelsAndGivenExceptionHandlingStrategy() throws Exception {
-        expectLoggerAppendersToBeRegistered(LogLevel.INFO, LogLevel.ERROR, customExceptionHandlingStrategyFactoryMock);
+        expectLoggerAppendersToBeRegistered(Level.INFO, Level.ERROR, customExceptionHandlingStrategyFactoryMock);
 
         SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(customExceptionHandlingStrategyFactoryMock);
 
@@ -107,9 +107,9 @@ public class SysOutOverSLF4JTests extends SysOutOverSLF4JTestCase {
 
     @Test
     public void sendSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManagerWithCustomLevelsAndLogPerLineExceptionHandlingStrategy() throws Exception {
-        expectLoggerAppendersToBeRegistered(LogLevel.DEBUG, LogLevel.WARN, LogPerLineExceptionHandlingStrategyFactory.getInstance());
+        expectLoggerAppendersToBeRegistered(Level.DEBUG, Level.WARN, LogPerLineExceptionHandlingStrategyFactory.getInstance());
 
-        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(LogLevel.DEBUG, LogLevel.WARN);
+        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(Level.DEBUG, Level.WARN);
 
         verify(outMock).registerPrintStreamForThisContext(outContextPrintStream);
         verify(errMock).registerPrintStreamForThisContext(errContextPrintStream);
@@ -117,20 +117,20 @@ public class SysOutOverSLF4JTests extends SysOutOverSLF4JTestCase {
 
     @Test
     public void sendSystemOutAndErrToSLF4JDelegatesToSLF4JPrintStreamManagerWithCustomLevelsAndGivenExceptionHandlingStrategy() throws Exception {
-        expectLoggerAppendersToBeRegistered(LogLevel.DEBUG, LogLevel.WARN, customExceptionHandlingStrategyFactoryMock);
+        expectLoggerAppendersToBeRegistered(Level.DEBUG, Level.WARN, customExceptionHandlingStrategyFactoryMock);
 
-        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(LogLevel.DEBUG, LogLevel.WARN, customExceptionHandlingStrategyFactoryMock);
+        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(Level.DEBUG, Level.WARN, customExceptionHandlingStrategyFactoryMock);
 
         verify(outMock).registerPrintStreamForThisContext(outContextPrintStream);
         verify(errMock).registerPrintStreamForThisContext(errContextPrintStream);
     }
 
-    private void expectLoggerAppendersToBeRegistered(LogLevel outLevel, LogLevel errLevel, ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws Exception {
+    private void expectLoggerAppendersToBeRegistered(Level outLevel, Level errLevel, ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws Exception {
         outContextPrintStream = expectLoggerAppenderToBeRegistered(outMock, outLevel, exceptionHandlingStrategyFactory);
         errContextPrintStream = expectLoggerAppenderToBeRegistered(errMock, errLevel, exceptionHandlingStrategyFactory);
     }
 
-    private PrintStream expectLoggerAppenderToBeRegistered(PerContextSystemOutput systemOutputMock, LogLevel logLevel, ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws Exception {
+    private PrintStream expectLoggerAppenderToBeRegistered(PerContextSystemOutput systemOutputMock, Level logLevel, ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws Exception {
         PrintStream originalPrintStreamMock = mock(PrintStream.class);
         when(systemOutputMock.getOriginalPrintStream()).thenReturn(originalPrintStreamMock);
 
@@ -193,10 +193,5 @@ public class SysOutOverSLF4JTests extends SysOutOverSLF4JTestCase {
     public void isSLF4JPrintStreamReturnsTrueWhenSystemOutIsSLF4JPrintStream() {
         when(outMock.isPerContextPrintStream()).thenReturn(true);
         assertTrue(SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams());
-    }
-
-    @Test
-    public void notInstantiable() throws Throwable {
-        assertNotInstantiable(SysOutOverSLF4J.class);
     }
 }

@@ -31,48 +31,31 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 
+import uk.org.lidalia.slf4jtest.LoggingEvent;
+import uk.org.lidalia.slf4jtest.TestLoggerFactory;
+import uk.org.lidalia.slf4jutils.Level;
 import uk.org.lidalia.testutils.ClassCreationUtils;
-import uk.org.lidalia.testutils.LoggingUtils;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mock;
+import static uk.org.lidalia.slf4jtest.LoggingEvent.warn;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ LoggingSystemRegister.class, ch.qos.logback.classic.Logger.class })
+@PrepareForTest({ LoggingSystemRegister.class })
 public class InitialiserTests {
-
-    static {
-        LoggingUtils.turnOffRootLogging();
-    }
 
     private Initialiser initialiser;
     private LoggingSystemRegister loggingSystemRegister;
     private Logger loggerImplementation;
-    private ch.qos.logback.classic.Logger initialiserLogger;
-    private ListAppender<ILoggingEvent> appender;
 
     public InitialiserTests() {
-        setUpLogger();
         loggingSystemRegister = mock(LoggingSystemRegister.class);
         initialiser = new Initialiser(loggingSystemRegister);
-    }
-
-    private void setUpLogger() {
-        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-        initialiserLogger = lc.getLogger(Initialiser.class);
-        initialiserLogger.setLevel(Level.DEBUG);
-        initialiserLogger.detachAndStopAllAppenders();
-        appender = new ListAppender<ILoggingEvent>();
-        appender.setContext(lc);
-        appender.start();
-        initialiserLogger.addAppender(appender);
     }
 
     @Test
@@ -104,7 +87,7 @@ public class InitialiserTests {
 
     @Test
     public void initialiseWithLogbackLoggerRegistersLoggingPackageAutomatically() throws Exception {
-        Logger logbackLogger = mock(ch.qos.logback.classic.Logger.class);
+        Logger logbackLogger = makeMockLogger("ch.qos.logback.classic.Logger");
 
         givenLoggerIsA(logbackLogger);
         whenInitialiseIsCalled();
@@ -168,14 +151,6 @@ public class InitialiserTests {
         verify(loggingSystemRegister).registerLoggingSystem("org.slf4j.impl.");
     }
 
-    private void assertSoleLoggingEvent(Level level, String message, Object... args) {
-        assertEquals(1, appender.list.size());
-        ILoggingEvent loggingEvent = appender.list.get(0);
-        assertEquals(level, loggingEvent.getLevel());
-        assertEquals(message, loggingEvent.getMessage());
-        assertArrayEquals(args, loggingEvent.getArgumentArray());
-    }
-
     @Test
     public void initialiseWithUnknownLoggingSystemLogsWarnMessage() throws Exception {
         Logger unknownLogger = mock(Logger.class);
@@ -185,7 +160,9 @@ public class InitialiserTests {
     }
 
     private void thenAWarnMessageToSayRegistrationMayBeNecessaryShouldBeLogged(Class<? extends Logger> unknownLoggerClass) {
-        assertSoleLoggingEvent(Level.WARN, "Your logging framework {} is not known - if it needs access to the console you " +
-                "will need to register it by calling SysOutOverSLF4J.registerLoggingSystem", unknownLoggerClass);
+        assertEquals(asList(
+                warn("Your logging framework {} is not known - if it needs access to the console you " +
+                "will need to register it by calling SysOutOverSLF4J.registerLoggingSystem", unknownLoggerClass)),
+                TestLoggerFactory.getTestLogger(Initialiser.class).getLoggingEvents());
     }
 }

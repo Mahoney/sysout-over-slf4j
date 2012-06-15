@@ -30,7 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import uk.org.lidalia.sysoutslf4j.context.LogLevel;
+import uk.org.lidalia.slf4jutils.Level;
+import uk.org.lidalia.slf4jutils.RichLogger;
 
 /**
  * Implementation of {@link LogPerLineExceptionHandlingStrategyFactory} which returns an
@@ -48,7 +49,7 @@ public final class LogPerLineExceptionHandlingStrategyFactory implements Excepti
     }
 
     public ExceptionHandlingStrategy makeExceptionHandlingStrategy(
-            final LogLevel logLevel, final PrintStream originalPrintStream) {
+            final Level logLevel, final PrintStream originalPrintStream) {
         return new LogPerLineExceptionHandlingStrategy(logLevel);
     }
 
@@ -56,9 +57,9 @@ public final class LogPerLineExceptionHandlingStrategyFactory implements Excepti
 
         private static final Marker MARKER = MarkerFactory.getMarker("stacktrace");
 
-        private final LogLevel logLevel;
+        private final Level logLevel;
 
-        LogPerLineExceptionHandlingStrategy(final LogLevel logLevel) {
+        LogPerLineExceptionHandlingStrategy(final Level logLevel) {
             super();
             this.logLevel = logLevel;
         }
@@ -71,7 +72,7 @@ public final class LogPerLineExceptionHandlingStrategyFactory implements Excepti
         }
 
         public void handleExceptionLine(final String line, final Logger log) {
-            logLevel.log(log, MARKER, line);
+            new RichLogger(log).log(logLevel, MARKER, line);
         }
 
     }

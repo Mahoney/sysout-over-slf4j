@@ -35,11 +35,10 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-
 import uk.org.lidalia.lang.RunnableCallable;
+import uk.org.lidalia.slf4jtest.LoggingEvent;
+import uk.org.lidalia.slf4jtest.TestLogger;
+import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
@@ -47,12 +46,11 @@ import static org.junit.Assert.assertEquals;
 
 public class TestSysOutOverSLF4JThreadSafety extends SysOutOverSLF4JTestCase {
 
-    private Logger log = (Logger) LoggerFactory.getLogger(TestSysOutOverSLF4JThreadSafety.class);
+    private TestLogger log = TestLoggerFactory.getTestLogger(TestSysOutOverSLF4JThreadSafety.class);
 
     @Test
     public void sysoutOverSLF4JLogsCorrectlyInMultipleThreads() throws InterruptedException {
 
-        log.setLevel(Level.INFO);
         SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
         final CountDownLatch start = new CountDownLatch(1);
 
@@ -87,10 +85,11 @@ public class TestSysOutOverSLF4JThreadSafety extends SysOutOverSLF4JTestCase {
         start.countDown();
         executor.shutdown();
         executor.awaitTermination(30, TimeUnit.SECONDS);
-        assertEquals(numberOfTimesToPrint * 2, appender.list.size());
+        List<LoggingEvent> loggingEvents = log.getLoggingEvents();
+        assertEquals(numberOfTimesToPrint * 2, loggingEvents.size());
 
         List<String> messages = new ArrayList<String>();
-        for (ILoggingEvent loggingEvent : appender.list) {
+        for (LoggingEvent loggingEvent : loggingEvents) {
             messages.add(loggingEvent.getMessage());
         }
         Collections.sort(messages);

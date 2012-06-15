@@ -36,7 +36,7 @@
     	<answer>
     		<p>You can customise the levels at which ${project.artifactId} logs when initially configuring it at application startup.
     		Simply call:</p>
-    		<source>SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(LogLevel.DEBUG, LogLevel.WARN);</source>
+    		<source>SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(Level.DEBUG, Level.WARN);</source>
     		<p>instead of the no argument version.  The first argument represents the level of calls to System.out, and the
     		second argument represents the level of calls to System.err.</p>
     	</answer>

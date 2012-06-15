@@ -34,44 +34,36 @@ import java.util.logging.Handler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.SimpleLayout;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.ConsoleAppender;
-import ch.qos.logback.core.Context;
 import ch.qos.logback.core.CoreConstants;
-import ch.qos.logback.core.joran.spi.ConsoleTarget;
-import ch.qos.logback.core.layout.EchoLayout;
 
+import uk.org.lidalia.slf4jtest.LoggingEvent;
+import uk.org.lidalia.slf4jtest.TestLogger;
+import uk.org.lidalia.slf4jtest.TestLoggerFactory;
+import uk.org.lidalia.slf4jutils.Level;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.sysoutslf4j.context.LogLevel;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
-import uk.org.lidalia.testutils.Assert;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static uk.org.lidalia.slf4jtest.LoggingEvent.debug;
+import static uk.org.lidalia.slf4jtest.LoggingEvent.error;
+import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
+import static uk.org.lidalia.slf4jtest.LoggingEvent.warn;
 
 public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 
     private static final String PACKAGE_NAME = StringUtils.substringBeforeLast(TestSysOutOverSlf4J.class.getName(), ".");
     private static final Marker STACKTRACE_MARKER = MarkerFactory.getMarker("stacktrace");
 
-    private Logger log = (Logger) LoggerFactory.getLogger(TestSysOutOverSlf4J.class);
-
-    @Before
-    public void setUp() {
-        log.setLevel(Level.TRACE);
-    }
+    private TestLogger log = TestLoggerFactory.getTestLogger(TestSysOutOverSlf4J.class);
 
     @After
     public void unregisterLoggingSystemPackage() {
@@ -100,7 +92,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 
         System.out.println("Hello World");
 
-        assertExpectedLoggingEvent(appender.list.get(0), "Hello World", Level.INFO);
+        assertEquals(asList(info("Hello World")), log.getLoggingEvents());
     }
 
     @Test
@@ -109,33 +101,33 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 
         System.err.println("Hello World");
 
-        assertExpectedLoggingEvent(appender.list.get(0), "Hello World", Level.ERROR);
+        assertEquals(asList(error("Hello World")), log.getLoggingEvents());
     }
 
-    @Test
-    public void logBackConsoleAppenderStillLogsToConsole() throws Exception {
-        OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.OUT);
-        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
-
-        configureLogBackConsoleAppender();
-        log.info("Should reach the old sysout");
-
-        assertEquals("[INFO] Should reach the old sysout" + CoreConstants.LINE_SEPARATOR, sysOutMock.toString());
-    }
-
-    private void configureLogBackConsoleAppender() {
-        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-        Logger log = lc.getLogger(Logger.ROOT_LOGGER_NAME);
-        ConsoleAppender<ILoggingEvent> app = new ConsoleAppender<ILoggingEvent>();
-        app.setContext((Context) LoggerFactory.getILoggerFactory());
-        app.setLayout(new EchoLayout<ILoggingEvent>());
-        app.start();
-        log.addAppender(app);
-
-        Logger consoleLogger = lc.getLogger(ConsoleTarget.class);
-        consoleLogger.setLevel(Level.ALL);
-        consoleLogger.addAppender(app);
-    }
+//    @Test
+//    public void logBackConsoleAppenderStillLogsToConsole() throws Exception {
+//        OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.OUT);
+//        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+//
+//        configureLogBackConsoleAppender();
+//        log.info("Should reach the old sysout");
+//
+//        assertEquals("[INFO] Should reach the old sysout" + CoreConstants.LINE_SEPARATOR, sysOutMock.toString());
+//    }
+//
+//    private void configureLogBackConsoleAppender() {
+//        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+//        Logger log = lc.getLogger(Logger.ROOT_LOGGER_NAME);
+//        ConsoleAppender<ILoggingEvent> app = new ConsoleAppender<ILoggingEvent>();
+//        app.setContext((Context) LoggerFactory.getILoggerFactory());
+//        app.setLayout(new EchoLayout<ILoggingEvent>());
+//        app.start();
+//        log.addAppender(app);
+//
+//        Logger consoleLogger = lc.getLogger(ConsoleTarget.class);
+//        consoleLogger.setLevel(Level.ALL);
+//        consoleLogger.addAppender(app);
+//    }
 
     @Test
     public void juliConsoleAppenderStillLogsToConsole() throws Exception {
@@ -181,7 +173,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
         System.out.print('c');
         System.out.print('\n');
 
-        assertExpectedLoggingEvent(appender.list.get(0), "Hello Worldtrue1c", Level.INFO);
+        assertEquals(asList(info("Hello Worldtrue1c")), log.getLoggingEvents());
     }
 
     private static final int FOUR = 4;
@@ -195,7 +187,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
         System.out.append("Hello", 0, FOUR);
         System.out.println();
 
-        assertExpectedLoggingEvent(appender.list.get(0), "cHelloHell", Level.INFO);
+        assertEquals(asList(info("cHelloHell")), log.getLoggingEvents());
     }
 
     @Test
@@ -205,7 +197,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
         System.out.format("Hello %1$s", "World");
         System.out.format(Locale.getDefault(), "Disciples: %1$s\r\n", 12);
 
-        assertExpectedLoggingEvent(appender.list.get(0), "Hello WorldDisciples: 12", Level.INFO);
+        assertEquals(asList(info("Hello WorldDisciples: 12")), log.getLoggingEvents());
     }
 
     @Test
@@ -215,7 +207,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
         System.out.printf("Hello %1$s", "World");
         System.out.printf(Locale.getDefault(), "Disciples: %1$s\r\n", 12);
 
-        assertEquals("Hello WorldDisciples: 12", appender.list.get(0).getMessage());
+        assertEquals(asList(info("Hello WorldDisciples: 12")), log.getLoggingEvents());
     }
 
     @Test
@@ -230,12 +222,12 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
     }
 
     private void assertExpectedStackTraceLoggingEvents(Exception exception, Level level) {
-        assertExpectedLoggingEvent(appender.list.get(0), exception.toString(), level, STACKTRACE_MARKER);
+        assertEquals(new LoggingEvent(level, STACKTRACE_MARKER, exception.toString()), log.getLoggingEvents().get(0));
         StackTraceElement[] stackTrace = exception.getStackTrace();
         for (int i = 0; i < stackTrace.length; i++) {
-            assertExpectedLoggingEvent(appender.list.get(i + 1), "\tat " + stackTrace[i].toString(), level, STACKTRACE_MARKER);
+            assertEquals(new LoggingEvent(level, STACKTRACE_MARKER, "\tat " + stackTrace[i].toString()), log.getLoggingEvents().get(i + 1));
         }
-        assertEquals(exception.getStackTrace().length + 1, appender.list.size());
+        assertEquals(exception.getStackTrace().length + 1, log.getLoggingEvents().size());
     }
 
     @Test
@@ -249,14 +241,6 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
         assertExpectedStackTraceLoggingEvents(exception, Level.INFO);
     }
 
-    private void assertExpectedLoggingEvent(ILoggingEvent loggingEvent, String message, Level level) {
-        Assert.assertExpectedLoggingEvent(loggingEvent, message, level, null, getClass().getName());
-    }
-
-    private void assertExpectedLoggingEvent(ILoggingEvent loggingEvent, String message, Level level, Marker marker) {
-        Assert.assertExpectedLoggingEvent(loggingEvent, message, level, marker, getClass().getName());
-    }
-
     @Test
     public void innerClassLoggedAsOuterClass() {
         SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
@@ -267,7 +251,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
             }
         }).run();
 
-        Assert.assertExpectedLoggingEvent(appender.list.get(0), "From inner class", Level.INFO, null, getClass().getName());
+        assertEquals(asList(info("From inner class")), log.getLoggingEvents());
     }
 
     @Test
@@ -283,13 +267,15 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 
     @Test
     public void levelsAreConfigurable() {
-        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(LogLevel.DEBUG, LogLevel.WARN);
+        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J(Level.DEBUG, Level.WARN);
 
         System.out.println("Message 1");
         System.err.println("Message 2");
 
-        assertExpectedLoggingEvent(appender.list.get(0), "Message 1", Level.DEBUG);
-        assertExpectedLoggingEvent(appender.list.get(1), "Message 2", Level.WARN);
+        assertEquals(asList(
+                debug("Message 1"),
+                warn("Message 2")),
+                log.getLoggingEvents());
     }
 
     @Test
@@ -345,8 +331,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
         System.out.print((String) null);
         System.out.println((String) null);
 
-        assertExpectedLoggingEvent(appender.list.get(0), "nullnull", Level.INFO);
-        assertExpectedLoggingEvent(appender.list.get(1), "nullnull", Level.INFO);
+        assertEquals(asList(info("nullnull"), info("nullnull")), log.getLoggingEvents());
     }
 
     @Test
@@ -367,9 +352,6 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
         for (int i = 1; i <= 3; i++) {
             System.out.print("message\nprompt>");
         }
-        assertEquals(3, appender.list.size());
-        assertExpectedLoggingEvent(appender.list.get(0), "message", Level.INFO);
-        assertExpectedLoggingEvent(appender.list.get(1), "prompt>message", Level.INFO);
-        assertExpectedLoggingEvent(appender.list.get(2), "prompt>message", Level.INFO);
+        assertEquals(asList(info("message"), info("prompt>message"), info("prompt>message")), log.getLoggingEvents());
     }
 }

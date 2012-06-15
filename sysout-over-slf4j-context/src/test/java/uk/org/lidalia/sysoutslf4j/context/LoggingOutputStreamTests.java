@@ -32,46 +32,44 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import uk.org.lidalia.slf4jtest.TestLogger;
+import uk.org.lidalia.slf4jtest.TestLoggerFactory;
+import uk.org.lidalia.slf4jutils.Level;
+import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyZeroInteractions;
 import static org.powermock.api.mockito.PowerMockito.when;
+import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
+import static uk.org.lidalia.slf4jtest.LoggingEvent.warn;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({LoggerFactory.class, CallOrigin.class, LoggingSystemRegister.class, LoggingOutputStream.class})
-public class LoggingOutputStreamTests {
+@PrepareForTest({CallOrigin.class, LoggingSystemRegister.class})
+public class LoggingOutputStreamTests extends SysOutOverSLF4JTestCase {
 
     private static final String CLASS_IN_LOGGING_SYSTEM = "org.logging.LoggerClass";
     private static final String CLASS_NAME = "org.something.SomeClass";
 
-    private LogLevel level = LogLevel.INFO;
+    private Level level = Level.INFO;
 
     private ExceptionHandlingStrategy exceptionHandlingStrategyMock = mock(ExceptionHandlingStrategy.class);
     private PrintStream origPrintStreamMock = mock(PrintStream.class);
-    private Logger loggerMock = mock(Logger.class);
     private LoggingSystemRegister loggingSystemRegisterMock = mock(LoggingSystemRegister.class);
     private LoggingOutputStream outputStream = new LoggingOutputStream(level, exceptionHandlingStrategyMock, origPrintStreamMock, loggingSystemRegisterMock);
-
-    private final Logger loggingOutputStreamLoggerMock = mock(Logger.class);
+    private TestLogger logger = TestLoggerFactory.getTestLogger(CLASS_NAME);
 
     @Before
     public void setUp() {
-        Whitebox.setInternalState(LoggingOutputStream.class, loggingOutputStreamLoggerMock);
-        mockStatic(LoggerFactory.class);
-        when(LoggerFactory.getLogger(anyString())).thenReturn(mock(Logger.class));
-        when(LoggerFactory.getLogger(CLASS_NAME)).thenReturn(loggerMock);
-
         mockGettingCallOrigin(false, false, CLASS_NAME);
     }
 
@@ -79,14 +77,14 @@ public class LoggingOutputStreamTests {
     public void flushLogsWhenMessageEndsWithUnixLineBreak() throws Exception {
         outputStream.write("the message\n".getBytes("UTF-8"));
         outputStream.flush();
-        verify(loggerMock).info("the message");
+        assertEquals(asList(info("the message")), logger.getLoggingEvents());
     }
 
     @Test
     public void flushLogsWhenMessageEndsWithWindowsLineBreak() throws Exception {
         outputStream.write("the message\r\n".getBytes("UTF-8"));
         outputStream.flush();
-        verify(loggerMock).info("the message");
+        assertEquals(asList(info("the message")), logger.getLoggingEvents());
     }
 
     @Test
@@ -113,7 +111,8 @@ public class LoggingOutputStreamTests {
         outputStream.write(bytes);
         outputStream.flush();
 
-        verify(loggingOutputStreamLoggerMock, times(1)).warn(LoggingMessages.PERFORMANCE_WARNING);
+        TestLogger loggingOutputStreamLogger = TestLoggerFactory.getTestLogger(LoggingOutputStream.class);
+        assertEquals(asList(warn(LoggingMessages.PERFORMANCE_WARNING)), loggingOutputStreamLogger.getLoggingEvents());
     }
 
     @Test
@@ -131,9 +130,9 @@ public class LoggingOutputStreamTests {
         outputStream.write("exception line\n".getBytes("UTF-8"));
         outputStream.flush();
 
-        verify(exceptionHandlingStrategyMock).handleExceptionLine("exception line", loggerMock);
+        verify(exceptionHandlingStrategyMock).handleExceptionLine("exception line", logger);
         verify(exceptionHandlingStrategyMock, never()).notifyNotStackTrace();
-        verifyZeroInteractions(loggerMock);
+        assertEquals(emptyList(), logger.getLoggingEvents());
     }
 
     @Test
@@ -142,13 +141,13 @@ public class LoggingOutputStreamTests {
         outputStream.write("2\n".getBytes("UTF-8"));
         outputStream.flush();
 
-        verify(loggerMock).info("12");
+        assertEquals(asList(info("12")), logger.getLoggingEvents());
 
         outputStream.write("3".getBytes("UTF-8"));
         outputStream.write("4\n".getBytes("UTF-8"));
         outputStream.flush();
 
-        verify(loggerMock).info("34");
+        assertEquals(asList(info("12"), info("34")), logger.getLoggingEvents());
     }
 
     private void mockGettingCallOrigin(boolean isStackTrace, boolean inLoggingSystem, String className) {
