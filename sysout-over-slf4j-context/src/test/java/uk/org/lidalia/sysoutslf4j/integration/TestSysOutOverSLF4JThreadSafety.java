@@ -85,7 +85,7 @@ public class TestSysOutOverSLF4JThreadSafety extends SysOutOverSLF4JTestCase {
         start.countDown();
         executor.shutdown();
         executor.awaitTermination(30, TimeUnit.SECONDS);
-        List<LoggingEvent> loggingEvents = log.getLoggingEvents();
+        List<LoggingEvent> loggingEvents = log.getAllLoggingEvents();
         assertEquals(numberOfTimesToPrint * 2, loggingEvents.size());
 
         List<String> messages = new ArrayList<String>();
