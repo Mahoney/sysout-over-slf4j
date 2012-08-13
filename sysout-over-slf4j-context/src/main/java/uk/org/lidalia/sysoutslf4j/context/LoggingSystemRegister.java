@@ -43,7 +43,8 @@ class LoggingSystemRegister {
             "org.slf4j.impl.Log4jLoggerAdapter",
             "org.slf4j.impl.JDK14LoggerAdapter",
             "org.apache.log4j.",
-            "java.util.logging."));
+            "java.util.logging.",
+            "uk.org.lidalia.slf4jtest."));
 
     void registerLoggingSystem(final String packageName) {
         loggingSystemNameFragments.add(packageName);

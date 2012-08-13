@@ -35,9 +35,6 @@ class Initialiser {
         "Your logging framework {} is not known - if it needs access to the console you will need to register it " +
         "by calling SysOutOverSLF4J.registerLoggingSystem";
 
-    private static final String[] LOGGING_SYSTEMS_THAT_MIGHT_ACCESS_CONSOLE =
-        { "org.x4juli.", "org.grlea.log.", "org.slf4j.impl.", "ch.qos.logback.", "org.apache.log4j." };
-
     private final LoggingSystemRegister loggingSystemRegister;
 
     Initialiser(final LoggingSystemRegister loggingSystemRegister) {
@@ -45,34 +42,8 @@ class Initialiser {
     }
 
     void initialise(final Logger currentLoggerImplementation) {
-        if (loggingSystemKnownAndMightAccessConsoleViaPrintln(currentLoggerImplementation)) {
-            registerCurrentLoggingSystemPackage(currentLoggerImplementation);
-        } else {
+        if (!loggingSystemRegister.isInLoggingSystem(currentLoggerImplementation.getClass().getName())) {
             LOG.warn(UNKNOWN_LOGGING_SYSTEM_MESSAGE, currentLoggerImplementation.getClass());
         }
     }
-
-    private boolean loggingSystemKnownAndMightAccessConsoleViaPrintln(final Logger currentLoggerImplementation) {
-        boolean loggingSystemKnownAndMightAccessConsoleViaPrintln = false;
-        for (String loggingPackage : LOGGING_SYSTEMS_THAT_MIGHT_ACCESS_CONSOLE) {
-            if (usingLogFramework(currentLoggerImplementation, loggingPackage)) {
-                loggingSystemKnownAndMightAccessConsoleViaPrintln = true;
-                break;
-            }
-        }
-        return loggingSystemKnownAndMightAccessConsoleViaPrintln;
-    }
-
-    private void registerCurrentLoggingSystemPackage(final Logger currentLoggerImplementation) {
-        for (String loggingPackage : LOGGING_SYSTEMS_THAT_MIGHT_ACCESS_CONSOLE) {
-            if (usingLogFramework(currentLoggerImplementation, loggingPackage)) {
-                loggingSystemRegister.registerLoggingSystem(loggingPackage);
-            }
-        }
-    }
-
-    private boolean usingLogFramework(final Logger currentLoggerImplementation, final String packageName) {
-        return currentLoggerImplementation.getClass().getName().startsWith(packageName);
-    }
-
 }

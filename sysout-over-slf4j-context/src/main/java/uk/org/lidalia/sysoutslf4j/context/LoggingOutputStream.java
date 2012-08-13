@@ -64,9 +64,9 @@ class LoggingOutputStream extends ByteArrayOutputStream {
         reset();
     }
 
-    private final AtomicBoolean warned = new AtomicBoolean(false);
+    private static final AtomicBoolean warned = new AtomicBoolean(false);
 
-    private void warnAboutPerformance() {
+    private static void warnAboutPerformance() {
         if (warned.compareAndSet(false, true)) {
             log.warn(LoggingMessages.PERFORMANCE_WARNING);
         }
@@ -74,15 +74,20 @@ class LoggingOutputStream extends ByteArrayOutputStream {
 
     private void log(final CallOrigin callOrigin, String bufferAsString) {
         String valueToLog = StringUtils.stripEnd(bufferAsString, " \r\n");
-        if (valueToLog.length() > 0) {
-            if (callOrigin.isPrintingStackTrace()) {
-                exceptionHandlingStrategy.handleExceptionLine(valueToLog, LoggerFactory.getLogger(callOrigin.getClassName()));
-            } else {
-                exceptionHandlingStrategy.notifyNotStackTrace();
-                RichLoggerFactory.getLogger(callOrigin.getClassName()).log(level, valueToLog);
+        try {
+            if (valueToLog.length() > 0) {
+                if (callOrigin.isPrintingStackTrace()) {
+                    exceptionHandlingStrategy.handleExceptionLine(valueToLog, LoggerFactory.getLogger(callOrigin.getClassName()));
+                } else {
+                    exceptionHandlingStrategy.notifyNotStackTrace();
+                    RichLoggerFactory.getLogger(callOrigin.getClassName()).log(level, valueToLog);
+                }
             }
+        } catch (StackOverflowError stackOverflowError) {
+            throw new AssertionError("An unregistered logging system is sending data to the console - please register it. Original message: " + valueToLog, stackOverflowError);
+        } finally {
+            reset();
         }
-        reset();
     }
 
     protected void finalize() throws Throwable {
