@@ -29,26 +29,24 @@ import java.io.PrintStream;
 import java.util.Collection;
 
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.core.ContextBase;
-import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.encoder.EchoEncoder;
 import ch.qos.logback.core.encoder.Encoder;
-import com.google.common.base.Predicate;
 
 import uk.org.lidalia.slf4jtest.LoggingEvent;
-import uk.org.lidalia.slf4jtest.TestLogger;
 import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 import uk.org.lidalia.sysoutslf4j.context.LoggingMessages;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 
-import static com.google.common.collect.Iterables.any;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static uk.org.lidalia.slf4jtest.LoggingEvent.warn;
 
 public class ConsoleAppenderTests extends SysOutOverSLF4JTestCase {
 
@@ -63,21 +61,10 @@ public class ConsoleAppenderTests extends SysOutOverSLF4JTestCase {
         consoleAppender.doAppend("some log text");
 
         String outString = new String(outputStreamBytes.toByteArray());
+        assertThat(outString, containsString("some log text"));
 
-        assertEquals("some log text" + CoreConstants.LINE_SEPARATOR, outString);
-
-        Collection<TestLogger> allLoggers = TestLoggerFactory.getAllTestLoggers().values();
-        assertFalse(any(allLoggers, new Predicate<TestLogger>() {
-            @Override
-            public boolean apply(TestLogger testLogger) {
-                return any(testLogger.getLoggingEvents(), new Predicate<LoggingEvent>() {
-                    @Override
-                    public boolean apply(LoggingEvent loggingEvent) {
-                        return loggingEvent.getMessage().contains(LoggingMessages.PERFORMANCE_WARNING);
-                    }
-                });
-            }
-        }));
+        Collection<LoggingEvent> allLoggingEvents = TestLoggerFactory.getAllLoggingEvents();
+        assertThat(allLoggingEvents, not(hasItem(equalTo(warn(LoggingMessages.PERFORMANCE_WARNING)))));
     }
 
     private ConsoleAppender<String> buildConsoleAppender() {

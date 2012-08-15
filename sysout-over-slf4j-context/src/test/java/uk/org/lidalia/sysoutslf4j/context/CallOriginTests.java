@@ -48,7 +48,8 @@ public class CallOriginTests {
     public void getCallOriginThrowsIllegalStateExceptionIfNoPerContextPrintStreamStackEntry() throws Throwable {
         expectGetStackTraceToReturn(
                 stackTraceElement("org.a.1"),
-                stackTraceElement("org.a.2")
+                stackTraceElement("org.a.2"),
+                stackTraceElement("main.Class")
         );
 
         IllegalStateException exception = shouldThrow(IllegalStateException.class, new Runnable() {
@@ -64,7 +65,8 @@ public class CallOriginTests {
         expectGetStackTraceToReturn(
                 stackTraceElement(PerContextPrintStream.class),
                 stackTraceElement("org.a.ClassName"),
-                stackTraceElement("org.b.ClassName")
+                stackTraceElement("org.b.ClassName"),
+                stackTraceElement("main.Class")
         );
 
         CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
@@ -75,10 +77,12 @@ public class CallOriginTests {
     public void getCallOriginIsNotStackTraceIfThrowableNotFirstElement() {
         expectGetStackTraceToReturn(
                 stackTraceElement(PerContextPrintStream.class),
-                stackTraceElement("org.a.ClassName"));
+                stackTraceElement("org.a.ClassName"),
+                stackTraceElement("main.Class")
+        );
 
         CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
-        assertFalse(callOrigin.isPrintingStackTrace());
+        assertFalse(callOrigin.toString(), callOrigin.isPrintingStackTrace());
     }
 
     @Test
@@ -86,11 +90,12 @@ public class CallOriginTests {
         expectGetStackTraceToReturn(
                 stackTraceElement(PerContextPrintStream.class),
                 stackTraceElement("java.lang.Throwable", "printStackTrace"),
-                stackTraceElement("org.a.ClassName")
+                stackTraceElement("org.a.ClassName"),
+                stackTraceElement("main.Class")
         );
 
         CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
-        assertTrue(callOrigin.isPrintingStackTrace());
+        assertTrue(callOrigin.toString(), callOrigin.isPrintingStackTrace());
     }
 
     @Test
@@ -99,7 +104,8 @@ public class CallOriginTests {
                 stackTraceElement(PerContextPrintStream.class),
                 stackTraceElement("some.other.ClassName"),
                 stackTraceElement(Throwable.class, "printStackTrace"),
-                stackTraceElement("org.a.ClassName")
+                stackTraceElement("org.a.ClassName"),
+                stackTraceElement("main.Class")
         );
 
         CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
@@ -111,7 +117,8 @@ public class CallOriginTests {
         expectGetStackTraceToReturn(
                 stackTraceElement(PerContextPrintStream.class),
                 stackTraceElement("org.a.ClassName$InnerClass"),
-                stackTraceElement("org.b.ClassName")
+                stackTraceElement("org.b.ClassName"),
+                stackTraceElement("main.Class")
         );
         CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
         assertEquals("org.a.ClassName", callOrigin.getClassName());
@@ -122,12 +129,13 @@ public class CallOriginTests {
         expectGetStackTraceToReturn(
                 stackTraceElement(PerContextPrintStream.class),
                 stackTraceElement(Throwable.class, "printStackTrace"),
-                stackTraceElement("class.in.logging.system")
+                stackTraceElement("class.in.logging.system"),
+                stackTraceElement("main.Class")
         );
         when(loggingSystemRegister.isInLoggingSystem("class.in.logging.system")).thenReturn(true);
 
         CallOrigin callOrigin = CallOrigin.getCallOrigin(loggingSystemRegister);
-        assertTrue(callOrigin.isInLoggingSystem());
+        assertTrue(callOrigin.toString(), callOrigin.isInLoggingSystem());
     }
 
     private void expectGetStackTraceToReturn(StackTraceElement... stackTraceElements) {

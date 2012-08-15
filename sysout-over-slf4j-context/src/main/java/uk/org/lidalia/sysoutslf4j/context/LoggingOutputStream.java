@@ -43,8 +43,10 @@ class LoggingOutputStream extends ByteArrayOutputStream {
         } else {
             String bufferAsString = new String(toByteArray());
             if (bufferAsString.endsWith("\n")) {
+                reset();
                 log(callOrigin, bufferAsString);
             } else if (bufferAsString.contains("\n")) {
+                reset();
                 List<String> messages = Arrays.asList(bufferAsString.split("\n"));
                 List<String> messagesToLog = messages.subList(0, messages.size() - 1);
                 for (String messageToLog : messagesToLog) {
@@ -84,9 +86,9 @@ class LoggingOutputStream extends ByteArrayOutputStream {
                 }
             }
         } catch (StackOverflowError stackOverflowError) {
-            throw new AssertionError("An unregistered logging system is sending data to the console - please register it. Original message: " + valueToLog, stackOverflowError);
-        } finally {
-            reset();
+            throw new IllegalStateException("Logging system " + LoggerFactory.getLogger(Object.class).getClass() +
+                    " is sending data to the console - please register it by calling SysOutOverSLF4J.registerLoggingSystem. " +
+                    "Original message: " + System.getProperty("line.separator") + valueToLog, stackOverflowError);
         }
     }
 

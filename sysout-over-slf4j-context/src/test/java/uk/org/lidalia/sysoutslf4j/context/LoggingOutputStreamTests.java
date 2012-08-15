@@ -26,12 +26,14 @@ package uk.org.lidalia.sysoutslf4j.context;
 
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 
 import uk.org.lidalia.slf4jtest.TestLogger;
@@ -103,6 +105,8 @@ public class LoggingOutputStreamTests extends SysOutOverSLF4JTestCase {
 
     @Test
     public void flushWarnsOnceIfInLoggingSystem() throws Exception {
+        AtomicBoolean warned = (AtomicBoolean) Whitebox.getField(LoggingOutputStream.class, "warned").get(LoggingOutputStream.class);
+        warned.set(false);
         mockGettingCallOrigin(false, true, CLASS_IN_LOGGING_SYSTEM);
 
         byte[] bytes = "twelve chars".getBytes("UTF-8");

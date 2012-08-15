@@ -42,7 +42,7 @@ public class TestLogPerLineExceptionHandlingStrategyFactory extends SysOutOverSL
 
     private static final ExceptionHandlingStrategyFactory STRATEGY_FACTORY =
         LogPerLineExceptionHandlingStrategyFactory.getInstance();
-    private static final String EXCEPTION_LINE = "Hello World";
+    private static final String EXCEPTION_LINE = "an exception line";
     private static final Marker STACKTRACE = MarkerFactory.getMarker("stacktrace");
 
     private TestLogger log = TestLoggerFactory.getTestLogger(TestLogPerLineExceptionHandlingStrategyFactory.class);

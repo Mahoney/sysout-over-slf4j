@@ -36,6 +36,12 @@ import static java.util.Arrays.asList;
 
 final class CallOrigin {
 
+    private static final Supplier<Integer> THROW_ILLEGAL_STATE_EXCEPTION = new Supplier<Integer>() {
+        @Override
+        public Integer get() {
+            throw new IllegalStateException("Must be called from down stack of " + PerContextPrintStream.class.getName());
+        }
+    };
     private final boolean printingStackTrace;
     private final String className;
     private final boolean inLoggingSystem;
@@ -58,33 +64,34 @@ final class CallOrigin {
         return inLoggingSystem;
     }
 
+    @Override
+    public String toString() {
+        return "CallOrigin{" +
+                "printingStackTrace=" + printingStackTrace +
+                ", className='" + className + '\'' +
+                ", inLoggingSystem=" + inLoggingSystem +
+                '}';
+    }
+
     static CallOrigin getCallOrigin(LoggingSystemRegister loggingSystemRegister) {
         Thread currentThread = Thread.currentThread();
         final List<StackTraceElement> stackTraceElements = asList(currentThread.getStackTrace());
-        int firstPerContextPrintStreamFrame = frameWithPrintStreamClassName(stackTraceElements, 0).or(new Supplier<Integer>() {
-            @Override
-            public Integer get() {
-                throw new IllegalStateException("Must be called from down stack of " + PerContextPrintStream.class.getName());
-            }
-        });
+        int firstPerContextPrintStreamFrame = frameWithPrintStreamClassName(stackTraceElements, 0).or(THROW_ILLEGAL_STATE_EXCEPTION);
         int secondPerContextPrintStreamFrame = frameWithPrintStreamClassName(stackTraceElements, firstPerContextPrintStreamFrame + 1).or(stackTraceElements.size());
 
-        final List<StackTraceElement> interestingStackTraceElements = stackTraceElements.subList(firstPerContextPrintStreamFrame, secondPerContextPrintStreamFrame);
+        final List<StackTraceElement> interestingStackTraceElements = stackTraceElements.subList(firstPerContextPrintStreamFrame + 1, secondPerContextPrintStreamFrame);
 
-        for (int i = interestingStackTraceElements.size() -1; i >= 0; i--) {
+        for (int i = interestingStackTraceElements.size() - 2; i >= 0; i--) {
             StackTraceElement stackTraceElement = interestingStackTraceElements.get(i);
             String currentClassName = stackTraceElement.getClassName();
             if (currentClassName.equals(Throwable.class.getName()) && stackTraceElement.getMethodName().equals("printStackTrace")) {
                 return new CallOrigin(true, false, getOuterClassName(interestingStackTraceElements.get(i + 1).getClassName()));
             }
-            if (currentClassName.equals(PerContextPrintStream.class.getName())) {
-                return new CallOrigin(false, false, getOuterClassName(interestingStackTraceElements.get(i + 1).getClassName()));
-            }
             if (loggingSystemRegister.isInLoggingSystem(currentClassName)) {
                 return new CallOrigin(false, true, null);
             }
         }
-        throw new IllegalStateException("Must be called from down stack of " + PerContextPrintStream.class.getName());
+        return new CallOrigin(false, false, getOuterClassName(interestingStackTraceElements.get(0).getClassName()));
     }
 
     private static Optional<Integer> frameWithPrintStreamClassName(final List<StackTraceElement> stackTraceElements, int startPoint) {

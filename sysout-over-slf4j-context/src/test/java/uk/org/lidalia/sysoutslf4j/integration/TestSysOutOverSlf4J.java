@@ -38,8 +38,6 @@ import org.junit.Test;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import ch.qos.logback.core.CoreConstants;
-
 import uk.org.lidalia.slf4jtest.LoggingEvent;
 import uk.org.lidalia.slf4jtest.TestLogger;
 import uk.org.lidalia.slf4jtest.TestLoggerFactory;
@@ -49,6 +47,9 @@ import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
@@ -62,6 +63,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 
     private static final String PACKAGE_NAME = StringUtils.substringBeforeLast(TestSysOutOverSlf4J.class.getName(), ".");
     private static final Marker STACKTRACE_MARKER = MarkerFactory.getMarker("stacktrace");
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     private TestLogger log = TestLoggerFactory.getTestLogger(TestSysOutOverSlf4J.class);
 
@@ -77,7 +79,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 
         System.out.println("Hello again");
 
-        assertEquals("", sysOutMock.toString());
+        assertThat(sysOutMock.toString(), not(containsString("Hello again")));
     }
 
     private OutputStream setUpMockSystemOutput(SystemOutput systemOutput) {
@@ -104,31 +106,6 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
         assertEquals(asList(error("Hello World")), log.getLoggingEvents());
     }
 
-//    @Test
-//    public void logBackConsoleAppenderStillLogsToConsole() throws Exception {
-//        OutputStream sysOutMock = setUpMockSystemOutput(SystemOutput.OUT);
-//        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
-//
-//        configureLogBackConsoleAppender();
-//        log.info("Should reach the old sysout");
-//
-//        assertEquals("[INFO] Should reach the old sysout" + CoreConstants.LINE_SEPARATOR, sysOutMock.toString());
-//    }
-//
-//    private void configureLogBackConsoleAppender() {
-//        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-//        Logger log = lc.getLogger(Logger.ROOT_LOGGER_NAME);
-//        ConsoleAppender<ILoggingEvent> app = new ConsoleAppender<ILoggingEvent>();
-//        app.setContext((Context) LoggerFactory.getILoggerFactory());
-//        app.setLayout(new EchoLayout<ILoggingEvent>());
-//        app.start();
-//        log.addAppender(app);
-//
-//        Logger consoleLogger = lc.getLogger(ConsoleTarget.class);
-//        consoleLogger.setLevel(Level.ALL);
-//        consoleLogger.addAppender(app);
-//    }
-
     @Test
     public void juliConsoleAppenderStillLogsToConsole() throws Exception {
         OutputStream newSysErr = setUpMockSystemOutput(SystemOutput.ERR);
@@ -141,7 +118,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
         log.addHandler(new ConsoleHandler());
         log.info("Should reach the old syserr");
 
-        assertTrue(newSysErr.toString().contains("INFO: Should reach the old syserr"));
+        assertThat(newSysErr.toString(), containsString("INFO: Should reach the old syserr"));
     }
 
     @Test
@@ -152,7 +129,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
         org.apache.log4j.Logger log = configureLog4jLoggerToUseConsoleAppender();
         log.info("Should reach the old sysout");
 
-        assertEquals("INFO - Should reach the old sysout" + CoreConstants.LINE_SEPARATOR, sysOutMock.toString());
+        assertThat(sysOutMock.toString(), containsString("INFO - Should reach the old sysout"));
     }
 
     private org.apache.log4j.Logger configureLog4jLoggerToUseConsoleAppender() {
@@ -262,7 +239,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 
         System.out.println("Should reach console");
 
-        assertEquals("Should reach console" + CoreConstants.LINE_SEPARATOR, sysOutMock.toString());
+        assertThat(sysOutMock.toString(), containsString("Should reach console" + LINE_SEPARATOR));
     }
 
     @Test
@@ -286,7 +263,7 @@ public class TestSysOutOverSlf4J extends SysOutOverSLF4JTestCase {
 
         System.out.println("Hello");
 
-        assertEquals("Hello" + CoreConstants.LINE_SEPARATOR, sysOutMock.toString());
+        assertThat(sysOutMock.toString(), containsString("Hello" + LINE_SEPARATOR));
     }
 
     @Test

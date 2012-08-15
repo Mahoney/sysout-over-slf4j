@@ -56,12 +56,6 @@ public final class SysOutOverSLF4J {
     private static final Logger LOG = LoggerFactory.getLogger(SysOutOverSLF4J.class);
     private static final LoggingSystemRegister LOGGING_SYSTEM_REGISTER = new LoggingSystemRegister();
 
-    static {
-        final Initialiser sysOutOverSLF4JInitialiser = new Initialiser(LOGGING_SYSTEM_REGISTER);
-        final Logger loggerImplementation = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        sysOutOverSLF4JInitialiser.initialise(loggerImplementation);
-    }
-
     /**
      * If they have not previously been wrapped, wraps the System.out and
      * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream} and registers

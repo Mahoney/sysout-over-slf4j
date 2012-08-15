@@ -40,6 +40,8 @@ import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 import uk.org.lidalia.testutils.SimpleClassloader;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
 
@@ -94,7 +96,7 @@ public class TestSysOutOverSLF4JInClassLoader extends SysOutOverSLF4JTestCase {
 
         System.out.println("Hello again");
 
-        assertEquals("Hello again" + System.getProperty("line.separator"), sysOutMock.toString());
+        assertThat(sysOutMock.toString(), containsString("Hello again" + System.getProperty("line.separator")));
     }
 
     private OutputStream setUpMockSystemOutput(SystemOutput systemOutput) {
