@@ -39,7 +39,7 @@ public abstract class SysOutOverSLF4JTestCase {
 
     @Before
     public void resetLoggers() {
-        TestLoggerFactory.clear();
+        TestLoggerFactory.clearAll();
     }
 
     @Before
