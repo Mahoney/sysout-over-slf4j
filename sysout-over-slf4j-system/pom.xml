@@ -5,7 +5,6 @@
     <groupId>uk.org.lidalia</groupId>
     <artifactId>lidalia-jvm-library</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <relativePath>../../lidalia-jvm-library</relativePath>
   </parent>
   <groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
   <artifactId>sysout-over-slf4j-system</artifactId>
