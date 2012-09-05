@@ -45,7 +45,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
-import static uk.org.lidalia.test.Assert.shouldThrow;
+import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(PerContextPrintStream.class)

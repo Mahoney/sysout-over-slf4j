@@ -30,7 +30,7 @@ import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4JSystemNotPresentException;
 
 import static org.junit.Assert.assertEquals;
-import static uk.org.lidalia.test.Assert.shouldThrow;
+import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
 
 public class SysoutOverSlf4jWithNoSystemJarOnClasspathTests {
 

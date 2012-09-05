@@ -30,7 +30,7 @@ import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static uk.org.lidalia.test.Assert.assertNotInstantiable;
-import static uk.org.lidalia.test.Assert.shouldThrow;
+import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
 
 public class StringUtilsTests extends SysOutOverSLF4JTestCase {
 

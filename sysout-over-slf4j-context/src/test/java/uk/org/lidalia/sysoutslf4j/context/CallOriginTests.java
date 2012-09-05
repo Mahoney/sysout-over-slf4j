@@ -37,7 +37,7 @@ import static org.junit.Assert.assertTrue;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
-import static uk.org.lidalia.test.Assert.shouldThrow;
+import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CallOrigin.class, LoggingSystemRegister.class})
