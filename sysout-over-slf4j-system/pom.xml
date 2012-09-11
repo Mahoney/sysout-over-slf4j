@@ -2,16 +2,25 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>uk.org.lidalia</groupId>
-    <artifactId>lidalia-jvm-library</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
+    <artifactId>sysout-over-slf4j-parent</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
   </parent>
-  <groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
   <artifactId>sysout-over-slf4j-system</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
-
+  <name>System Jar</name>
+  <description>
+    Contains all the classes that cannot be garbage collected as they are referenced from system classes, and so should be
+    loaded by a classloader that is never discarded.
+  </description>
   <dependencies>
     <!-- TEST -->
+    <dependency>
+      <groupId>uk.org.lidalia</groupId>
+      <artifactId>lidalia-test-dependencies</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>uk.org.lidalia</groupId>
       <artifactId>lidalia-lang</artifactId>

@@ -9,6 +9,9 @@
   </parent>
   <artifactId>sysout-over-slf4j-webapps</artifactId>
   <packaging>pom</packaging>
+  <name>Test Web Applications</name>
+  <description>A collection of web applications using different logging implementations for
+    functional testing of sysout-over-slf4j's behaviour when several reloadable contexts exist in a JVM.</description>
   <modules>
     <module>webapp-with-jdk14</module>
   </modules>

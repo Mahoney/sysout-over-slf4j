@@ -11,6 +11,7 @@
 
   <artifactId>tests</artifactId>
   <packaging>pom</packaging>
+  <name>Tests</name>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -19,7 +20,7 @@
       <type>war</type>
     </dependency>
     <dependency>
-      <groupId>uk.org.lidalia.sysout-over-slf4j</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>sysout-over-slf4j-system</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -45,17 +46,17 @@
             <properties>
               <cargo.servlet.port>8081</cargo.servlet.port>
             </properties>
-            <deployables>
-              <deployable>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>webapp-with-jdk14</artifactId>
-                <type>war</type>
-                <properties>
-                  <context>/webapp-with-jdk14</context>
-                </properties>
-              </deployable>
-            </deployables>
           </configuration>
+          <deployables>
+            <deployable>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>webapp-with-jdk14</artifactId>
+              <type>war</type>
+              <properties>
+                <context>/webapp-with-jdk14</context>
+              </properties>
+            </deployable>
+          </deployables>
         </configuration>
         <executions>
           <execution>
