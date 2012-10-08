@@ -26,7 +26,7 @@ package uk.org.lidalia.sysoutslf4j.context.exceptionhandlers;
 
 import java.io.PrintStream;
 
-import uk.org.lidalia.slf4jutils.Level;
+import uk.org.lidalia.slf4jext.Level;
 
 /**
  * <p>

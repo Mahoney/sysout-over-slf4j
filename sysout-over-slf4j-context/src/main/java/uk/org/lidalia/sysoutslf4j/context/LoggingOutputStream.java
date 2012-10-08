@@ -7,19 +7,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import uk.org.lidalia.slf4jutils.Level;
-import uk.org.lidalia.slf4jutils.RichLogger;
-import uk.org.lidalia.slf4jutils.RichLoggerFactory;
+import uk.org.lidalia.slf4jext.Level;
+import uk.org.lidalia.slf4jext.Logger;
+import uk.org.lidalia.slf4jext.LoggerFactory;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 
 import static uk.org.lidalia.sysoutslf4j.context.CallOrigin.getCallOrigin;
 
 class LoggingOutputStream extends ByteArrayOutputStream {
 
-    private static final Logger log = LoggerFactory.getLogger(LoggingOutputStream.class);
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(LoggingOutputStream.class);
 
     private final Level level;
     private final ExceptionHandlingStrategy exceptionHandlingStrategy;
@@ -79,14 +76,14 @@ class LoggingOutputStream extends ByteArrayOutputStream {
         try {
             if (valueToLog.length() > 0) {
                 if (callOrigin.isPrintingStackTrace()) {
-                    exceptionHandlingStrategy.handleExceptionLine(valueToLog, LoggerFactory.getLogger(callOrigin.getClassName()));
+                    exceptionHandlingStrategy.handleExceptionLine(valueToLog, org.slf4j.LoggerFactory.getLogger(callOrigin.getClassName()));
                 } else {
                     exceptionHandlingStrategy.notifyNotStackTrace();
-                    RichLoggerFactory.getLogger(callOrigin.getClassName()).log(level, valueToLog);
+                    LoggerFactory.getLogger(callOrigin.getClassName()).log(level, valueToLog);
                 }
             }
         } catch (StackOverflowError stackOverflowError) {
-            throw new IllegalStateException("Logging system " + LoggerFactory.getLogger(Object.class).getClass() +
+            throw new IllegalStateException("Logging system " + org.slf4j.LoggerFactory.getLogger(Object.class).getClass() +
                     " is sending data to the console - please register it by calling SysOutOverSLF4J.registerLoggingSystem. " +
                     "Original message: " + System.getProperty("line.separator") + valueToLog, stackOverflowError);
         }
@@ -96,7 +93,7 @@ class LoggingOutputStream extends ByteArrayOutputStream {
         super.finalize();
         String bufferAsString = StringUtils.stripEnd(new String(toByteArray()), " \r\n");
         if (bufferAsString.length() > 0) {
-            RichLogger logger = RichLoggerFactory.getLogger(SysOutOverSLF4J.class);
+            Logger logger = LoggerFactory.getLogger(SysOutOverSLF4J.class);
             logger.log(level, bufferAsString);
         }
         reset();

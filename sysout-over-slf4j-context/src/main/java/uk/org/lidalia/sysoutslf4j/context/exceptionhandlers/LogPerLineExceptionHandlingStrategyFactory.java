@@ -26,12 +26,11 @@ package uk.org.lidalia.sysoutslf4j.context.exceptionhandlers;
 
 import java.io.PrintStream;
 
-import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import uk.org.lidalia.slf4jutils.Level;
-import uk.org.lidalia.slf4jutils.RichLogger;
+import uk.org.lidalia.slf4jext.Level;
+import uk.org.lidalia.slf4jext.Logger;
 
 /**
  * Implementation of {@link LogPerLineExceptionHandlingStrategyFactory} which returns an
@@ -71,8 +70,8 @@ public final class LogPerLineExceptionHandlingStrategyFactory implements Excepti
             // Do nothing
         }
 
-        public void handleExceptionLine(final String line, final Logger log) {
-            new RichLogger(log).log(logLevel, MARKER, line);
+        public void handleExceptionLine(final String line, final org.slf4j.Logger log) {
+            new Logger(log).log(logLevel, MARKER, line);
         }
 
     }

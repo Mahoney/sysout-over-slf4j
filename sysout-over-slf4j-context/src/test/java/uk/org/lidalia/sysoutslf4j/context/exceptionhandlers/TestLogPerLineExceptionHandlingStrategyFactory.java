@@ -31,7 +31,7 @@ import org.slf4j.MarkerFactory;
 import uk.org.lidalia.slf4jtest.TestLogger;
 import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
-import uk.org.lidalia.slf4jutils.Level;
+import uk.org.lidalia.slf4jext.Level;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
