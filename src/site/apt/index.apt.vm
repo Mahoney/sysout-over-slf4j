@@ -1,0 +1,26 @@
+System Out and Err Redirected to SLF4J
+
+  The ${project.artifactId} module allows a user to redirect all calls to
+  System.out and System.err to an SLF4J defined logger with the name of
+  the fully qualified class in which the System.out.println (or similar)
+  call was made, at configurable levels.
+
+*What are the intended use cases?
+
+  The ${project.artifactId} module is for cases where your legacy codebase,
+  or a third party module you use, prints directly to the console and
+  you would like to get the benefits of a proper logging framework,
+  with automatic capture of information like timestamp and the ability
+  to filter which messages you are interested in seeing and control where
+  they are sent.
+
+  The ${project.artifactId} module is explicitly not intended to encourage
+  the use of System.out or System.err for logging purposes.  There is a
+  significant performance overhead attached to its use, and as such it
+  should be considered a stop-gap for your own code until you can alter
+  it to use SLF4J directly, or a work-around for poorly behaving third
+  party modules.
+
+*Getting started
+
+  Follow the {{{quickstart.html}Quick start}} guide.
