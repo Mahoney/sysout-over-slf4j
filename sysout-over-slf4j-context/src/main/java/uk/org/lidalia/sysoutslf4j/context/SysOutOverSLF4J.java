@@ -30,7 +30,7 @@ import java.util.concurrent.Callable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.org.lidalia.lang.RunnableCallable;
+import uk.org.lidalia.lang.RunAndCallable;
 import uk.org.lidalia.slf4jext.Level;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategy;
 import uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory;
@@ -114,9 +114,9 @@ public final class SysOutOverSLF4J {
     public static void sendSystemOutAndErrToSLF4J(final Level outLevel, final Level errLevel,
             final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws SysOutOverSLF4JSystemNotPresentException {
         synchronized (System.class) {
-            doWithSystemClasses(new RunnableCallable() {
+            doWithSystemClasses(new RunAndCallable() {
                 @Override
-                public void run2() {
+                public void doRun() {
                     registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.OUT, outLevel);
                     registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.ERR, errLevel);
                     LOG.info("Redirected System.out and System.err to SLF4J for this context");
@@ -148,9 +148,9 @@ public final class SysOutOverSLF4J {
      */
     public static void stopSendingSystemOutAndErrToSLF4J() throws SysOutOverSLF4JSystemNotPresentException {
         synchronized (System.class) {
-            doWithSystemClasses(new RunnableCallable() {
+            doWithSystemClasses(new RunAndCallable() {
                 @Override
-                public void run2() {
+                public void doRun() {
                     for (PerContextSystemOutput systemOutput : PerContextSystemOutput.values()) {
                         systemOutput.deregisterPrintStreamForThisContext();
                     }
@@ -168,9 +168,9 @@ public final class SysOutOverSLF4J {
      */
     public static void restoreOriginalSystemOutputs() throws SysOutOverSLF4JSystemNotPresentException {
         synchronized (System.class) {
-            doWithSystemClasses(new RunnableCallable() {
+            doWithSystemClasses(new RunAndCallable() {
                 @Override
-                public void run2() {
+                public void doRun() {
                     for (PerContextSystemOutput systemOutput : PerContextSystemOutput.values()) {
                         systemOutput.restoreOriginalPrintStream();
                     }

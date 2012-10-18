@@ -32,11 +32,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
 
-import uk.org.lidalia.lang.RunnableCallable;
+import uk.org.lidalia.lang.RunAndCallable;
 import uk.org.lidalia.slf4jtest.LoggingEvent;
 import uk.org.lidalia.slf4jtest.TestLogger;
 import uk.org.lidalia.slf4jtest.TestLoggerFactory;
@@ -59,9 +57,9 @@ public class TestSysOutOverSLF4JThreadSafety extends SysOutOverSLF4JTestCase {
         int numberOfTimesToPrint = 100;
         for (int i = 1; i <= numberOfTimesToPrint; i++) {
             final int count = i;
-            executor.submit((Runnable) new RunnableCallable() {
+            executor.submit((Runnable) new RunAndCallable() {
                 @Override
-                public void run2() throws Exception {
+                public void doRun() throws Exception {
                     start.await();
                     System.out.println("logging " + count);
                 }
@@ -70,9 +68,9 @@ public class TestSysOutOverSLF4JThreadSafety extends SysOutOverSLF4JTestCase {
 
         for (int i = 1; i <= numberOfTimesToPrint; i++) {
             final int count = i;
-            executor.submit((Runnable) new RunnableCallable() {
+            executor.submit((Runnable) new RunAndCallable() {
                 @Override
-                public void run2() throws Exception {
+                public void doRun() throws Exception {
                     start.await();
                     synchronized(System.out) {
                         System.out.print("append1 ");
