@@ -30,7 +30,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static uk.org.lidalia.test.Assert.assertNotInstantiable;
+import static org.junit.Assert.assertThat;
+import static uk.org.lidalia.test.Assert.isNotInstantiable;
 
 public class ReferenceHolderTests {
 
@@ -61,6 +62,6 @@ public class ReferenceHolderTests {
 
     @Test
     public void notInstantiable() throws Throwable {
-        assertNotInstantiable(ReferenceHolder.class);
+        assertThat(ReferenceHolder.class, isNotInstantiable());
     }
 }

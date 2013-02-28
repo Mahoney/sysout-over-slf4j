@@ -43,7 +43,6 @@ import uk.org.lidalia.testutils.SimpleClassloader;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static uk.org.lidalia.slf4jtest.LoggingEvent.info;
 
 public class TestSysOutOverSLF4JInClassLoader extends SysOutOverSLF4JTestCase {
 

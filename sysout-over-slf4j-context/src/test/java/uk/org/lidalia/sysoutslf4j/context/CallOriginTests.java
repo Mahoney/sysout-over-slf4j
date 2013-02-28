@@ -45,7 +45,7 @@ public class CallOriginTests {
 
     private final LoggingSystemRegister loggingSystemRegister = mock(LoggingSystemRegister.class);
     @Test
-    public void getCallOriginThrowsIllegalStateExceptionIfNoPerContextPrintStreamStackEntry() throws Throwable {
+    public void getCallOriginThrowsIllegalStateExceptionIfNoPerContextPrintStreamStackEntry() {
         expectGetStackTraceToReturn(
                 stackTraceElement("org.a.1"),
                 stackTraceElement("org.a.2"),

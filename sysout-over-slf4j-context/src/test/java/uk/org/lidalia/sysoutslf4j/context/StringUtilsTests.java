@@ -29,7 +29,8 @@ import org.junit.Test;
 import uk.org.lidalia.sysoutslf4j.SysOutOverSLF4JTestCase;
 
 import static org.junit.Assert.assertEquals;
-import static uk.org.lidalia.test.Assert.assertNotInstantiable;
+import static org.junit.Assert.assertThat;
+import static uk.org.lidalia.test.Assert.isNotInstantiable;
 import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
 
 public class StringUtilsTests extends SysOutOverSLF4JTestCase {
@@ -50,7 +51,7 @@ public class StringUtilsTests extends SysOutOverSLF4JTestCase {
     }
 
     @Test
-    public void stripEndThrowsNullPointerExceptionIfInputIsNull() throws Throwable {
+    public void stripEndThrowsNullPointerExceptionIfInputIsNull() {
         shouldThrow(NullPointerException.class, new Runnable() {
             public void run() {
                 StringUtils.stripEnd(null, "irrelevant");
@@ -59,7 +60,7 @@ public class StringUtilsTests extends SysOutOverSLF4JTestCase {
     }
 
     @Test
-    public void stripEndThrowsNullPointerExceptionIfStripCharsIsNull() throws Throwable {
+    public void stripEndThrowsNullPointerExceptionIfStripCharsIsNull() {
         shouldThrow(NullPointerException.class, new Runnable() {
             public void run() {
                 StringUtils.stripEnd("irrelevant", null);
@@ -68,7 +69,7 @@ public class StringUtilsTests extends SysOutOverSLF4JTestCase {
     }
 
     @Test
-    public void notInstantiable() throws Throwable {
-        assertNotInstantiable(StringUtils.class);
+    public void notInstantiable() {
+        assertThat(StringUtils.class, isNotInstantiable());
     }
 }

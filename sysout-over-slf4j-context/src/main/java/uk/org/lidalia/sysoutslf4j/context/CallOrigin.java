@@ -27,8 +27,6 @@ package uk.org.lidalia.sysoutslf4j.context;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import uk.org.lidalia.sysoutslf4j.system.PerContextPrintStream;
-import uk.org.lidalia.sysoutslf4j.system.PerContextSystemOutput;
-import uk.org.lidalia.sysoutslf4j.system.SystemOutput;
 
 import java.util.List;
 

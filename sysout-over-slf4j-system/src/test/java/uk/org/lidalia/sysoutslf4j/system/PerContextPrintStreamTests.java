@@ -98,7 +98,7 @@ public class PerContextPrintStreamTests {
     }
 
     @Test
-    public void setErrorThrowsUnsupportedOperationException() throws Throwable {
+    public void setErrorThrowsUnsupportedOperationException() throws Exception {
         setUpMocks();
         UnsupportedOperationException exception = shouldThrow(UnsupportedOperationException.class, new Runnable() {
             @Override
@@ -110,21 +110,21 @@ public class PerContextPrintStreamTests {
     }
 
     @Test
-    public void registerPrintStreamForThisContextDelgatesToStore() throws Throwable {
+    public void registerPrintStreamForThisContextDelgatesToStore() throws Exception {
         setUpMocks();
         perContextPrintStream.registerPrintStreamForThisContext(contextPrintStreamMock);
         verify(perContextStoreMock).put(contextPrintStreamMock);
     }
 
     @Test
-    public void deregisterPrintStreamForThisContextDelegatesToStore() throws Throwable {
+    public void deregisterPrintStreamForThisContextDelegatesToStore() throws Exception {
         setUpMocks();
         perContextPrintStream.deregisterPrintStreamForThisContext();
         verify(perContextStoreMock).remove();
     }
 
     @Test
-    public void getOriginalPrintStreamReturnsOriginalPrintStream() throws Throwable {
+    public void getOriginalPrintStreamReturnsOriginalPrintStream() {
         perContextPrintStream = new PerContextPrintStream(System.err);
         assertSame(System.err, perContextPrintStream.getOriginalPrintStream());
     }

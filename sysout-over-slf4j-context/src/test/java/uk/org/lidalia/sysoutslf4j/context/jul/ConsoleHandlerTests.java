@@ -20,7 +20,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertTrue;
 import static uk.org.lidalia.slf4jtest.LoggingEvent.warn;
 
 public class ConsoleHandlerTests extends SysOutOverSLF4JTestCase {
