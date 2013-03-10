@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
-import uk.org.lidalia.lang.RunAndCallable;
+import uk.org.lidalia.lang.Task;
 import uk.org.lidalia.slf4jtest.LoggingEvent;
 import uk.org.lidalia.slf4jtest.TestLogger;
 import uk.org.lidalia.slf4jtest.TestLoggerFactory;
@@ -57,7 +57,7 @@ public class TestSysOutOverSLF4JThreadSafety extends SysOutOverSLF4JTestCase {
         int numberOfTimesToPrint = 100;
         for (int i = 1; i <= numberOfTimesToPrint; i++) {
             final int count = i;
-            executor.submit((Runnable) new RunAndCallable() {
+            executor.submit((Runnable) new Task() {
                 @Override
                 public void doRun() throws Exception {
                     start.await();
@@ -68,7 +68,7 @@ public class TestSysOutOverSLF4JThreadSafety extends SysOutOverSLF4JTestCase {
 
         for (int i = 1; i <= numberOfTimesToPrint; i++) {
             final int count = i;
-            executor.submit((Runnable) new RunAndCallable() {
+            executor.submit((Runnable) new Task() {
                 @Override
                 public void doRun() throws Exception {
                     start.await();
