@@ -116,7 +116,7 @@ public final class SysOutOverSLF4J {
         synchronized (System.class) {
             doWithSystemClasses(new Task() {
                 @Override
-                public void doRun() {
+                public void perform() {
                     registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.OUT, outLevel);
                     registerNewLoggerAppender(exceptionHandlingStrategyFactory, PerContextSystemOutput.ERR, errLevel);
                     LOG.info("Redirected System.out and System.err to SLF4J for this context");
@@ -150,7 +150,7 @@ public final class SysOutOverSLF4J {
         synchronized (System.class) {
             doWithSystemClasses(new Task() {
                 @Override
-                public void doRun() {
+                public void perform() {
                     for (PerContextSystemOutput systemOutput : PerContextSystemOutput.values()) {
                         systemOutput.deregisterPrintStreamForThisContext();
                     }
@@ -170,7 +170,7 @@ public final class SysOutOverSLF4J {
         synchronized (System.class) {
             doWithSystemClasses(new Task() {
                 @Override
-                public void doRun() {
+                public void perform() {
                     for (PerContextSystemOutput systemOutput : PerContextSystemOutput.values()) {
                         systemOutput.restoreOriginalPrintStream();
                     }

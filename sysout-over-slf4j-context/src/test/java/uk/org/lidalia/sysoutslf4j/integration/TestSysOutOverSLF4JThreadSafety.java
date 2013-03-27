@@ -59,7 +59,7 @@ public class TestSysOutOverSLF4JThreadSafety extends SysOutOverSLF4JTestCase {
             final int count = i;
             executor.submit((Runnable) new Task() {
                 @Override
-                public void doRun() throws Exception {
+                public void perform() throws Exception {
                     start.await();
                     System.out.println("logging " + count);
                 }
@@ -70,7 +70,7 @@ public class TestSysOutOverSLF4JThreadSafety extends SysOutOverSLF4JTestCase {
             final int count = i;
             executor.submit((Runnable) new Task() {
                 @Override
-                public void doRun() throws Exception {
+                public void perform() throws Exception {
                     start.await();
                     synchronized(System.out) {
                         System.out.print("append1 ");
