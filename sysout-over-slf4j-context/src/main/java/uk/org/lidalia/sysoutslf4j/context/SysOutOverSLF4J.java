@@ -198,7 +198,7 @@ public final class SysOutOverSLF4J {
                 throw error;
             }
         } catch (Exception e) {
-            return throwUnchecked(e, (T) null);
+            return throwUnchecked(e, null);
         }
     }
 
