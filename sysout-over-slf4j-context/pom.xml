@@ -20,7 +20,6 @@
     <dependency>
       <groupId>uk.org.lidalia</groupId>
       <artifactId>lidalia-lang</artifactId>
-      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -29,14 +28,12 @@
     <dependency>
       <groupId>uk.org.lidalia</groupId>
       <artifactId>lidalia-slf4j-ext</artifactId>
-      <version>1.0.0</version>
     </dependency>
 
     <!-- OPTIONAL -->
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>${logback.version}</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
@@ -52,7 +49,6 @@
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
-      <version>2.3</version>
       <scope>provided</scope>
       <optional>true</optional>
     </dependency>
@@ -67,14 +63,11 @@
     <dependency>
       <groupId>uk.org.lidalia</groupId>
       <artifactId>lidalia-test-dependencies</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
       <type>pom</type>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>${commons-io.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

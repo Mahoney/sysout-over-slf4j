@@ -65,7 +65,7 @@ public final class SysOutOverSLF4J {
      * for handling printlns coming from Throwable.printStackTrace().<br/>
      * Logs at info level for System.out and at error level for System.err.
      */
-    public static void sendSystemOutAndErrToSLF4J() throws SysOutOverSLF4JSystemNotPresentException {
+    public static void sendSystemOutAndErrToSLF4J() throws SysOutOverSLF4JSystemJarNotPresentException {
         sendSystemOutAndErrToSLF4J(Level.INFO, Level.ERROR);
     }
 
@@ -80,7 +80,7 @@ public final class SysOutOverSLF4J {
      * @param outLevel The SLF4J {@link Level} at which calls to System.out should be logged
      * @param errLevel The SLF4J {@link Level} at which calls to System.err should be logged
      */
-    public static void sendSystemOutAndErrToSLF4J(final Level outLevel, final Level errLevel) throws SysOutOverSLF4JSystemNotPresentException {
+    public static void sendSystemOutAndErrToSLF4J(final Level outLevel, final Level errLevel) throws SysOutOverSLF4JSystemJarNotPresentException {
         sendSystemOutAndErrToSLF4J(outLevel, errLevel, LogPerLineExceptionHandlingStrategyFactory.getInstance());
     }
 
@@ -95,7 +95,7 @@ public final class SysOutOverSLF4J {
      *             The {@link uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.ExceptionHandlingStrategyFactory}
      *             for creating strategies for handling printlns coming from Throwable.printStackTrace()
      */
-    public static void sendSystemOutAndErrToSLF4J(final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws SysOutOverSLF4JSystemNotPresentException {
+    public static void sendSystemOutAndErrToSLF4J(final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws SysOutOverSLF4JSystemJarNotPresentException {
         sendSystemOutAndErrToSLF4J(Level.INFO, Level.ERROR, exceptionHandlingStrategyFactory);
     }
 
@@ -112,7 +112,7 @@ public final class SysOutOverSLF4J {
      *             for creating strategies for handling printlns coming from Throwable.printStackTrace()
      */
     public static void sendSystemOutAndErrToSLF4J(final Level outLevel, final Level errLevel,
-            final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws SysOutOverSLF4JSystemNotPresentException {
+            final ExceptionHandlingStrategyFactory exceptionHandlingStrategyFactory) throws SysOutOverSLF4JSystemJarNotPresentException {
         synchronized (System.class) {
             doWithSystemClasses(new Task() {
                 @Override
@@ -146,7 +146,7 @@ public final class SysOutOverSLF4J {
      * Has no effect on any other contexts that may be using sysout-over-slf4j.<br/>
      * Can be called any number of times, and is synchronized on System.class.
      */
-    public static void stopSendingSystemOutAndErrToSLF4J() throws SysOutOverSLF4JSystemNotPresentException {
+    public static void stopSendingSystemOutAndErrToSLF4J() throws SysOutOverSLF4JSystemJarNotPresentException {
         synchronized (System.class) {
             doWithSystemClasses(new Task() {
                 @Override
@@ -166,7 +166,7 @@ public final class SysOutOverSLF4J {
      * {@link SysOutOverSLF4J#stopSendingSystemOutAndErrToSLF4J} as well as this method.
      * Can be called any number of times, and is synchronized on System.class.
      */
-    public static void restoreOriginalSystemOutputs() throws SysOutOverSLF4JSystemNotPresentException {
+    public static void restoreOriginalSystemOutputs() throws SysOutOverSLF4JSystemJarNotPresentException {
         synchronized (System.class) {
             doWithSystemClasses(new Task() {
                 @Override
@@ -179,7 +179,7 @@ public final class SysOutOverSLF4J {
         }
     }
 
-    public static boolean systemOutputsAreSLF4JPrintStreams() throws SysOutOverSLF4JSystemNotPresentException {
+    public static boolean systemOutputsAreSLF4JPrintStreams() throws SysOutOverSLF4JSystemJarNotPresentException {
         return doWithSystemClasses(new Callable<Boolean>() {
             @Override
             public Boolean call() {
@@ -188,12 +188,12 @@ public final class SysOutOverSLF4J {
         });
     }
 
-    private static <T> T doWithSystemClasses(Callable<T> callable) throws SysOutOverSLF4JSystemNotPresentException {
+    private static <T> T doWithSystemClasses(Callable<T> callable) throws SysOutOverSLF4JSystemJarNotPresentException {
         try {
             return callable.call();
         } catch (NoClassDefFoundError error) {
             if (error.getMessage().contains("sysoutslf4j/system")) {
-                throw new SysOutOverSLF4JSystemNotPresentException(error);
+                throw new SysOutOverSLF4JSystemJarNotPresentException(error);
             } else {
                 throw error;
             }

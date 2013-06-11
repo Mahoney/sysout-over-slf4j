@@ -27,7 +27,7 @@ package uk.org.lidalia.sysoutslf4j;
 import org.junit.Test;
 
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
-import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4JSystemNotPresentException;
+import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4JSystemJarNotPresentException;
 
 import static org.junit.Assert.assertEquals;
 import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
@@ -35,50 +35,50 @@ import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
 public class SysoutOverSlf4jWithNoSystemJarOnClasspathTests {
 
     @Test
-    public void sendSystemOutAndErrToSLF4JWithoutSystemJarOnClasspath() throws Throwable {
-        SysOutOverSLF4JSystemNotPresentException exception = shouldThrow(SysOutOverSLF4JSystemNotPresentException.class, new Runnable() {
+    public void sendSystemOutAndErrToSLF4JWithoutSystemJarOnClasspath() {
+        SysOutOverSLF4JSystemJarNotPresentException exception = shouldThrow(SysOutOverSLF4JSystemJarNotPresentException.class, new Runnable() {
             @Override
             public void run() {
                 SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
             }
         });
 
-        assertEquals(SysOutOverSLF4JSystemNotPresentException.MESSAGE, exception.getMessage());
+        assertEquals(SysOutOverSLF4JSystemJarNotPresentException.MESSAGE, exception.getMessage());
     }
 
     @Test
-    public void stopSendingSystemOutAndErrToSLF4JWithoutSystemJarOnClasspath() throws Throwable {
-        SysOutOverSLF4JSystemNotPresentException exception = shouldThrow(SysOutOverSLF4JSystemNotPresentException.class, new Runnable() {
+    public void stopSendingSystemOutAndErrToSLF4JWithoutSystemJarOnClasspath() {
+        SysOutOverSLF4JSystemJarNotPresentException exception = shouldThrow(SysOutOverSLF4JSystemJarNotPresentException.class, new Runnable() {
             @Override
             public void run() {
                 SysOutOverSLF4J.stopSendingSystemOutAndErrToSLF4J();
             }
         });
 
-        assertEquals(SysOutOverSLF4JSystemNotPresentException.MESSAGE, exception.getMessage());
+        assertEquals(SysOutOverSLF4JSystemJarNotPresentException.MESSAGE, exception.getMessage());
     }
 
     @Test
-    public void restoreOriginalSystemOutputsWithoutSystemJarOnClasspath() throws Throwable {
-        SysOutOverSLF4JSystemNotPresentException exception = shouldThrow(SysOutOverSLF4JSystemNotPresentException.class, new Runnable() {
+    public void restoreOriginalSystemOutputsWithoutSystemJarOnClasspath() {
+        SysOutOverSLF4JSystemJarNotPresentException exception = shouldThrow(SysOutOverSLF4JSystemJarNotPresentException.class, new Runnable() {
             @Override
             public void run() {
                 SysOutOverSLF4J.restoreOriginalSystemOutputs();
             }
         });
 
-        assertEquals(SysOutOverSLF4JSystemNotPresentException.MESSAGE, exception.getMessage());
+        assertEquals(SysOutOverSLF4JSystemJarNotPresentException.MESSAGE, exception.getMessage());
     }
 
     @Test
-    public void systemOutputsAreSLF4JPrintStreamsWithoutSystemJarOnClasspath() throws Throwable {
-        SysOutOverSLF4JSystemNotPresentException exception = shouldThrow(SysOutOverSLF4JSystemNotPresentException.class, new Runnable() {
+    public void systemOutputsAreSLF4JPrintStreamsWithoutSystemJarOnClasspath() {
+        SysOutOverSLF4JSystemJarNotPresentException exception = shouldThrow(SysOutOverSLF4JSystemJarNotPresentException.class, new Runnable() {
             @Override
             public void run() {
                 SysOutOverSLF4J.systemOutputsAreSLF4JPrintStreams();
             }
         });
 
-        assertEquals(SysOutOverSLF4JSystemNotPresentException.MESSAGE, exception.getMessage());
+        assertEquals(SysOutOverSLF4JSystemJarNotPresentException.MESSAGE, exception.getMessage());
     }
 }

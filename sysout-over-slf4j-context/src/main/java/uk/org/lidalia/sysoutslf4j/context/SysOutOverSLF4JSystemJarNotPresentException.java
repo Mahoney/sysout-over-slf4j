@@ -1,6 +1,6 @@
 package uk.org.lidalia.sysoutslf4j.context;
 
-public class SysOutOverSLF4JSystemNotPresentException extends RuntimeException {
+public class SysOutOverSLF4JSystemJarNotPresentException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
@@ -9,7 +9,7 @@ public class SysOutOverSLF4JSystemNotPresentException extends RuntimeException {
             "it is necessary to add this jar to your classpath, at a point where it is visible to all class loaders and " +
             "where the class loader that will load it will never be discarded.";
 
-    public SysOutOverSLF4JSystemNotPresentException(Throwable cause) {
+    public SysOutOverSLF4JSystemJarNotPresentException(Throwable cause) {
         super(MESSAGE, cause);
     }
 }

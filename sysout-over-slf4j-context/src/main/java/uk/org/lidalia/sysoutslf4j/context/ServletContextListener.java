@@ -36,7 +36,7 @@ public class ServletContextListener implements javax.servlet.ServletContextListe
     public final void contextInitialized(final ServletContextEvent servletContextEvent) {
         try {
             SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
-        } catch (SysOutOverSLF4JSystemNotPresentException e) {
+        } catch (SysOutOverSLF4JSystemJarNotPresentException e) {
             LOG.warn("You do not have sysout-over-slf4j-system on your classpath - it is required for redirecting system outputs to SLF4J.", e);
         }
     }
@@ -44,7 +44,7 @@ public class ServletContextListener implements javax.servlet.ServletContextListe
     public void contextDestroyed(final ServletContextEvent servletContextEvent) {
         try {
             SysOutOverSLF4J.stopSendingSystemOutAndErrToSLF4J();
-        } catch (SysOutOverSLF4JSystemNotPresentException e) {
+        } catch (SysOutOverSLF4JSystemJarNotPresentException e) {
             LOG.debug("You do not have sysout-over-slf4j-system on your classpath - it is required for redirecting system outputs to SLF4J.", e);
         }
     }

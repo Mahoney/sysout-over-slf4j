@@ -83,9 +83,7 @@ public class ConsoleAppender extends WriterAppender {
         super.activateOptions();
     }
 
-    /**
-     *  {@inheritDoc}
-     */
+    @Override
     protected final void closeWriter() {
     }
 }
