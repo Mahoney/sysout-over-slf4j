@@ -29,6 +29,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
@@ -59,7 +61,7 @@ public class CrossClassLoaderTestUtils {
 		private Object doWork(Method method, Object[] args) throws Exception {
 			Method targetMethod = target.getClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
 			targetMethod.setAccessible(true);
-			Object result = ReflectionUtils.invokeMethod(targetMethod, target, args);
+			Object result = invokeMethod(args, targetMethod);
 			if (result == null) {
 				return null;
 			}
@@ -72,7 +74,23 @@ public class CrossClassLoaderTestUtils {
 				return moveToCurrentClassLoader(resultClassLoadedInThisClassLoader, result);
 			}
 		}
-	}
+
+        private Object invokeMethod(Object[] args, final Method targetMethod) {
+            try {
+                if (!targetMethod.isAccessible()) {
+                    AccessController.doPrivileged(new PrivilegedAction<Void>() {
+                        public Void run() {
+                            targetMethod.setAccessible(true);
+                            return null;
+                        }
+                    });
+                }
+                return targetMethod.invoke(target, args);
+            } catch (Exception exception) {
+                throw ExceptionUtils.asRuntimeException(exception);
+            }
+        }
+    }
 
 	@SuppressWarnings("unchecked")
 	public static <E> E moveToCurrentClassLoader(Class<E> destinationClass, Object target) {

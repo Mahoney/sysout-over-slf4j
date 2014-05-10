@@ -43,22 +43,44 @@ final class CallOrigin {
 	}
 
 	static CallOrigin getCallOrigin(final StackTraceElement[] stackTraceElements, final String libraryPackageName) {
-		boolean isStackTrace = false;
-		for (StackTraceElement stackTraceElement : stackTraceElements) {
+		for (int i = stackTraceElements.length - 1; i >= 0; i--) {
+            StackTraceElement stackTraceElement = stackTraceElements[i];
 			String className = stackTraceElement.getClassName();
-			if (className.equals(Throwable.class.getName())) {
-				isStackTrace = true;
-			} else if (outsideThisLibrary(className, libraryPackageName)) {
-				className = getOuterClassName(className);
-				return new CallOrigin(isStackTrace, className);
-			}
+            if (inThisLibrary(className, libraryPackageName)) {
+                return new CallOrigin(false, getCallingClassName(stackTraceElements, i, libraryPackageName));
+            } else if (callToPrintStackTraceOnThrowable(className, stackTraceElement.getMethodName())) {
+                return new CallOrigin(true, getCallingClassName(stackTraceElements, i, libraryPackageName));
+            }
 		}
-		throw new IllegalStateException("Nothing in the stack originated from outside package name " + libraryPackageName);
+		throw new IllegalStateException("Nothing in the stack originated from inside package name " + libraryPackageName);
 	}
 
-	private static boolean outsideThisLibrary(final String className, final String libraryPackageName) {
-		return !className.equals(Thread.class.getName()) && !className.startsWith(libraryPackageName); // NOPMD not using thread
-	}
+    private static String getCallingClassName(StackTraceElement[] stackTraceElements, int i, String libraryPackageName) {
+        int callingStackIndex = i + 1;
+        if (stackTraceElements.length > callingStackIndex) {
+            StackTraceElement stackTraceElement = stackTraceElements[i + 1];
+            return getOuterClassName(stackTraceElement.getClassName());
+        } else {
+            throw new IllegalStateException("Nothing in the stack originated from outside package name " + libraryPackageName);
+        }
+    }
+
+    private static boolean callToPrintStackTraceOnThrowable(String className, String methodName) {
+        return methodName.equals("printStackTrace") &&
+                (className.equals(Throwable.class.getName()) || classExtendsThrowable(className));
+    }
+
+    private static boolean classExtendsThrowable(String className) {
+        try {
+            return Throwable.class.isAssignableFrom(Class.forName(className));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static boolean inThisLibrary(String className, String libraryPackageName) {
+        return className.startsWith(libraryPackageName);
+    }
 
 	private static String getOuterClassName(final String className) {
 		final int startOfInnerClassName = className.indexOf('$');
