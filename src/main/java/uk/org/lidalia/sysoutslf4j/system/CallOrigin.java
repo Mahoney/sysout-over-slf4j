@@ -24,6 +24,8 @@
 
 package uk.org.lidalia.sysoutslf4j.system;
 
+import java.util.Arrays;
+
 final class CallOrigin {
 
 	private final boolean printingStackTrace;
@@ -46,13 +48,16 @@ final class CallOrigin {
 		for (int i = stackTraceElements.length - 1; i >= 0; i--) {
             StackTraceElement stackTraceElement = stackTraceElements[i];
 			String className = stackTraceElement.getClassName();
-            if (inThisLibrary(className, libraryPackageName)) {
+            if (className.startsWith(libraryPackageName)) {
                 return new CallOrigin(false, getCallingClassName(stackTraceElements, i, libraryPackageName));
             } else if (callToPrintStackTraceOnThrowable(className, stackTraceElement.getMethodName())) {
                 return new CallOrigin(true, getCallingClassName(stackTraceElements, i, libraryPackageName));
             }
 		}
-		throw new IllegalStateException("Nothing in the stack originated from inside package name " + libraryPackageName);
+		throw new IllegalStateException(
+                "Nothing in the stack originated from inside package name "
+                        +libraryPackageName+"; this should be impossible. "+
+                        "Stack: "+Arrays.toString(stackTraceElements));
 	}
 
     private static String getCallingClassName(StackTraceElement[] stackTraceElements, int i, String libraryPackageName) {
@@ -61,7 +66,10 @@ final class CallOrigin {
             StackTraceElement stackTraceElement = stackTraceElements[i + 1];
             return getOuterClassName(stackTraceElement.getClassName());
         } else {
-            throw new IllegalStateException("Nothing in the stack originated from outside package name " + libraryPackageName);
+            throw new IllegalStateException(
+                    "Nothing in the stack originated from outside package name "
+                            +libraryPackageName+"; this should be impossible. "+
+                            "Stack: "+Arrays.toString(stackTraceElements));
         }
     }
 
@@ -76,10 +84,6 @@ final class CallOrigin {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    private static boolean inThisLibrary(String className, String libraryPackageName) {
-        return className.startsWith(libraryPackageName);
     }
 
 	private static String getOuterClassName(final String className) {
