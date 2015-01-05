@@ -57,10 +57,10 @@ public final class SysOutOverSLF4J {
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
 	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamImpl} and registers
-	 * SLF4J for the current context.<br/>
-	 * Can be called any number of times, and is synchronized on System.class.<br/>
+	 * SLF4J for the current context.<br>
+	 * Can be called any number of times, and is synchronized on System.class.<br>
 	 * Uses the {@link uk.org.lidalia.sysoutslf4j.context.exceptionhandlers.LogPerLineExceptionHandlingStrategyFactory}
-	 * for handling printlns coming from Throwable.printStackTrace().<br/>
+	 * for handling printlns coming from Throwable.printStackTrace().<br>
 	 * Logs at info level for System.out and at error level for System.err.
 	 */
 	public static void sendSystemOutAndErrToSLF4J() {
@@ -70,8 +70,8 @@ public final class SysOutOverSLF4J {
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
 	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamImpl} and registers
-	 * SLF4J for the current context's classloader.<br/>
-	 * Can be called any number of times, and is synchronized on System.class.<br/>
+	 * SLF4J for the current context's classloader.<br>
+	 * Can be called any number of times, and is synchronized on System.class.<br>
 	 * Uses the LogPerLineExceptionHandlingStrategy for handling printlns coming from
 	 * Throwable.printStackTrace().
 	 * 
@@ -87,7 +87,7 @@ public final class SysOutOverSLF4J {
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
 	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamImpl} and registers
-	 * SLF4J for the current context's classloader.<br/>
+	 * SLF4J for the current context's classloader.<br>
 	 * Can be called any number of times, and is synchronized on System.class.
 	 * Logs at info level for System.out and at error level for System.err.
 	 *
@@ -102,8 +102,8 @@ public final class SysOutOverSLF4J {
 	/**
 	 * If they have not previously been wrapped, wraps the System.out and
 	 * System.err PrintStreams in an {@link uk.org.lidalia.sysoutslf4j.system.SLF4JPrintStreamImpl} and registers
-	 * SLF4J for the current context's classloader.<br/>
-	 * Can be called any number of times, and is synchronized on System.class.<br/>
+	 * SLF4J for the current context's classloader.<br>
+	 * Can be called any number of times, and is synchronized on System.class.<br>
 	 * 
 	 * @param outLevel The SLF4J {@link LogLevel} at which calls to System.out should be logged
 	 * @param errLevel The SLF4J {@link LogLevel} at which calls to System.err should be logged
@@ -120,7 +120,7 @@ public final class SysOutOverSLF4J {
 
 	/**
 	 * Stops using SLF4J for calls to System.out and System.err in the current context.
-	 * Has no effect on any other contexts that may be using sysout-over-slf4j.<br/>
+	 * Has no effect on any other contexts that may be using sysout-over-slf4j.<br>
 	 * Can be called any number of times, and is synchronized on System.class.
 	 */
 	public static void stopSendingSystemOutAndErrToSLF4J() {
@@ -131,7 +131,7 @@ public final class SysOutOverSLF4J {
 
 	/**
 	 * If System.out and System.err have been redirected to SLF4J, restores the original PrintStreams
-	 * allowing direct access to the console again.<br/>
+	 * allowing direct access to the console again.<br>
 	 * This will stop all contexts in the JVM from using sysout-over-slf4j. It is not necessary to call
 	 * {@link SysOutOverSLF4J#stopSendingSystemOutAndErrToSLF4J} as well as this method.
 	 * Can be called any number of times, and is synchronized on System.class.

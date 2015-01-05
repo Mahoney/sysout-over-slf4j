@@ -44,7 +44,7 @@ public interface ExceptionHandlingStrategyFactory {
 
 	/**
 	 * This method will be called twice for each context that is sent to SLF4J, once each to return an
-	 * {@link ExceptionHandlingStrategy} for the new System.out and System.err print streams.<br/>
+	 * {@link ExceptionHandlingStrategy} for the new System.out and System.err print streams.<br>
 	 * 
 	 * It is called with the {@link LogLevel} of the SLF4JPrintStream and the original System output
 	 * PrintStream that is being replaced, so that ExceptionHandlingStrategies can have direct access to

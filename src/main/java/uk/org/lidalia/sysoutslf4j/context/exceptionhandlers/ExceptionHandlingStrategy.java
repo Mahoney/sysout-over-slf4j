@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 
 /**
  * This interface defines the methods used by sysout-over-slf4j to convert the results of Throwable.printStacktrace
- * into logging events.<br/>
+ * into logging events.<br>
  * 
  * Since the exception itself cannot be reclaimed, all that is available is the individual lines of the stack trace
  * as they are printed to System.out/err. Something more like normal logging might be achievable by buffering these
