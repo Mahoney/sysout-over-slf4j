@@ -34,7 +34,7 @@
     
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<powermock.version>1.4</powermock.version>
+		<powermock.version>1.6.2</powermock.version>
 		<logback.version>0.9.24</logback.version>
 	</properties>
 	
@@ -74,6 +74,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.2</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
@@ -81,6 +82,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.16</version>
 				<configuration>
 					<forkMode>once</forkMode>
 					<excludes>
@@ -217,7 +219,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
+			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -233,13 +235,13 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.powermock.modules</groupId>
+			<groupId>org.powermock</groupId>
 			<artifactId>powermock-module-junit4</artifactId>
 			<version>${powermock.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.powermock.api</groupId>
+			<groupId>org.powermock</groupId>
 			<artifactId>powermock-api-easymock</artifactId>
 			<version>${powermock.version}</version>
 			<scope>test</scope>
