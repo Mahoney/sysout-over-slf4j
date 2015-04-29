@@ -5,6 +5,7 @@ target
 *.iml
 *.ipr
 *.iws
+.idea
 *~
 integration/bundle/
 integration/felix-cache
